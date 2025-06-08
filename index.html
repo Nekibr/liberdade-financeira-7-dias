@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-book e Ferramenta: Planejamento Financeiro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: The document is structured into two main parts: the e-book content and the interactive tool. The e-book content acts as a comprehensive introduction and theoretical foundation, leading to a call-to-action button. Clicking this button smoothly scrolls the user to the interactive tool section within the same page. The interactive tool itself follows a task-oriented layout with tabbed navigation for budgeting, debt planning, and goal setting, enhancing user engagement and practical application of the e-book's concepts. This single-page structure provides a seamless user experience, avoiding external redirects and keeping all resources self-contained for easy distribution. -->
+    <!-- Visualization & Content Choices: 
+        - E-book Content: Goal: Inform/Explain. Method: Markdown converted to standard HTML paragraphs, headings, and lists. Interaction: Passive reading. Justification: Provides foundational knowledge clearly and comprehensively.
+        - Interactive Tool - Budgeting: Goal: Inform/Compare. Method: Donut chart (Chart.js) for expense distribution, dynamically updated input fields, and HTML bars for 50/30/20 rule comparison. Interaction: Real-time calculation and chart update on user input. Justification: Offers immediate visual feedback on spending habits, making abstract numbers tangible.
+        - Interactive Tool - Debt Plan: Goal: Organize/Prioritize. Method: Interactive list of debts with toggle buttons ('Snowball' vs 'Avalanche' methods). Interaction: List re-sorts debts based on selected strategy. Justification: Helps users visualize and prioritize debt repayment strategies effectively.
+        - Interactive Tool - Goals/Savings: Goal: Inform/Organize. Method: Simple calculators (emergency fund) and goal list. Interaction: Input-based calculation for emergency fund, adding/removing goals. Justification: Simplifies financial goal setting and initial investment understanding.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .nav-button { transition: all 0.3s ease; }
+        .nav-button.active { background-color: #10B981; color: white; }
+        .nav-button:not(.active):hover { background-color: #D1FAE5; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .chart-container { position: relative; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto; height: 300px; max-height: 350px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .debt-item:not(:last-child) { border-bottom: 1px solid #e5e7eb; }
+    </style>
+</head>
+<body class="bg-stone-50 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <!-- E-book Content Section -->
+        <section id="ebook-content" class="bg-white p-6 rounded-2xl shadow-lg mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-emerald-600 mb-6 text-center">Planejamento Financeiro para Iniciantes: Organize Suas Finanças em 7 Dias</h1>
+
+            <h2 class="text-2xl font-bold mb-4 text-emerald-600">Introdução: Diga Adeus à Preocupação com Dinheiro!</h2>
+            <p class="mb-4 text-slate-700">Você se sente perdido quando o assunto é dinheiro? O salário mal entra e já parece desaparecer? As dívidas te tiram o sono? Se a resposta for sim para alguma dessas perguntas, este e-book foi feito para você!</p>
+            <p class="mb-4 text-slate-700">Muitas pessoas pensam que organizar as finanças é um bicho de sete cabeças, algo para "experts" ou para quem ganha muito dinheiro. A verdade é que o planejamento financeiro é para todos e, com as ferramentas certas e um pouco de disciplina, você pode transformar sua relação com o dinheiro em apenas 7 dias.</p>
+            <p class="mb-4 text-slate-700">Este guia prático e direto ao ponto vai te mostrar, passo a passo, como tomar o controle da sua vida financeira. Não importa o quanto você ganha ou o tamanho das suas dívidas; o que importa é o primeiro passo que você dará hoje.</p>
+            <p class="mb-6 text-slate-700">Vamos começar essa jornada rumo à tranquilidade e à liberdade financeira!</p>
+
+            <h2 class="text-2xl font-bold mb-4 text-emerald-600">Capítulo 1: Onde Seu Dinheiro Vai? Entendendo Seus Gastos</h2>
+            <p class="mb-4 text-slate-700">O primeiro passo para qualquer planejamento financeiro é simples, mas crucial: <strong>saber para onde seu dinheiro está indo.</strong> Parece óbvio, mas a maioria das pessoas não tem essa clareza e se surpreende ao descobrir gastos que nem imaginava ter.</p>
+
+            <h3 class="text-xl font-bold mb-2">Por que saber para onde o dinheiro vai?</h3>
+            <p class="mb-3 text-slate-700">É como tentar dirigir um carro de olhos fechados. Você pode estar indo em frente, mas não sabe para onde nem se está no caminho certo. Ao registrar seus gastos, você:</p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li>Identifica vazamentos (gastos desnecessários).</li>
+                <li>Entende seus hábitos de consumo.</li>
+                <li>Consegue tomar decisões mais conscientes.</li>
+                <li>Percebe onde pode economizar.</li>
+            </ul>
+
+            <h3 class="text-xl font-bold mb-2">Como registrar seus gastos?</h3>
+            <p class="mb-3 text-slate-700">Não precisa ser complicado! Escolha o método que melhor se adapta a você e comece hoje mesmo:</p>
+            <ol class="list-decimal list-inside mb-4 text-slate-700">
+                <li class="mb-2"><strong>Aplicativos de Finanças:</strong> Existem diversos apps gratuitos e pagos que se conectam à sua conta bancária e categorizam seus gastos automaticamente.
+                    <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
+                        <li><strong>Vantagens:</strong> Praticidade, relatórios visuais.</li>
+                        <li><strong>Desvantagens:</strong> Exige confiança em vincular sua conta (opcional).</li>
+                    </ul>
+                </li>
+                <li class="mb-2"><strong>Planilhas (Excel ou Google Sheets):</strong> Você pode criar sua própria planilha simples ou usar modelos prontos.
+                    <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
+                        <li><strong>Vantagens:</strong> Flexibilidade, controle manual.</li>
+                        <li><strong>Desvantagens:</strong> Exige disciplina para registrar tudo.</li>
+                    </ul>
+                </li>
+                <li class="mb-2"><strong>Caderninho/Diário de Gastos:</strong> A moda antiga, mas muito eficaz! Anote cada gasto, por menor que seja.
+                    <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
+                        <li><strong>Vantagens:</strong> Simplicidade, não exige tecnologia.</li>
+                        <li><strong>Desvantagens:</strong> Pode ser menos prático para analisar grandes volumes de dados.</li>
+                    </ul>
+                </li>
+            </ol>
+            <p class="font-bold bg-amber-50 p-3 rounded-lg mt-4 mb-6 text-slate-700"><strong>Dica de Ouro:</strong> Experimente por 7 dias. Anote <em>tudo</em>, do cafezinho ao aluguel. Não julgue, apenas registre. Ao final do período, você terá um raio-x real da sua vida financeira.</p>
+
+            <h3 class="text-xl font-bold mb-2">Categorias de Gastos: Onde o Dinheiro Se Esconde?</h3>
+            <p class="mb-3 text-slate-700">Para facilitar a análise, categorize seus gastos:</p>
+            <ul class="list-disc list-inside mb-6 text-slate-700">
+                <li><strong>Essenciais (Necessidades):</strong> Aluguel/Hipoteca, contas de água, luz, gás, internet, alimentação básica, transporte, educação, saúde. São gastos que você não consegue viver sem.</li>
+                <li><strong>Variáveis (Desejos/Supérfluos):</strong> Lazer (cinema, restaurantes), roupas novas, delivery frequente, assinaturas de streaming que não usa, viagens, hobbies. São gastos que trazem prazer, mas podem ser ajustados.</li>
+                <li><strong>Dívidas:</strong> Parcelas de empréstimos, cartão de crédito, financiamentos, etc.</li>
+            </ul>
+            <p class="mb-6 text-slate-700">Ao categorizar, você verá claramente onde pode cortar ou reduzir sem comprometer seu bem-estar básico.</p>
+
+            <h2 class="text-2xl font-bold mb-4 text-emerald-600">Capítulo 2: Criando Seu Orçamento: O Mapa para a Liberdade Financeira</h2>
+            <p class="mb-4 text-slate-700">Agora que você sabe para onde seu dinheiro está indo, é hora de criar um <strong>orçamento</strong>. O orçamento é o seu mapa financeiro, ele te diz o que você pode gastar e onde, para que seus objetivos sejam alcançados.</p>
+
+            <h3 class="text-xl font-bold mb-2">Definindo Receita e Despesas</h3>
+            <p class="mb-3 text-slate-700">Um orçamento básico tem duas partes principais:</p>
+            <ol class="list-decimal list-inside mb-4 text-slate-700">
+                <li class="mb-2"><strong>Receita (Tudo que Entra):</strong> Seu salário líquido, rendas extras (freelances, bônus), pensões, aluguéis recebidos, etc.</li>
+                <li class="mb-2"><strong>Despesas (Tudo que Sai):</strong> Os gastos que você identificou no Capítulo 1.</li>
+            </ol>
+            <p class="mb-6 text-slate-700"><strong>Seu objetivo:</strong> Fazer com que a Receita seja <strong>MAIOR</strong> que as Despesas. Se suas despesas são maiores, você está se endividando. Se são iguais, você está "empatando". O ideal é que sobre dinheiro para poupar e investir.</p>
+
+            <h3 class="text-xl font-bold mb-2">Métodos de Orçamento Simples</h3>
+            <p class="mb-3 text-slate-700">Existem várias formas de montar seu orçamento. Escolha a que parece mais fácil para você:</p>
+            <ol class="list-decimal list-inside mb-6 text-slate-700">
+                <li class="mb-2"><strong>Regra 50/30/20:</strong>
+                    <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
+                        <li><strong>50% da sua renda:</strong> para <strong>Necessidades</strong> (aluguel, contas, alimentação básica).</li>
+                        <li><strong>30% da sua renda:</strong> para <strong>Desejos</strong> (lazer, hobbies, compras não essenciais).</li>
+                        <li><strong>20% da sua renda:</strong> para <strong>Poupança e Quitação de Dívidas</strong>.</li>
+                        <li><strong>Vantagem:</strong> Fácil de entender e aplicar.</li>
+                        <li><strong>Desvantagem:</strong> Pode não ser ideal para quem tem muitas dívidas ou uma renda muito baixa.</li>
+                    </ul>
+                </li>
+                <li class="mb-2"><strong>Orçamento Base Zero:</strong>
+                    <p class="ml-5 mt-1 text-slate-600">A ideia é que cada centavo da sua renda tenha um "trabalho". No final do mês, sua renda menos suas despesas deve ser igual a zero. Isso não significa que você gasta tudo, mas sim que você aloca cada centavo para uma categoria específica (gastos, poupança, investimentos, dívidas).</p>
+                    <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
+                        <li><strong>Vantagem:</strong> Total controle e clareza sobre o destino de cada real.</li>
+                        <li><strong>Desvantagem:</strong> Exige mais disciplina e detalhamento inicial.</li>
+                    </ul>
+                </li>
+                <li class="mb-2"><strong>Método dos Envelopes (Físico ou Digital):</strong>
+                    <p class="ml-5 mt-1 text-slate-600">Separe o dinheiro em "envelopes" para cada categoria (ex: um envelope para "Alimentação", outro para "Lazer"). Quando o dinheiro de um envelope acaba, você não gasta mais naquela categoria até o próximo período. Pode ser feito com dinheiro físico ou usando apps e contas digitais que permitem criar "cofrinhos" ou "objetivos".</p>
+                    <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
+                        <li><strong>Vantagem:</strong> Visual e tangível, ajuda a limitar gastos.</li>
+                        <li><strong>Desvantagem:</strong> Mais trabalhoso para grandes orçamentos ou quem usa muito cartão.</li>
+                    </ul>
+                </li>
+            </ol>
+            <p class="mb-6 text-slate-700"><strong>Como adaptar à sua realidade:</strong></p>
+            <ul class="list-disc list-inside mb-6 text-slate-700">
+                <li>Comece simples. Não tente ser perfeito no primeiro mês.</li>
+                <li>Seja realista. Se você adora um cafezinho, não corte totalmente; apenas defina um limite.</li>
+                <li>Acompanhe. O orçamento não é uma meta fixa, é um guia. Revise-o semanalmente ou quinzenalmente para ver se está funcionando.</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold mb-4 text-emerald-600">Capítulo 3: Dívidas: Como se Livrar Delas e Nunca Mais Vê-las</h2>
+            <p class="mb-4 text-slate-700">As dívidas são como âncoras que te impedem de avançar. Livrar-se delas é um dos maiores alívios que você pode ter e um passo fundamental para construir sua liberdade financeira.</p>
+
+            <h3 class="text-xl font-bold mb-2">Identificando os Tipos de Dívidas</h3>
+            <p class="mb-3 text-slate-700">Nem toda dívida é igual. Algumas são "boas" (como um financiamento de um imóvel que valoriza), mas a maioria das dívidas pessoais são "ruins" e crescem rapidamente devido aos juros.</p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li><strong>Dívidas de Juros Altos (Inimigas!):</strong> Cartão de crédito (rotativo), cheque especial, empréstimos pessoais sem garantia. São as mais perigosas e que você deve focar em quitar primeiro.</li>
+                <li><strong>Dívidas de Juros Médios:</strong> Financiamentos de carros, empréstimos consignados.</li>
+                <li><strong>Dívidas de Juros Baixos:</strong> Financiamento imobiliário (geralmente os juros são menores).</li>
+            </ul>
+
+            <h3 class="text-xl font-bold mb-2">Estratégias para Quitar Dívidas</h3>
+            <p class="mb-3 text-slate-700">Escolha uma destas estratégias e foque nela:</p>
+            <ol class="list-decimal list-inside mb-6 text-slate-700">
+                <li class="mb-2"><strong>Método Bola de Neve:</strong>
+                    <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
+                        <li>Liste suas dívidas da menor para a maior (ignorando os juros).</li>
+                        <li>Pague o mínimo em todas as dívidas, exceto na menor.</li>
+                        <li>Na menor dívida, pague o máximo que puder.</li>
+                        <li>Quando a menor for quitada, use o valor que você pagava nela para atacar a próxima menor, e assim por diante.</li>
+                        <li><strong>Vantagem:</strong> Traz motivação rapidamente ao ver as dívidas menores sendo eliminadas.</li>
+                        <li><strong>Desvantagem:</strong> Pode não ser o mais rápido financeiramente (devido aos juros).</li>
+                    </ul>
+                </li>
+                <li class="mb-2"><strong>Método Avalancha:</strong>
+                    <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
+                        <li>Liste suas dívidas da maior taxa de juros para a menor.</li>
+                        <li>Pague o mínimo em todas as dívidas, exceto na que tem os juros mais altos.</li>
+                        <li>Na dívida com juros mais altos, pague o máximo que puder.</li>
+                        <li>Quando essa for quitada, use o valor que você pagava nela para atacar a próxima com juros mais altos.</li>
+                        <li><strong>Vantagem:</strong> É a estratégia mais rápida e economicamente vantajosa, pois você paga menos juros no total.</li>
+                        <li><strong>Desvantagem:</strong> Pode demorar mais para ver uma dívida sendo totalmente quitada se a de juros mais altos for grande.</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3 class="text-xl font-bold mb-2">Negociação com Credores</h3>
+            <p class="mb-3 text-slate-700">Não tenha medo de negociar! Muitos credores estão dispostos a conversar para receber o que lhes é devido.</p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li><strong>Prepare-se:</strong> Saiba exatamente quanto você deve e quanto pode pagar por mês.</li>
+                <li><strong>Entre em contato:</strong> Ligue para o banco ou a empresa.</li>
+                <li><strong>Proponha um acordo:</strong> Peça descontos nos juros, parcelamentos menores, ou até um valor para quitar à vista com bom desconto.</li>
+                <li><strong>Cuidado com promessas milagrosas:</strong> Sempre desconfie de "soluções" que parecem fáceis demais ou que pedem dinheiro adiantado.</li>
+            </ul>
+            <p class="mb-6 text-slate-700"><strong>Lembre-se:</strong> A disciplina é sua melhor amiga na luta contra as dívidas. Celebre cada dívida quitada!</p>
+
+            <h2 class="text-2xl font-bold mb-4 text-emerald-600">Capítulo 4: Poupar e Investir: O Segredo para o Futuro</h2>
+            <p class="mb-4 text-slate-700">Parabéns! Se você chegou até aqui, já está no caminho certo para organizar suas finanças. Agora, vamos falar sobre o futuro: como fazer seu dinheiro trabalhar para você, através da poupança e dos investimentos.</p>
+
+            <h3 class="text-xl font-bold mb-2">A Importância da Reserva de Emergência</h3>
+            <p class="mb-3 text-slate-700">Antes de pensar em grandes investimentos, a sua <strong>Reserva de Emergência</strong> é prioridade máxima. Ela é um valor que deve cobrir seus gastos essenciais por 3 a 12 meses, guardado em um lugar seguro e de fácil acesso (como uma poupança ou CDB de liquidez diária).</p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li><strong>Para que serve:</strong> Desemprego, doenças inesperadas, consertos urgentes no carro ou casa.</li>
+                <li><strong>Onde guardar:</strong> Em lugares que você possa resgatar rapidamente e que não percam valor (inflação).</li>
+            </ul>
+
+            <h3 class="text-xl font-bold mb-2">Primeiros Passos para Poupar</h3>
+            <p class="mb-3 text-slate-700">Poupar não é o que sobra, é o que você guarda <strong>primeiro</strong>.</p>
+            <ol class="list-decimal list-inside mb-6 text-slate-700">
+                <li class="mb-2"><strong>Pague-se Primeiro:</strong> Assim que receber seu salário, separe uma parte para sua poupança/investimentos, antes de pagar qualquer outra conta ou desejo.</li>
+                <li class="mb-2"><strong>Defina Metas de Poupança:</strong> "Vou guardar R$100 este mês para a reserva de emergência." Metas específicas ajudam a manter o foco.</li>
+                <li class="mb-2"><strong>Automatize:</strong> Programe transferências automáticas do seu banco para sua conta de poupança/investimentos no dia do seu pagamento. Você nem vai sentir!</li>
+                <li class="mb-2"><strong>Corte o Desnecessário:</strong> Use seu orçamento (Capítulo 2) para identificar onde cortar gastos para liberar dinheiro para a poupança.</li>
+            </ol>
+
+            <h3 class="text-xl font-bold mb-2">Introdução aos Investimentos (Para Iniciantes)</h3>
+            <p class="mb-3 text-slate-700">Investir é fazer seu dinheiro render mais do que a poupança tradicional. Para quem está começando, a palavra-chave é <strong>segurança e liquidez</strong>.</p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li><strong>Renda Fixa:</strong> É o ponto de partida mais seguro para iniciantes. Você "empresta" dinheiro para bancos ou o governo e recebe juros por isso.
+                    <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
+                        <li><strong>CDB (Certificado de Depósito Bancário):</strong> Você empresta dinheiro para um banco. Existem CDBs que pagam 100% ou mais do CDI (um índice de juros de mercado) e alguns com liquidez diária.</li>
+                        <li><strong>Tesouro Direto:</strong> Você empresta dinheiro para o governo. Títulos como o <strong>Tesouro Selic</strong> são excelentes para reserva de emergência, pois têm liquidez diária e seguem a taxa básica de juros (Selic).</li>
+                        <li><strong>LCI/LCA (Letras de Crédito Imobiliário/Agronegócio):</strong> Títulos emitidos por bancos para financiar setores específicos. São isentos de Imposto de Renda para pessoa física.</li>
+                    </ul>
+                </li>
+            </ul>
+            <p class="mb-6 text-slate-700"><strong>Onde investir?</strong><br>Abra conta em uma corretora de investimentos (elas não cobram taxas para esses produtos de renda fixa) ou use o banco digital onde você já tem conta, que geralmente oferece CDBs.</p>
+            <p class="mb-6 text-slate-700"><strong>Não tenha pressa:</strong> Comece com pouco, entenda como funciona e, com o tempo, você pode buscar investimentos mais complexos.</p>
+
+            <h2 class="text-2xl font-bold mb-4 text-emerald-600">Capítulo 5: Metas Financeiras: Onde Você Quer Chegar?</h2>
+            <p class="mb-4 text-slate-700">Organizar suas finanças é importante, mas ter um <strong>propósito</strong> para isso é o que te mantém motivado. Suas metas financeiras são o destino no seu mapa.</p>
+
+            <h3 class="text-xl font-bold mb-2">Definindo Metas SMART</h3>
+            <p class="mb-3 text-slate-700">Para que suas metas sejam eficazes, elas devem ser SMART:</p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li><strong>S - Específicas:</strong> O que exatamente você quer? "Quero uma viagem para a Europa", em vez de "Quero viajar".</li>
+                <li><strong>M - Mensuráveis:</strong> Como você vai saber que atingiu a meta? "R$ 10.000 para a viagem", em vez de "dinheiro para a viagem".</li>
+                <li><strong>A - Atingíveis:</strong> É realista para sua renda e tempo? Você consegue juntar R$10.000 em 1 ano com sua renda atual?</li>
+                <li><strong>R - Relevantes:</strong> Por que essa meta é importante para você? O que ela representa em sua vida?</li>
+                <li><strong>T - Temporizáveis:</strong> Quando você quer atingir essa meta? "Em 2 anos", "até dezembro de 2026".</li>
+            </ul>
+
+            <h3 class="text-xl font-bold mb-2">Metas de Curto, Médio e Longo Prazo</h3>
+            <p class="mb-3 text-slate-700">Organize suas metas para ter foco em diferentes horizontes:</p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li><strong>Curto Prazo (até 1 ano):</strong>
+                    <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
+                        <li>Ex: Quitar a dívida do cartão de crédito.</li>
+                        <li>Ex: Formar sua reserva de emergência.</li>
+                        <li>Ex: Comprar um celular novo à vista.</li>
+                    </ul>
+                </li>
+                <li><strong>Médio Prazo (1 a 5 anos):</strong>
+                    <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
+                        <li>Ex: Dar entrada em um carro.</li>
+                        <li>Ex: Fazer uma pós-graduação.</li>
+                        <li>Ex: Fazer uma viagem internacional.</li>
+                    </ul>
+                </li>
+                <li><strong>Longo Prazo (acima de 5 anos):</strong>
+                    <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
+                        <li>Ex: Comprar a casa própria.</li>
+                        <li>Ex: Planejar a aposentadoria.</li>
+                        <li>Ex: Abrir um negócio.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-bold mb-2">Como Manter a Motivação</h3>
+            <ul class="list-disc list-inside mb-6 text-slate-700">
+                <li><strong>Visualize:</strong> Imagine-se alcançando suas metas.</li>
+                <li><strong>Acompanhe o Progresso:</strong> Celebre cada pequena vitória (cada dívida quitada, cada valor poupado).</li>
+                <li><strong>Recompense-se:</strong> Ao atingir uma meta menor, dê a si mesmo uma pequena recompensa (que não desfaça seu progresso!).</li>
+                <li><strong>Compartilhe (se quiser):</strong> Converse com alguém de confiança sobre suas metas para ter um "parceiro" na jornada.</li>
+                <li><strong>Seja Flexível:</strong> A vida acontece! Se algo sair do plano, ajuste suas metas e continue.</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold mb-4 text-emerald-600">Capítulo 6: Dicas Extras para Acelerar Sua Jornada</h2>
+            <p class="mb-4 text-slate-700">Chegamos ao final da sua semana de organização. Parabéns pela dedicação! Agora, vamos ver algumas dicas extras que podem acelerar sua jornada rumo à liberdade financeira.</p>
+
+            <h3 class="text-xl font-bold mb-2">Renda Extra: Ideias e Como Começar</h3>
+            <p class="mb-3 text-slate-700">Seu orçamento está apertado? Considere buscar uma fonte de renda extra. Não precisa ser algo grandioso no início.</p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li><strong>Freelance:</strong> Ofereça seus conhecimentos (escrita, design, programação, tradução, consultoria) em plataformas como Workana, 99Freelas.</li>
+                <li><strong>Venda o que não usa:</strong> Roupas, eletrônicos, móveis. Use OLX, Enjoei, Mercado Livre.</li>
+                <li><strong>Serviços Locais:</strong> Cuide de pets, dê aulas particulares, faça entregas.</li>
+                <li><strong>Culinária:</strong> Prepare e venda doces, salgados, marmitas saudáveis.</li>
+                <li><strong>Marketing de Afiliados:</strong> Promova produtos de outras pessoas e ganhe comissão (como e-books de outros autores).</li>
+            </ul>
+            <p class="mb-6 text-slate-700"><strong>Lembre-se:</strong> A renda extra deve ser usada para acelerar a quitação de dívidas ou o acúmulo da sua reserva de emergência, não para aumentar seus gastos.</p>
+
+            <h3 class="text-xl font-bold mb-2">Consumo Consciente e Evitar Armadilhas</h3>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li><strong>Pense antes de comprar:</strong> Pergunte-se: "Eu realmente preciso disso agora?".</li>
+                <li><strong>Evite parcelar demais:</strong> Juros e parcelas comprometem sua renda futura.</li>
+                <li><strong>Cuidado com promoções:</strong> Não compre algo só porque está barato.</li>
+                <li><strong>Leve sua própria comida/café:</strong> Pequenas economias diárias se somam em grandes valores no ano.</li>
+                <li><strong>Desative notificações de lojas:</strong> Evite a tentação de compras por impulso.</li>
+            </ul>
+
+            <h3 class="text-xl font-bold mb-2">Importância de Revisar o Orçamento Periodicamente</h3>
+            <p class="mb-3 text-slate-700">Seu orçamento não é uma lei inquebrável, é um guia vivo!</p>
+            <ul class="list-disc list-inside mb-6 text-slate-700">
+                <li><strong>Revise-o mensalmente:</strong> Veja o que funcionou, o que não funcionou.</li>
+                <li><strong>Ajuste:</strong> Sua renda mudou? Teve um gasto inesperado? Adapte o plano.</li>
+                <li><strong>Seja gentil consigo mesmo:</strong> Se um mês não foi bom, não desista. Analise, aprenda e recomece.</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold mb-4 text-emerald-600">Conclusão: Sua Jornada Apenas Começou!</h2>
+            <p class="mb-4 text-slate-700">Parabéns! Em apenas 7 dias (ou no seu ritmo), você deu passos gigantes para organizar suas finanças. Você aprendeu a:</p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li><strong>Entender para onde seu dinheiro vai:</strong> A clareza é poder.</li>
+                <li><strong>Criar um orçamento:</strong> Seu mapa para a liberdade.</li>
+                <li><strong>Atacar as dívidas:</strong> Libertando-se de pesos.</li>
+                <li><strong>Poupar e começar a investir:</strong> Construindo um futuro sólido.</li>
+                <li><strong>Definir metas:</strong> O combustível para sua jornada.</li>
+            </ul>
+            <p class="mb-4 text-slate-700">Lembre-se: o planejamento financeiro é uma <strong>maratona, não uma corrida de 100 metros</strong>. Haverá altos e baixos, mas a consistência e a disciplina farão toda a diferença.</p>
+
+            <p class="mb-6 text-slate-700"><strong>Transforme Teoria em Prática com a Ferramenta Interativa!</strong></p>
+            <p class="mb-4 text-slate-700">Para que você possa aplicar tudo o que aprendeu de forma ainda mais prática e visual, criamos uma <strong>Ferramenta Interativa de Planejamento Financeiro</strong>. Com ela, você poderá:</p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li>Registrar seus gastos e ver gráficos da sua distribuição.</li>
+                <li>Organizar suas dívidas com as estratégias "Bola de Neve" ou "Avalancha".</li>
+                <li>Calcular sua reserva de emergência e definir suas metas financeiras de forma clara.</li>
+            </ul>
+            <p class="mb-6 text-slate-700">Acesse a ferramenta agora e comece a colocar seu planejamento em prática de forma dinâmica!</p>
+
+            <hr class="my-8 border-gray-300">
+
+            <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
+                <a href="#ferramenta-interativa" 
+                   class="inline-block py-3 px-6 bg-emerald-500 text-white 
+                          text-decoration-none rounded-lg font-bold text-lg 
+                          shadow-md hover:bg-emerald-600 transition duration-300">
+                    Iniciar sua Ferramenta Interativa!
+                </a>
+            </div>
+
+            <hr class="my-8 border-gray-300">
+
+            <p class="mt-8 mb-2 text-slate-700"><strong>Recursos Adicionais:</strong></p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li><strong>Aplicativos sugeridos para controle financeiro:</strong> GuiaBolso, Mobills</li>
+                <li><strong>Planilhas de orçamento gratuitas:</strong> Modelos do Google Sheets, ou procure por "planilha de orçamento pessoal gratuita"</li>
+                <li><strong>Canais e sites de educação financeira:</strong> Me Poupe! (Nathalia Arcuri), Primo Rico (Thiago Nigro), Nath Finanças</li>
+            </ul>
+            <p class="mb-6 text-slate-700"><strong>Deseja aprofundar seus conhecimentos em...?</strong> Fique atento(a) para futuros lançamentos sobre investimentos avançados ou ideias de renda extra para empreendedores digitais!</p>
+        </section>
+
+        <!-- Interactive Tool Section -->
+        <section id="ferramenta-interativa" class="bg-white p-6 rounded-2xl shadow-lg">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-emerald-600">Ferramenta Interativa: Planejamento Financeiro</h1>
+                <p class="mt-2 text-slate-600">Aplique os conceitos do e-book de forma prática e visualize seu progresso.</p>
+            </header>
+
+            <nav class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8">
+                <button data-target="passo1" class="nav-button active font-medium py-2 px-4 rounded-full border border-gray-200 bg-white">Passo 1: Orçamento</button>
+                <button data-target="passo2" class="nav-button font-medium py-2 px-4 rounded-full border border-gray-200 bg-white">Passo 2: Plano de Dívidas</button>
+                <button data-target="passo3" class="nav-button font-medium py-2 px-4 rounded-full border border-gray-200 bg-white">Passo 3: Metas e Futuro</button>
+                <button data-target="passo4" class="nav-button font-medium py-2 px-4 rounded-full border border-gray-200 bg-white">Passo 4: Dicas Extras</button>
+            </nav>
+
+            <main>
+                <!-- Seção 1: Raio-X Financeiro e Orçamento -->
+                <section id="passo1" class="content-section active">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm">
+                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 1: Raio-X Financeiro</h2>
+                        <p class="text-slate-600 mb-6">O primeiro passo é entender para onde seu dinheiro está indo. Preencha os campos abaixo para criar seu orçamento mensal e visualizar sua saúde financeira.</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-8 items-start">
+                            <!-- Lado Esquerdo: Inputs -->
+                            <div>
+                                <div class="mb-4">
+                                    <label for="income" class="block font-medium mb-1">Sua Renda Mensal Líquida (R$)</label>
+                                    <input type="number" id="income" placeholder="Ex: 3000" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
+                                </div>
+
+                                <div class="mb-4">
+                                    <h3 class="font-bold text-lg mb-2">Adicionar Despesa</h3>
+                                    <div class="grid sm:grid-cols-2 gap-2">
+                                        <input type="text" id="expense-name" placeholder="Nome da despesa" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
+                                        <input type="number" id="expense-amount" placeholder="Valor (R$)" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
+                                        <select id="expense-category" class="col-span-2 sm:col-span-1 p-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-400 focus:outline-none">
+                                            <option value="necessidades">Necessidades</option>
+                                            <option value="desejos">Desejos</option>
+                                            <option value="dividas">Dívidas</option>
+                                        </select>
+                                        <button id="add-expense" class="col-span-2 sm:col-span-1 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar</button>
+                                    </div>
+                                </div>
+                                
+                                <div id="expense-list" class="space-y-2 mt-4 max-h-60 overflow-y-auto pr-2">
+                                    <!-- Despesas serão adicionadas aqui -->
+                                </div>
+                            </div>
+
+                            <!-- Lado Direito: Visualização -->
+                            <div class="bg-stone-50 p-4 rounded-xl">
+                                <h3 class="font-bold text-lg mb-4 text-center">Distribuição de Gastos</h3>
+                                <div class="chart-container">
+                                    <canvas id="budgetChart"></canvas>
+                                </div>
+                                <div id="summary" class="text-center mt-4 font-semibold text-xl">
+                                    Saldo: R$ 0,00
+                                </div>
+                                <div class="mt-4 pt-4 border-t">
+                                    <h4 class="font-bold text-center mb-2">Comparativo: Você vs. Regra 50/30/20</h4>
+                                    <div id="comparison-bars" class="space-y-2 text-sm">
+                                        <!-- Barras de comparação -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Seção 2: Plano de Dívidas -->
+                <section id="passo2" class="content-section">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm">
+                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 2: Monte seu Plano de Dívidas</h2>
+                        <p class="text-slate-600 mb-6">Liste suas dívidas e escolha uma estratégia para quitá-las. A ferramenta irá organizar a prioridade para você focar seus esforços.</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="font-bold text-lg mb-2">Adicionar Dívida</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-4 bg-stone-50 rounded-lg">
+                                    <input type="text" id="debt-name" placeholder="Nome da dívida" class="sm:col-span-2 p-2 border rounded-lg">
+                                    <input type="number" id="debt-total" placeholder="Valor Total (R$)" class="p-2 border rounded-lg">
+                                    <input type="number" id="debt-rate" placeholder="Juros (% a.m.)" class="p-2 border rounded-lg">
+                                    <button id="add-debt" class="sm:col-span-2 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar Dívida</button>
+                                </div>
+                                <div class="mt-4">
+                                    <h3 class="font-bold text-lg mb-2">Escolha sua Estratégia</h3>
+                                    <div class="flex gap-2 mb-4">
+                                        <button id="snowball-btn" class="flex-1 bg-emerald-200 text-emerald-800 p-2 rounded-lg font-medium">Bola de Neve</button>
+                                        <button id="avalanche-btn" class="flex-1 bg-gray-200 p-2 rounded-lg font-medium">Avalancha</button>
+                                    </div>
+                                    <p id="strategy-explanation" class="text-sm text-slate-600 p-3 bg-blue-50 rounded-lg"><b>Método Bola de Neve:</b> Pague as dívidas da menor para a maior. Ideal para ganhar motivação rápida.</p>
+                                </div>
+                            </div>
+                        
+                            <div>
+                                <h3 class="font-bold text-lg mb-2">Sua Lista de Prioridades</h3>
+                                <div id="debt-list" class="bg-stone-50 rounded-lg p-2 min-h-[200px]">
+                                    <!-- Dívidas listadas aqui -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Seção 3: Metas e Futuro -->
+                <section id="passo3" class="content-section">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm">
+                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 3: Construindo seu Futuro</h2>
+                        <p class="text-slate-600 mb-6">Defina suas metas e entenda os primeiros passos para poupar e investir. Ter um propósito claro é o que mantém a motivação.</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <!-- Calculadora Reserva -->
+                            <div class="bg-stone-50 p-6 rounded-xl">
+                                <h3 class="font-bold text-lg mb-2">Calculadora de Reserva de Emergência</h3>
+                                <p class="text-sm text-slate-600 mb-4">Sua reserva deve cobrir de 3 a 6 meses de seus custos essenciais.</p>
+                                <label for="essential-costs" class="block font-medium mb-1">Seu Custo de Vida Essencial Mensal (R$)</label>
+                                <input type="number" id="essential-costs" placeholder="Ex: 1500" class="w-full p-2 border rounded-lg mb-4">
+                                <div id="emergency-fund-result" class="text-center bg-emerald-100 text-emerald-800 p-4 rounded-lg">
+                                    <p class="font-bold">Sua meta de reserva é:</p>
+                                    <p class="text-2xl font-bold">R$ 0,00 - R$ 0,00</p>
+                                </div>
+                            </div>
+
+                            <!-- Metas SMART -->
+                            <div class="bg-stone-50 p-6 rounded-xl">
+                                <h3 class="font-bold text-lg mb-2">Defina Suas Metas (SMART)</h3>
+                                <p class="text-sm text-slate-600 mb-4">Metas devem ser Específicas, Mensuráveis, Atingíveis, Relevantes e com Prazo.</p>
+                                <div class="space-y-2">
+                                    <input type="text" id="goal-name" placeholder="Ex: Viagem para a praia" class="w-full p-2 border rounded-lg">
+                                    <input type="number" id="goal-amount" placeholder="Valor: R$ 3000" class="w-full p-2 border rounded-lg">
+                                    <button id="add-goal" class="w-full bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar Meta</button>
+                                </div>
+                                <div id="goal-list" class="mt-4 space-y-2"></div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8">
+                            <h3 class="text-xl font-bold text-center mb-4">Primeiros Passos para Investir</h3>
+                            <div class="grid sm:grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-bold">Tesouro Selic</h4>
+                                    <p class="text-sm text-slate-600">Ideal para reserva de emergência. Seguro e acompanha a taxa básica de juros.</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-bold">CDB de Liquidez Diária</h4>
+                                    <p class="text-sm text-slate-600">Outra ótima opção para reserva. Você empresta dinheiro para um banco e pode resgatar a qualquer momento.</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-bold">LCI / LCA</h4>
+                                    <p class="text-sm text-slate-600">Investimentos isentos de Imposto de Renda, geralmente com prazos um pouco maiores. Bom para metas de médio prazo.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Seção 4: Dicas Extras -->
+                <section id="passo4" class="content-section">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm">
+                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 4: Dicas Extras para Acelerar</h2>
+                        <p class="text-slate-600 mb-6">Pequenas atitudes e ideias que podem fazer uma grande diferença na sua jornada financeira.</p>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">💡 Consumo Consciente</h3>
+                                <ul class="list-disc list-inside space-y-1 text-slate-700">
+                                    <li><strong>Pense antes de comprar:</strong> Pergunte-se: "Eu realmente preciso disso agora?".</li>
+                                    <li><strong>Evite parcelar demais:</strong> Juros e parcelas comprometem sua renda futura.</li>
+                                    <li><strong>Cuidado com promoções:</strong> Não compre algo só porque está barato.</li>
+                                    <li><strong>Leve sua própria comida/café:</strong> Pequenas economias diárias viram uma fortuna no ano.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">🚀 Renda Extra</h3>
+                                <ul class="list-disc list-inside space-y-1 text-slate-700">
+                                    <li><strong>Freelance:</strong> Ofereça suas habilidades online (escrita, design, programação, tradução, consultoria).</li>
+                                    <li><strong>Venda o que não usa:</strong> Libere espaço e ganhe dinheiro.</li>
+                                    <li><strong>Serviços locais:</strong> Cuide de pets, dê aulas particulares.</li>
+                                    <li><strong>Culinária:</strong> Prepare e venda doces, salgados ou marmitas.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">🔄 Revise Sempre</h3>
+                                <ul class="list-disc list-inside space-y-1 text-slate-700">
+                                    <li><strong>Seu orçamento é um guia vivo:</strong> Revise-o mensalmente para ver o que funcionou.</li>
+                                    <li><strong>Ajuste conforme a vida muda:</strong> Sua renda aumentou? Teve um gasto inesperado? Adapte o plano.</li>
+                                    <li><strong>Seja gentil consigo mesmo:</strong> Se um mês não foi bom, não desista. Analise, aprenda e recomece.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <footer class="text-center mt-12 text-sm text-slate-500">
+                <p>Ferramenta interativa para te ajudar a conquistar sua liberdade financeira.</p>
+            </footer>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // State Management
+            const state = {
+                income: 0,
+                expenses: [],
+                debts: [],
+                goals: [],
+                activeSection: 'passo1',
+                debtStrategy: 'snowball', // 'snowball' or 'avalanche'
+            };
+
+            // Chart instance
+            let budgetChart;
+
+            // DOM Elements
+            const navButtons = document.querySelectorAll('.nav-button');
+            const contentSections = document.querySelectorAll('.content-section');
+            const incomeInput = document.getElementById('income');
+            const addExpenseBtn = document.getElementById('add-expense');
+            const expenseNameInput = document.getElementById('expense-name');
+            const expenseAmountInput = document.getElementById('expense-amount');
+            const expenseCategoryInput = document.getElementById('expense-category');
+            const expenseList = document.getElementById('expense-list');
+            const summaryEl = document.getElementById('summary');
+            const comparisonBarsEl = document.getElementById('comparison-bars');
+            
+            const addDebtBtn = document.getElementById('add-debt');
+            const debtNameInput = document.getElementById('debt-name');
+            const debtTotalInput = document.getElementById('debt-total');
+            const debtRateInput = document.getElementById('debt-rate');
+            const debtListEl = document.getElementById('debt-list');
+            const snowballBtn = document.getElementById('snowball-btn');
+            const avalancheBtn = document.getElementById('avalanche-btn');
+            const strategyExplanationEl = document.getElementById('strategy-explanation');
+
+            const essentialCostsInput = document.getElementById('essential-costs');
+            const emergencyFundResultEl = document.getElementById('emergency-fund-result');
+
+            const addGoalBtn = document.getElementById('add-goal');
+            const goalNameInput = document.getElementById('goal-name');
+            const goalAmountInput = document.getElementById('goal-amount');
+            const goalListEl = document.getElementById('goal-list');
+
+            // --- RENDER FUNCTIONS ---
+
+            const renderExpenses = () => {
+                expenseList.innerHTML = '';
+                if (state.expenses.length === 0) {
+                    expenseList.innerHTML = '<p class="text-slate-400 text-center">Nenhuma despesa adicionada.</p>';
+                } else {
+                    state.expenses.forEach((exp, index) => {
+                        const expEl = document.createElement('div');
+                        expEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
+                        expEl.innerHTML = `
+                            <span>${exp.name} (${exp.category})</span>
+                            <div class="flex items-center gap-2">
+                                <span class="font-medium">R$ ${exp.amount.toFixed(2)}</span>
+                                <button data-index="${index}" class="remove-expense text-red-500 hover:text-red-700 text-lg">&times;</button>
+                            </div>
+                        `;
+                        expenseList.appendChild(expEl);
+                    });
+                }
+            };
+
+            const renderChartAndSummary = () => {
+                const totals = {
+                    necessidades: 0,
+                    desejos: 0,
+                    dividas: 0,
+                };
+                let totalExpenses = 0;
+                state.expenses.forEach(exp => {
+                    totals[exp.category] += exp.amount;
+                    totalExpenses += exp.amount;
+                });
+
+                const balance = state.income - totalExpenses;
+                summaryEl.textContent = `Saldo: R$ ${balance.toFixed(2)}`;
+                summaryEl.classList.toggle('text-red-500', balance < 0);
+                summaryEl.classList.toggle('text-green-600', balance >= 0);
+
+                // Update Chart
+                if (!budgetChart) {
+                    const ctx = document.getElementById('budgetChart').getContext('2d');
+                    budgetChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Necessidades', 'Desejos', 'Dívidas'],
+                            datasets: [{
+                                data: [totals.necessidades, totals.desejos, totals.dividas],
+                                backgroundColor: ['#34D399', '#FBBF24', '#F87171'],
+                                borderWidth: 0,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'bottom' },
+                            },
+                            cutout: '60%'
+                        }
+                    });
+                } else {
+                    budgetChart.data.datasets[0].data = [totals.necessidades, totals.desejos, totals.dividas];
+                    budgetChart.update();
+                }
+                
+                // Update Comparison Bars
+                comparisonBarsEl.innerHTML = '';
+                const income = state.income > 0 ? state.income : 1;
+                const percentages = {
+                    necessidades: (totals.necessidades / income) * 100,
+                    desejos: (totals.desejos / income) * 100,
+                    poupanca: (balance > 0 ? balance / income : 0) * 100,
+                };
+
+                const createBar = (label, userPercent, targetPercent, color) => {
+                    const barHtml = `
+                        <div class="mb-2">
+                            <div class="flex justify-between mb-1">
+                                <span>${label}</span>
+                                <span>${userPercent.toFixed(1)}% (Meta: ${targetPercent}%)</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="h-2.5 rounded-full" style="width: ${Math.min(userPercent, 100)}%; background-color: ${color};"></div>
+                            </div>
+                        </div>
+                    `;
+                    comparisonBarsEl.innerHTML += barHtml;
+                }
+
+                createBar('Necessidades', percentages.necessidades, 50, '#34D399');
+                createBar('Desejos', percentages.desejos, 30, '#FBBF24');
+                createBar('Poupança/Saldo', percentages.poupanca, 20, '#60A5FA');
+            };
+            
+            const renderDebts = () => {
+                debtListEl.innerHTML = '';
+                 if (state.debts.length === 0) {
+                    debtListEl.innerHTML = '<p class="text-slate-400 text-center p-4">Nenhuma dívida adicionada.</p>';
+                    return;
+                }
+
+                let sortedDebts = [...state.debts];
+                if (state.debtStrategy === 'snowball') {
+                    sortedDebts.sort((a, b) => a.total - b.total);
+                } else { // avalanche
+                    sortedDebts.sort((a, b) => b.rate - a.rate);
+                }
+
+                sortedDebts.forEach((debt, index) => {
+                    const debtEl = document.createElement('div');
+                    debtEl.className = 'debt-item flex justify-between items-center p-3';
+                    if (index === 0) debtEl.classList.add('bg-emerald-100', 'rounded-lg');
+                    
+                    debtEl.innerHTML = `
+                        <div>
+                            <p class="font-bold">${index + 1}. ${debt.name}</p>
+                            <p class="text-sm text-slate-600">Total: R$ ${debt.total.toFixed(2)} | Juros: ${debt.rate}% a.m.</p>
+                        </div>
+                        <button data-id="${debt.id}" class="remove-debt text-red-500 hover:text-red-700 text-lg">&times;</button>
+                    `;
+                    debtListEl.appendChild(debtEl);
+                });
+            };
+
+            const renderGoals = () => {
+                goalListEl.innerHTML = '';
+                if(state.goals.length === 0) {
+                     goalListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhuma meta adicionada.</p>';
+                } else {
+                    state.goals.forEach(goal => {
+                        const goalEl = document.createElement('div');
+                        goalEl.className = 'bg-gray-100 p-3 rounded-lg flex justify-between items-center';
+                        goalEl.innerHTML = `
+                            <span>${goal.name} - <strong>R$ ${goal.amount.toFixed(2)}</strong></span>
+                            <button data-id="${goal.id}" class="remove-goal text-red-500 hover:text-red-700 text-lg">&times;</button>
+                        `;
+                        goalListEl.appendChild(goalEl);
+                    });
+                }
+            };
+
+            const updateAll = () => {
+                renderExpenses();
+                renderChartAndSummary();
+                renderDebts();
+                renderGoals();
+            };
+
+            // --- EVENT LISTENERS ---
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const target = button.dataset.target;
+                    state.activeSection = target;
+                    
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    contentSections.forEach(section => {
+                        section.classList.toggle('active', section.id === target);
+                    });
+                });
+            });
+
+            incomeInput.addEventListener('input', (e) => {
+                state.income = parseFloat(e.target.value) || 0;
+                renderChartAndSummary();
+            });
+
+            addExpenseBtn.addEventListener('click', () => {
+                const name = expenseNameInput.value.trim();
+                const amount = parseFloat(expenseAmountInput.value);
+                const category = expenseCategoryInput.value;
+
+                if (name && amount > 0) {
+                    state.expenses.push({ name, amount, category });
+                    expenseNameInput.value = '';
+                    expenseAmountInput.value = '';
+                    updateAll();
+                }
+            });
+
+            expenseList.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-expense')) {
+                    const index = parseInt(e.target.dataset.index);
+                    state.expenses.splice(index, 1);
+                    updateAll();
+                }
+            });
+            
+            addDebtBtn.addEventListener('click', () => {
+                const name = debtNameInput.value.trim();
+                const total = parseFloat(debtTotalInput.value);
+                const rate = parseFloat(debtRateInput.value);
+                if (name && total > 0 && rate >= 0) {
+                    state.debts.push({ id: Date.now(), name, total, rate });
+                    debtNameInput.value = '';
+                    debtTotalInput.value = '';
+                    debtRateInput.value = '';
+                    renderDebts();
+                }
+            });
+
+            debtListEl.addEventListener('click', e => {
+                if(e.target.classList.contains('remove-debt')) {
+                    const id = parseInt(e.target.dataset.id);
+                    state.debts = state.debts.filter(d => d.id !== id);
+                    renderDebts();
+                }
+            });
+
+            snowballBtn.addEventListener('click', () => {
+                state.debtStrategy = 'snowball';
+                snowballBtn.classList.add('bg-emerald-200', 'text-emerald-800');
+                snowballBtn.classList.remove('bg-gray-200');
+                avalancheBtn.classList.add('bg-gray-200');
+                avalancheBtn.classList.remove('bg-emerald-200', 'text-emerald-800');
+                strategyExplanationEl.innerHTML = "<b>Método Bola de Neve:</b> Pague as dívidas da menor para a maior. Ideal para ganhar motivação rápida.";
+                renderDebts();
+            });
+
+            avalancheBtn.addEventListener('click', () => {
+                state.debtStrategy = 'avalanche';
+                avalancheBtn.classList.add('bg-emerald-200', 'text-emerald-800');
+                avalancheBtn.classList.remove('bg-gray-200');
+                snowballBtn.classList.add('bg-gray-200');
+                snowballBtn.classList.remove('bg-emerald-200', 'text-emerald-800');
+                strategyExplanationEl.innerHTML = "<b>Método Avalancha:</b> Pague as dívidas com maiores juros primeiro. Ideal para economizar mais dinheiro.";
+                renderDebts();
+            });
+
+            essentialCostsInput.addEventListener('input', (e) => {
+                const costs = parseFloat(e.target.value) || 0;
+                const minFund = costs * 3;
+                const maxFund = costs * 6;
+                emergencyFundResultEl.innerHTML = `
+                    <p class="font-bold">Sua meta de reserva é:</p>
+                    <p class="text-2xl font-bold">R$ ${minFund.toFixed(2)} - R$ ${maxFund.toFixed(2)}</p>
+                `;
+            });
+            
+            addGoalBtn.addEventListener('click', () => {
+                const name = goalNameInput.value.trim();
+                const amount = parseFloat(goalAmountInput.value);
+                if(name && amount > 0) {
+                    state.goals.push({ id: Date.now(), name, amount });
+                    goalNameInput.value = '';
+                    goalAmountInput.value = '';
+                    renderGoals();
+                }
+            });
+
+            goalListEl.addEventListener('click', e => {
+                 if(e.target.classList.contains('remove-goal')) {
+                    const id = parseInt(e.target.dataset.id);
+                    state.goals = state.goals.filter(g => g.id !== id);
+                    renderGoals();
+                }
+            });
+
+            // Initial Render
+            updateAll();
+        });
+    </script>
+</body>
+</html>

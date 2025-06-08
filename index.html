@@ -10,12 +10,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Calm Harmony -->
-    <!-- Application Structure Plan: The document is structured into two main parts: the e-book content and the interactive tool. The e-book content acts as a comprehensive introduction and theoretical foundation, leading to a call-to-action button. Clicking this button smoothly scrolls the user to the interactive tool section within the same page. The interactive tool itself follows a task-oriented layout with tabbed navigation for budgeting, debt planning, and goal setting, enhancing user engagement and practical application of the e-book's concepts. This single-page structure provides a seamless user experience, avoiding external redirects and keeping all resources self-contained for easy distribution. -->
+    <!-- Application Structure Plan: The document is structured into two main parts: the e-book content and the interactive tool. The e-book content acts as a comprehensive introduction and theoretical foundation, leading to a call-to-action button. Clicking this button smoothly scrolls the user to the interactive tool section within the same page. The interactive tool itself follows a task-oriented layout with tabbed navigation for budgeting, debt planning, and goal setting, enhancing user engagement and practical application of the e-book's concepts. Data persistence via localStorage is implemented to save user inputs (income, expenses, debts, goals) and active tab, ensuring data remains on refresh/revisit. This single-page structure provides a seamless user experience, avoiding external redirects and keeping all resources self-contained for easy distribution. -->
     <!-- Visualization & Content Choices: 
         - E-book Content: Goal: Inform/Explain. Method: Markdown converted to standard HTML paragraphs, headings, and lists. Interaction: Passive reading. Justification: Provides foundational knowledge clearly and comprehensively.
-        - Interactive Tool - Budgeting: Goal: Inform/Compare. Method: Donut chart (Chart.js) for expense distribution, dynamically updated input fields, and HTML bars for 50/30/20 rule comparison. Interaction: Real-time calculation and chart update on user input. Justification: Offers immediate visual feedback on spending habits, making abstract numbers tangible.
-        - Interactive Tool - Debt Plan: Goal: Organize/Prioritize. Method: Interactive list of debts with toggle buttons ('Snowball' vs 'Avalanche' methods). Interaction: List re-sorts debts based on selected strategy. Justification: Helps users visualize and prioritize debt repayment strategies effectively.
-        - Interactive Tool - Goals/Savings: Goal: Inform/Organize. Method: Simple calculators (emergency fund) and goal list. Interaction: Input-based calculation for emergency fund, adding/removing goals. Justification: Simplifies financial goal setting and initial investment understanding.
+        - Interactive Tool - Budgeting: Goal: Inform/Compare. Method: Donut chart (Chart.js) for expense distribution, dynamically updated input fields, and HTML bars for 50/30/20 rule comparison. Interaction: Real-time calculation and chart update on user input, persistence of data via localStorage. Justification: Offers immediate visual feedback on spending habits, making abstract numbers tangible, with user data retention.
+        - Interactive Tool - Debt Plan: Goal: Organize/Prioritize. Method: Interactive list of debts with toggle buttons ('Snowball' vs 'Avalanche' methods). Interaction: List re-sorts debts based on selected strategy, persistence of data via localStorage. Justification: Helps users visualize and prioritize debt repayment strategies effectively, with user data retention.
+        - Interactive Tool - Goals/Savings: Goal: Inform/Organize. Method: Simple calculators (emergency fund) and goal list. Interaction: Input-based calculation for emergency fund, adding/removing goals, persistence of data via localStorage. Justification: Simplifies financial goal setting and initial investment understanding, with user data retention.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -30,10 +30,10 @@
         .debt-item:not(:last-child) { border-bottom: 1px solid #e5e7eb; }
     </style>
 </head>
-<body class="bg-stone-50 text-slate-800">
+<body class="bg-stone-50 text-slate-800 leading-relaxed">
 
     <div class="container mx-auto p-4 md:p-8 max-w-4xl">
-        <!-- E-book Content Section -->
+        <!-- Seção de Conteúdo do E-book -->
         <section id="ebook-content" class="bg-white p-6 rounded-2xl shadow-lg mb-12">
             <h1 class="text-3xl md:text-4xl font-bold text-emerald-600 mb-6 text-center">Planejamento Financeiro para Iniciantes: Organize Suas Finanças em 7 Dias</h1>
 
@@ -235,14 +235,14 @@
                         <li>Ex: Comprar um celular novo à vista.</li>
                     </ul>
                 </li>
-                <li><strong>Médio Prazo (1 a 5 anos):</strong>
+                <li class="mb-2"><strong>Médio Prazo (1 a 5 anos):</strong>
                     <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
                         <li>Ex: Dar entrada em um carro.</li>
                         <li>Ex: Fazer uma pós-graduação.</li>
                         <li>Ex: Fazer uma viagem internacional.</li>
                     </ul>
                 </li>
-                <li><strong>Longo Prazo (acima de 5 anos):</strong>
+                <li class="mb-2"><strong>Longo Prazo (acima de 5 anos):</strong>
                     <ul class="list-disc list-inside ml-5 mt-1 text-slate-600">
                         <li>Ex: Comprar a casa própria.</li>
                         <li>Ex: Planejar a aposentadoria.</li>
@@ -333,7 +333,7 @@
             <p class="mb-6 text-slate-700"><strong>Deseja aprofundar seus conhecimentos em...?</strong> Fique atento(a) para futuros lançamentos sobre investimentos avançados ou ideias de renda extra para empreendedores digitais!</p>
         </section>
 
-        <!-- Interactive Tool Section -->
+        <!-- Seção da Ferramenta Interativa -->
         <section id="ferramenta-interativa" class="bg-white p-6 rounded-2xl shadow-lg">
             <header class="text-center mb-8">
                 <h1 class="text-3xl md:text-4xl font-bold text-emerald-600">Ferramenta Interativa: Planejamento Financeiro</h1>
@@ -521,6 +521,10 @@
                                     <li><strong>Seja gentil consigo mesmo:</strong> Se um mês não foi bom, não desista. Analise, aprenda e recomece.</li>
                                 </ul>
                             </div>
+                            <div class="mt-6 pt-6 border-t border-gray-200 text-center">
+                                <button id="reset-data-btn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition">Reiniciar Todos os Dados</button>
+                                <p class="text-sm text-slate-500 mt-2">Isso apagará todas as informações salvas nesta ferramenta.</p>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -534,20 +538,40 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // State Management
+            // Gerenciamento de Estado
             const state = {
                 income: 0,
                 expenses: [],
                 debts: [],
                 goals: [],
-                activeSection: 'passo1',
-                debtStrategy: 'snowball', // 'snowball' or 'avalanche'
+                activeSection: 'passo1', // Seção ativa padrão
+                debtStrategy: 'snowball', // Estratégia de dívida padrão
+                essentialCosts: 0, // Novo: custo essencial para cálculo da reserva
             };
 
-            // Chart instance
+            // Carregar estado salvo do localStorage
+            const savedState = localStorage.getItem('financasAppState');
+            if (savedState) {
+                try {
+                    const parsedState = JSON.parse(savedState);
+                    // Atribuir valores carregados com fallbacks seguros
+                    state.income = parsedState.income !== undefined ? parsedState.income : 0;
+                    state.expenses = Array.isArray(parsedState.expenses) ? parsedState.expenses : [];
+                    state.debts = Array.isArray(parsedState.debts) ? parsedState.debts : [];
+                    state.goals = Array.isArray(parsedState.goals) ? parsedState.goals : [];
+                    state.activeSection = parsedState.activeSection || 'passo1';
+                    state.debtStrategy = parsedState.debtStrategy || 'snowball';
+                    state.essentialCosts = parsedState.essentialCosts !== undefined ? parsedState.essentialCosts : 0;
+                } catch (e) {
+                    console.error("Erro ao carregar dados do localStorage:", e);
+                    // Se a análise falhar, o estado permanece o padrão inicializado
+                }
+            }
+
+            // Instância do Gráfico
             let budgetChart;
 
-            // DOM Elements
+            // Elementos do DOM
             const navButtons = document.querySelectorAll('.nav-button');
             const contentSections = document.querySelectorAll('.content-section');
             const incomeInput = document.getElementById('income');
@@ -576,8 +600,14 @@
             const goalAmountInput = document.getElementById('goal-amount');
             const goalListEl = document.getElementById('goal-list');
 
-            // --- RENDER FUNCTIONS ---
+            const resetDataBtn = document.getElementById('reset-data-btn'); // Novo botão
 
+            // Função para Salvar o Estado
+            const saveState = () => {
+                localStorage.setItem('financasAppState', JSON.stringify(state));
+            };
+
+            // Funções de Renderização
             const renderExpenses = () => {
                 expenseList.innerHTML = '';
                 if (state.expenses.length === 0) {
@@ -615,7 +645,7 @@
                 summaryEl.classList.toggle('text-red-500', balance < 0);
                 summaryEl.classList.toggle('text-green-600', balance >= 0);
 
-                // Update Chart
+                // Atualizar Gráfico
                 if (!budgetChart) {
                     const ctx = document.getElementById('budgetChart').getContext('2d');
                     budgetChart = new Chart(ctx, {
@@ -642,7 +672,7 @@
                     budgetChart.update();
                 }
                 
-                // Update Comparison Bars
+                // Atualizar Barras de Comparação
                 comparisonBarsEl.innerHTML = '';
                 const income = state.income > 0 ? state.income : 1;
                 const percentages = {
@@ -701,6 +731,16 @@
                 });
             };
 
+            const renderEmergencyFundResult = () => {
+                const costs = state.essentialCosts;
+                const minFund = costs * 3;
+                const maxFund = costs * 6;
+                emergencyFundResultEl.innerHTML = `
+                    <p class="font-bold">Sua meta de reserva é:</p>
+                    <p class="text-2xl font-bold">R$ ${minFund.toFixed(2)} - R$ ${maxFund.toFixed(2)}</p>
+                `;
+            };
+
             const renderGoals = () => {
                 goalListEl.innerHTML = '';
                 if(state.goals.length === 0) {
@@ -718,32 +758,58 @@
                 }
             };
 
+            // Função de Atualização Completa do UI
             const updateAll = () => {
                 renderExpenses();
                 renderChartAndSummary();
                 renderDebts();
+                renderEmergencyFundResult(); // Chamar aqui para atualizar com base no state.essentialCosts
                 renderGoals();
+
+                // Atualizar campos de input com o estado carregado
+                incomeInput.value = state.income;
+                essentialCostsInput.value = state.essentialCosts;
+
+                // Definir botão de navegação e seção ativa
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                const activeButton = document.querySelector(`.nav-button[data-target="${state.activeSection}"]`);
+                if (activeButton) {
+                    activeButton.classList.add('active');
+                }
+                contentSections.forEach(section => {
+                    section.classList.toggle('active', section.id === state.activeSection);
+                });
+
+                // Atualizar estado dos botões de estratégia de dívida
+                if (state.debtStrategy === 'snowball') {
+                    snowballBtn.classList.add('bg-emerald-200', 'text-emerald-800');
+                    snowballBtn.classList.remove('bg-gray-200');
+                    avalancheBtn.classList.add('bg-gray-200');
+                    avalancheBtn.classList.remove('bg-emerald-200', 'text-emerald-800');
+                    strategyExplanationEl.innerHTML = "<b>Método Bola de Neve:</b> Pague as dívidas da menor para a maior. Ideal para ganhar motivação rápida.";
+                } else {
+                    avalancheBtn.classList.add('bg-emerald-200', 'text-emerald-800');
+                    avalancheBtn.classList.remove('bg-gray-200');
+                    snowballBtn.classList.add('bg-gray-200');
+                    snowballBtn.classList.remove('bg-emerald-200', 'text-emerald-800');
+                    strategyExplanationEl.innerHTML = "<b>Método Avalancha:</b> Pague as dívidas com maiores juros primeiro. Ideal para economizar mais dinheiro.";
+                }
             };
 
-            // --- EVENT LISTENERS ---
-
+            // Listeners de Eventos
             navButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const target = button.dataset.target;
                     state.activeSection = target;
-                    
-                    navButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-
-                    contentSections.forEach(section => {
-                        section.classList.toggle('active', section.id === target);
-                    });
+                    saveState(); // Salvar a seção ativa
+                    updateAll(); // Atualizar UI
                 });
             });
 
             incomeInput.addEventListener('input', (e) => {
                 state.income = parseFloat(e.target.value) || 0;
-                renderChartAndSummary();
+                saveState(); // Salvar após mudança no estado
+                renderChartAndSummary(); // Atualizar UI
             });
 
             addExpenseBtn.addEventListener('click', () => {
@@ -755,7 +821,8 @@
                     state.expenses.push({ name, amount, category });
                     expenseNameInput.value = '';
                     expenseAmountInput.value = '';
-                    updateAll();
+                    saveState(); // Salvar após mudança no estado
+                    updateAll(); // Atualizar UI
                 }
             });
 
@@ -763,7 +830,8 @@
                 if (e.target.classList.contains('remove-expense')) {
                     const index = parseInt(e.target.dataset.index);
                     state.expenses.splice(index, 1);
-                    updateAll();
+                    saveState(); // Salvar após mudança no estado
+                    updateAll(); // Atualizar UI
                 }
             });
             
@@ -776,7 +844,8 @@
                     debtNameInput.value = '';
                     debtTotalInput.value = '';
                     debtRateInput.value = '';
-                    renderDebts();
+                    saveState(); // Salvar após mudança no estado
+                    renderDebts(); // Atualizar UI
                 }
             });
 
@@ -784,38 +853,27 @@
                 if(e.target.classList.contains('remove-debt')) {
                     const id = parseInt(e.target.dataset.id);
                     state.debts = state.debts.filter(d => d.id !== id);
-                    renderDebts();
+                    saveState(); // Salvar após mudança no estado
+                    renderDebts(); // Atualizar UI
                 }
             });
 
             snowballBtn.addEventListener('click', () => {
                 state.debtStrategy = 'snowball';
-                snowballBtn.classList.add('bg-emerald-200', 'text-emerald-800');
-                snowballBtn.classList.remove('bg-gray-200');
-                avalancheBtn.classList.add('bg-gray-200');
-                avalancheBtn.classList.remove('bg-emerald-200', 'text-emerald-800');
-                strategyExplanationEl.innerHTML = "<b>Método Bola de Neve:</b> Pague as dívidas da menor para a maior. Ideal para ganhar motivação rápida.";
-                renderDebts();
+                saveState(); // Salvar após mudança no estado
+                updateAll(); // Atualizar UI (que já contém a lógica de botões e explicação)
             });
 
             avalancheBtn.addEventListener('click', () => {
                 state.debtStrategy = 'avalanche';
-                avalancheBtn.classList.add('bg-emerald-200', 'text-emerald-800');
-                avalancheBtn.classList.remove('bg-gray-200');
-                snowballBtn.classList.add('bg-gray-200');
-                snowballBtn.classList.remove('bg-emerald-200', 'text-emerald-800');
-                strategyExplanationEl.innerHTML = "<b>Método Avalancha:</b> Pague as dívidas com maiores juros primeiro. Ideal para economizar mais dinheiro.";
-                renderDebts();
+                saveState(); // Salvar após mudança no estado
+                updateAll(); // Atualizar UI
             });
 
             essentialCostsInput.addEventListener('input', (e) => {
-                const costs = parseFloat(e.target.value) || 0;
-                const minFund = costs * 3;
-                const maxFund = costs * 6;
-                emergencyFundResultEl.innerHTML = `
-                    <p class="font-bold">Sua meta de reserva é:</p>
-                    <p class="text-2xl font-bold">R$ ${minFund.toFixed(2)} - R$ ${maxFund.toFixed(2)}</p>
-                `;
+                state.essentialCosts = parseFloat(e.target.value) || 0;
+                saveState(); // Salvar após mudança no estado
+                renderEmergencyFundResult(); // Atualizar UI
             });
             
             addGoalBtn.addEventListener('click', () => {
@@ -825,7 +883,8 @@
                     state.goals.push({ id: Date.now(), name, amount });
                     goalNameInput.value = '';
                     goalAmountInput.value = '';
-                    renderGoals();
+                    saveState(); // Salvar após mudança no estado
+                    renderGoals(); // Atualizar UI
                 }
             });
 
@@ -833,11 +892,28 @@
                  if(e.target.classList.contains('remove-goal')) {
                     const id = parseInt(e.target.dataset.id);
                     state.goals = state.goals.filter(g => g.id !== id);
-                    renderGoals();
+                    saveState(); // Salvar após mudança no estado
+                    renderGoals(); // Atualizar UI
                 }
             });
 
-            // Initial Render
+            // Novo: Reiniciar Dados
+            resetDataBtn.addEventListener('click', () => {
+                if (confirm("Tem certeza que deseja reiniciar todos os dados? Esta ação não pode ser desfeita.")) {
+                    localStorage.removeItem('financasAppState'); // Limpa o localStorage
+                    // Reinicializar o estado para valores padrão
+                    state.income = 0;
+                    state.expenses = [];
+                    state.debts = [];
+                    state.goals = [];
+                    state.activeSection = 'passo1';
+                    state.debtStrategy = 'snowball';
+                    state.essentialCosts = 0;
+                    updateAll(); // Atualizar UI para mostrar os dados zerados
+                }
+            });
+
+            // Renderização Inicial com o estado carregado ou padrão
             updateAll();
         });
     </script>

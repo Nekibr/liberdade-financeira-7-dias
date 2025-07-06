@@ -72,6 +72,7 @@
                 <button data-target="passo4-investimento" class="nav-button font-medium py-2 px-4 rounded-full">Passo 4: Investimentos</button>
                 <button data-target="passo5-financiamento" class="nav-button font-medium py-2 px-4 rounded-full">Passo 5: Financiamento</button>
                 <button data-target="passo6-fluxo-caixa" class="nav-button font-medium py-2 px-4 rounded-full">Passo 6: Fluxo de Caixa Futuro</button>
+                <button data-target="passo7-patrimonio" class="nav-button font-medium py-2 px-4 rounded-full">Passo 7: Meu Patrimônio Líquido</button>
             </nav>
 
             <main>
@@ -277,7 +278,7 @@
                     </div>
                 </section>
 
-                <!-- Seção 6: Previsão de Fluxo de Caixa Detalhada (NOVA) -->
+                <!-- Seção 6: Previsão de Fluxo de Caixa Detalhada -->
                 <section id="passo6-fluxo-caixa" class="content-section">
                     <div class="bg-white p-6 rounded-2xl shadow-sm">
                         <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 6: Previsão de Fluxo de Caixa Futuro</h2>
@@ -351,6 +352,64 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- Seção 7: Meu Patrimônio Líquido -->
+                <section id="passo7-patrimonio" class="content-section">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm">
+                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 7: Meu Patrimônio Líquido</h2>
+                        <p class="text-slate-600 mb-6">Calcule e acompanhe a evolução do seu patrimônio líquido. A verdadeira medida da sua riqueza!</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-8 items-start">
+                            <div>
+                                <!-- Adicionar Ativos -->
+                                <h3 class="font-bold text-lg mb-2">Adicionar Ativo</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-4 bg-stone-50 rounded-lg">
+                                    <input type="text" id="asset-name" placeholder="Nome do ativo (Ex: Poupança, Carro)" class="sm:col-span-2 p-2 border rounded-lg">
+                                    <input type="number" id="asset-value" placeholder="Valor (R$)" class="p-2 border rounded-lg">
+                                    <button id="add-asset" class="sm:col-span-2 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar Ativo</button>
+                                </div>
+                                <div id="asset-list" class="space-y-2 mt-4 max-h-40 overflow-y-auto pr-2">
+                                    <!-- Ativos serão adicionados aqui -->
+                                </div>
+
+                                <!-- Adicionar Passivos -->
+                                <h3 class="font-bold text-lg mb-2 mt-6">Adicionar Passivo</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-4 bg-stone-50 rounded-lg">
+                                    <input type="text" id="liability-name" placeholder="Nome do passivo (Ex: Dívida Cartão, Financiamento)" class="sm:col-span-2 p-2 border rounded-lg">
+                                    <input type="number" id="liability-value" placeholder="Valor (R$)" class="p-2 border rounded-lg">
+                                    <button id="add-liability" class="sm:col-span-2 bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition">Adicionar Passivo</button>
+                                </div>
+                                <div id="liability-list" class="space-y-2 mt-4 max-h-40 overflow-y-auto pr-2">
+                                    <!-- Passivos serão adicionados aqui -->
+                                </div>
+
+                                <div class="mt-6 pt-6 border-t border-gray-200">
+                                    <button id="record-net-worth" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition">Registrar Patrimônio Atual</button>
+                                    <p class="text-sm text-slate-600 mt-2 text-center">Isso salvará o seu patrimônio líquido atual para acompanhar a evolução.</p>
+                                </div>
+                            </div>
+
+                            <!-- Resumo e Gráfico de Patrimônio Líquido -->
+                            <div class="bg-stone-50 p-6 rounded-xl">
+                                <h3 class="font-bold text-lg mb-2 text-center">Seu Patrimônio Líquido Atual</h3>
+                                <div id="net-worth-summary" class="text-center mb-4">
+                                    <p class="text-sm text-slate-600">Total de Ativos: <span class="font-bold text-emerald-600" id="total-assets">R$ 0,00</span></p>
+                                    <p class="text-sm text-slate-600">Total de Passivos: <span class="font-bold text-red-500" id="total-liabilities">R$ 0,00</span></p>
+                                    <p class="text-3xl font-bold mt-2" id="current-net-worth">R$ 0,00</p>
+                                </div>
+                                <div class="mt-6">
+                                    <h3 class="font-bold text-lg mb-2 text-center">Evolução do Patrimônio Líquido</h3>
+                                    <div class="chart-container">
+                                        <canvas id="netWorthChart"></canvas>
+                                    </div>
+                                    <div id="net-worth-history-list" class="space-y-2 mt-4 max-h-40 overflow-y-auto pr-2">
+                                        <!-- Histórico de registros será exibido aqui -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </main>
 
             <footer class="text-center mt-12 text-sm text-slate-500">
@@ -390,7 +449,11 @@
                     startMonth: new Date().getMonth() + 1, // Mês atual (1-12)
                     startYear: new Date().getFullYear(), // Ano atual
                     months: 12 // Padrão de 12 meses
-                }
+                },
+                // Novos estados para Patrimônio Líquido
+                assets: [],
+                liabilities: [],
+                netWorthHistory: [] // [{ date: 'YYYY-MM-DD', value: 1234.56 }]
             };
 
             // Carregar estado salvo do localStorage
@@ -417,6 +480,15 @@
                         }
                     });
                     state.projectionSettings = parsedState.projectionSettings || { startMonth: new Date().getMonth() + 1, startYear: new Date().getFullYear(), months: 12 };
+                    // Carregar novos estados de Patrimônio Líquido
+                    state.assets = Array.isArray(parsedState.assets) ? parsedState.assets : [];
+                    state.liabilities = Array.isArray(parsedState.liabilities) ? parsedState.liabilities : [];
+                    state.netWorthHistory = Array.isArray(parsedState.netWorthHistory) ? parsedState.netWorthHistory : [];
+                    state.netWorthHistory.forEach(item => {
+                        if (typeof item.date === 'string') {
+                            item.date = new Date(item.date);
+                        }
+                    });
 
                 } catch (e) {
                     console.error("Erro ao carregar dados do localStorage:", e);
@@ -426,7 +498,8 @@
 
             // Instâncias de Gráficos
             let budgetChart;
-            let cashFlowChart; // Nova instância para o gráfico de fluxo de caixa
+            let cashFlowChart;
+            let netWorthChart; 
 
             // Elementos do DOM
             const navButtons = document.querySelectorAll('.nav-button');
@@ -474,7 +547,6 @@
             const calculateFinancingBtn = document.getElementById('calculate-financing');
             const financingResultEl = document.getElementById('financing-result');
 
-            // Novos elementos para Previsão de Fluxo de Caixa
             const eventNameInput = document.getElementById('event-name');
             const eventAmountInput = document.getElementById('event-amount');
             const eventDateInput = document.getElementById('event-date');
@@ -486,10 +558,28 @@
             const projectionMonthsInput = document.getElementById('projection-months');
             const calculateCashFlowBtn = document.getElementById('calculate-cash-flow');
             const projectionTableBody = document.getElementById('projection-table-body');
-            const cashFlowChartCanvas = document.getElementById('cashFlowChart'); // Canvas para o gráfico de fluxo de caixa
+            const cashFlowChartCanvas = document.getElementById('cashFlowChart');
 
-            // Botão de Reiniciar (mantido para apagar todos os dados, incluindo os novos)
-            const resetDataBtn = document.getElementById('reset-data-btn'); // Certifique-se de que este ID existe no HTML se quiser um botão de reset global
+            // Elementos para Patrimônio Líquido
+            const assetNameInput = document.getElementById('asset-name');
+            const assetValueInput = document.getElementById('asset-value');
+            const addAssetBtn = document.getElementById('add-asset');
+            const assetListEl = document.getElementById('asset-list');
+
+            const liabilityNameInput = document.getElementById('liability-name');
+            const liabilityValueInput = document.getElementById('liability-value');
+            const addLiabilityBtn = document.getElementById('add-liability');
+            const liabilityListEl = document.getElementById('liability-list');
+
+            const totalAssetsEl = document.getElementById('total-assets');
+            const totalLiabilitiesEl = document.getElementById('total-liabilities');
+            const currentNetWorthEl = document.getElementById('current-net-worth');
+            const recordNetWorthBtn = document.getElementById('record-net-worth');
+            const netWorthChartCanvas = document.getElementById('netWorthChart');
+            const netWorthHistoryListEl = document.getElementById('net-worth-history-list');
+
+            // Botão de Reiniciar (se existir no HTML)
+            const resetDataBtn = document.getElementById('reset-data-btn');
 
             // Função para Salvar o Estado
             const saveState = () => {
@@ -844,7 +934,9 @@
                 });
                 const monthlyNetIncomeFromBudget = state.income - totalMonthlyExpensesFromBudget;
 
-                let currentBalance = state.income - totalMonthlyExpensesFromBudget; // Start with the current month's net balance
+                // Initial balance for projection: current income minus current expenses
+                // This assumes the projection starts with the current month's calculated balance
+                let currentBalance = state.income - totalMonthlyExpensesFromBudget; 
 
                 projectionTableBody.innerHTML = ''; // Clear previous projection
 
@@ -860,7 +952,8 @@
                     let monthLabel = `${monthsNames[projectionDate.getMonth()]}/${projectionDate.getFullYear()}`;
                     labels.push(monthLabel);
 
-                    let monthStartBalance = currentBalance;
+                    let monthStartBalance = currentBalance; // Balance at the start of THIS month
+
                     let monthIncomeEvents = 0;
                     let monthExpenseEvents = 0;
 
@@ -877,14 +970,15 @@
                     });
 
                     // Calculate total income and expenses for the month
-                    const totalMonthlyIncome = state.income + monthIncomeEvents;
-                    const totalMonthlyExpenses = totalMonthlyExpensesFromBudget + monthExpenseEvents;
+                    const totalMonthlyIncome = state.income + monthIncomeEvents; // Regular income + event income
+                    const totalMonthlyExpenses = totalMonthlyExpensesFromBudget + monthExpenseEvents; // Regular expenses + event expenses
                     
-                    currentBalance = monthStartBalance + totalMonthlyIncome - totalMonthlyExpensesFromBudget - monthExpenseEvents; // Recalculate balance for the end of the month
+                    // The end balance for the current month becomes the start balance for the next month
+                    currentBalance = monthStartBalance + totalMonthlyIncome - totalMonthlyExpenses;
 
                     incomeData.push(totalMonthlyIncome);
                     expenseData.push(totalMonthlyExpenses);
-                    balanceData.push(currentBalance);
+                    balanceData.push(currentBalance); // This is the balance at the end of the month
 
                     const row = document.createElement('tr');
                     row.className = 'border-b last:border-b-0';
@@ -896,9 +990,6 @@
                         <td class="py-2 px-3 font-bold ${currentBalance < 0 ? 'text-red-600' : 'text-emerald-600'}">R$ ${currentBalance.toFixed(2)}</td>
                     `;
                     projectionTableBody.appendChild(row);
-
-                    // For the next month's start balance, use the current month's end balance
-                    // The `currentBalance` already holds the end balance for the current month
                 }
 
                 // Renderizar Gráfico de Fluxo de Caixa
@@ -979,6 +1070,139 @@
                 });
             };
 
+            const calculateNetWorth = () => {
+                let totalAssets = state.assets.reduce((sum, asset) => sum + asset.value, 0);
+                let totalLiabilities = state.liabilities.reduce((sum, liability) => sum + liability.value, 0);
+                let currentNetWorth = totalAssets - totalLiabilities;
+
+                totalAssetsEl.textContent = `R$ ${totalAssets.toFixed(2)}`;
+                totalLiabilitiesEl.textContent = `R$ ${totalLiabilities.toFixed(2)}`;
+                currentNetWorthEl.textContent = `R$ ${currentNetWorth.toFixed(2)}`;
+                currentNetWorthEl.classList.toggle('text-red-500', currentNetWorth < 0);
+                currentNetWorthEl.classList.toggle('text-emerald-600', currentNetWorth >= 0);
+
+                renderNetWorthHistory();
+            };
+
+            const renderAssets = () => {
+                assetListEl.innerHTML = '';
+                if (state.assets.length === 0) {
+                    assetListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum ativo adicionado.</p>';
+                } else {
+                    state.assets.forEach((asset, index) => {
+                        const assetEl = document.createElement('div');
+                        assetEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
+                        assetEl.innerHTML = `
+                            <span>${asset.name}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="font-medium text-emerald-600">R$ ${asset.value.toFixed(2)}</span>
+                                <button data-id="${asset.id}" class="remove-asset text-red-500 hover:text-red-700 text-lg">&times;</button>
+                            </div>
+                        `;
+                        assetListEl.appendChild(assetEl);
+                    });
+                }
+            };
+
+            const renderLiabilities = () => {
+                liabilityListEl.innerHTML = '';
+                if (state.liabilities.length === 0) {
+                    liabilityListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum passivo adicionado.</p>';
+                } else {
+                    state.liabilities.forEach((liability, index) => {
+                        const liabilityEl = document.createElement('div');
+                        liabilityEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
+                        liabilityEl.innerHTML = `
+                            <span>${liability.name}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="font-medium text-red-500">R$ ${liability.value.toFixed(2)}</span>
+                                <button data-id="${liability.id}" class="remove-liability text-red-500 hover:text-red-700 text-lg">&times;</button>
+                            </div>
+                        `;
+                        liabilityListEl.appendChild(liabilityEl);
+                    });
+                }
+            };
+
+            const renderNetWorthHistory = () => {
+                netWorthHistoryListEl.innerHTML = '';
+                if (state.netWorthHistory.length === 0) {
+                    netWorthHistoryListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum registro de patrimônio.</p>';
+                } else {
+                    state.netWorthHistory.sort((a, b) => b.date - a.date).forEach(item => { // Sort descending by date
+                        const historyEl = document.createElement('div');
+                        historyEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
+                        const itemDate = new Date(item.date);
+                        historyEl.innerHTML = `
+                            <span>${itemDate.toLocaleDateString('pt-BR')}</span>
+                            <span class="font-medium ${item.value < 0 ? 'text-red-600' : 'text-emerald-600'}">R$ ${item.value.toFixed(2)}</span>
+                        `;
+                        netWorthHistoryListEl.appendChild(historyEl);
+                    });
+                }
+
+                // Renderizar Gráfico de Patrimônio Líquido
+                if (netWorthChart) {
+                    netWorthChart.destroy();
+                }
+
+                const labels = state.netWorthHistory.map(item => new Date(item.date).toLocaleDateString('pt-BR'));
+                const data = state.netWorthHistory.map(item => item.value);
+
+                const ctx = netWorthChartCanvas.getContext('2d');
+                netWorthChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Patrimônio Líquido',
+                            data: data,
+                            borderColor: '#10B981', // Emerald 500
+                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false,
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += 'R$ ' + context.parsed.y.toFixed(2);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                title: {
+                                    display: true,
+                                    text: 'Valor (R$)'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Data'
+                                }
+                            }
+                        }
+                    }
+                });
+            };
 
             // Função de Atualização Completa do UI
             const updateAll = () => {
@@ -987,7 +1211,10 @@
                 renderDebts();
                 renderEmergencyFundResult();
                 renderGoals();
-                renderFutureEvents(); // Renderizar eventos futuros
+                renderFutureEvents();
+                renderAssets(); // Renderizar ativos
+                renderLiabilities(); // Renderizar passivos
+                calculateNetWorth(); // Calcular e renderizar patrimônio líquido
 
                 // Atualizar campos de input com o estado carregado
                 incomeInput.value = state.income;
@@ -1004,7 +1231,6 @@
                 annualFinancingRateInput.value = state.financing.annualFinancingRate;
                 financingPeriodYearsInput.value = state.financing.periodYears;
 
-                // Atualizar campos de projeção de fluxo de caixa
                 projectionStartMonthSelect.value = state.projectionSettings.startMonth;
                 projectionStartYearInput.value = state.projectionSettings.startYear;
                 projectionMonthsInput.value = state.projectionSettings.months;
@@ -1040,16 +1266,17 @@
                 button.addEventListener('click', () => {
                     const target = button.dataset.target;
                     state.activeSection = target;
-                    saveState(); // Salvar a seção ativa
-                    updateAll(); // Atualizar UI
-                    // Chamar a simulação específica apenas quando a seção é ativada
+                    saveState();
+                    updateAll();
                     if (target === 'passo4-investimento') {
                         calculateInvestment();
                     } else if (target === 'passo5-financiamento') {
                         calculateFinancing();
                     } else if (target === 'passo6-fluxo-caixa') {
-                        populateMonthYearSelectors(); // Popular seletores ao entrar na seção
-                        calculateCashFlowProjection(); // Gerar projeção inicial
+                        populateMonthYearSelectors();
+                        calculateCashFlowProjection();
+                    } else if (target === 'passo7-patrimonio') {
+                        calculateNetWorth(); 
                     }
                 });
             });
@@ -1066,7 +1293,7 @@
                 const category = expenseCategoryInput.value;
 
                 if (name && amount > 0) {
-                    state.expenses.push({ id: Date.now(), name, amount, category }); // Adicionado ID para remoção
+                    state.expenses.push({ id: Date.now(), name, amount, category });
                     expenseNameInput.value = '';
                     expenseAmountInput.value = '';
                     saveState();
@@ -1076,7 +1303,7 @@
 
             expenseList.addEventListener('click', (e) => {
                 if (e.target.classList.contains('remove-expense')) {
-                    const index = parseInt(e.target.dataset.index);
+                    const index = parseInt(e.target.dataset.index); 
                     state.expenses.splice(index, 1);
                     saveState();
                     updateAll();
@@ -1194,7 +1421,7 @@
                     eventDateInput.value = '';
                     saveState();
                     renderFutureEvents();
-                    calculateCashFlowProjection(); // Recalcular projeção ao adicionar evento
+                    calculateCashFlowProjection();
                 }
             });
 
@@ -1204,7 +1431,7 @@
                     state.futureEvents = state.futureEvents.filter(event => event.id !== id);
                     saveState();
                     renderFutureEvents();
-                    calculateCashFlowProjection(); // Recalcular projeção ao remover evento
+                    calculateCashFlowProjection();
                 }
             });
 
@@ -1212,6 +1439,73 @@
             projectionStartYearInput.addEventListener('input', calculateCashFlowProjection);
             projectionMonthsInput.addEventListener('input', calculateCashFlowProjection);
             calculateCashFlowBtn.addEventListener('click', calculateCashFlowProjection);
+
+            // Listeners para Patrimônio Líquido
+            addAssetBtn.addEventListener('click', () => {
+                const name = assetNameInput.value.trim();
+                const value = parseFloat(assetValueInput.value);
+                if (name && value >= 0) {
+                    state.assets.push({ id: Date.now(), name, value });
+                    assetNameInput.value = '';
+                    assetValueInput.value = '';
+                    saveState();
+                    renderAssets();
+                    calculateNetWorth();
+                }
+            });
+
+            assetListEl.addEventListener('click', e => {
+                if (e.target.classList.contains('remove-asset')) {
+                    const id = parseInt(e.target.dataset.id);
+                    state.assets = state.assets.filter(asset => asset.id !== id);
+                    saveState();
+                    renderAssets();
+                    calculateNetWorth();
+                }
+            });
+
+            addLiabilityBtn.addEventListener('click', () => {
+                const name = liabilityNameInput.value.trim();
+                const value = parseFloat(liabilityValueInput.value);
+                if (name && value >= 0) {
+                    state.liabilities.push({ id: Date.now(), name, value });
+                    liabilityNameInput.value = '';
+                    liabilityValueInput.value = '';
+                    saveState();
+                    renderLiabilities();
+                    calculateNetWorth();
+                }
+            });
+
+            liabilityListEl.addEventListener('click', e => {
+                if (e.target.classList.contains('remove-liability')) {
+                    const id = parseInt(e.target.dataset.id);
+                    state.liabilities = state.liabilities.filter(liability => liability.id !== id);
+                    saveState();
+                    renderLiabilities();
+                    calculateNetWorth();
+                }
+            });
+
+            recordNetWorthBtn.addEventListener('click', () => {
+                let totalAssets = state.assets.reduce((sum, asset) => sum + asset.value, 0);
+                let totalLiabilities = state.liabilities.reduce((sum, liability) => sum + liability.value, 0);
+                let currentNetWorth = totalAssets - totalLiabilities;
+                
+                // Add only if there's a change or if it's the first record
+                const lastRecord = state.netWorthHistory[state.netWorthHistory.length - 1];
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Normalize date to compare only day, month, year
+
+                if (!lastRecord || lastRecord.value !== currentNetWorth || new Date(lastRecord.date).toDateString() !== today.toDateString()) {
+                    state.netWorthHistory.push({ date: today, value: currentNetWorth });
+                    saveState();
+                    renderNetWorthHistory();
+                    // Optionally, provide feedback to the user that it was recorded
+                } else {
+                    // Optionally, inform the user that net worth hasn't changed or was already recorded today
+                }
+            });
 
             // Função para popular os seletores de mês e ano
             const populateMonthYearSelectors = () => {
@@ -1228,13 +1522,11 @@
                 projectionStartYearInput.value = currentYear;
             };
 
-            // Reiniciar Dados
-            // Certifique-se de que o botão com ID 'reset-data-btn' existe no HTML, caso contrário, este listener não funcionará.
-            // Se não houver um botão de reset global, você pode remover este bloco.
+            // Reiniciar Dados (se existir no HTML)
             if (resetDataBtn) {
                 resetDataBtn.addEventListener('click', () => {
                     if (confirm("Tem certeza que deseja reiniciar todos os dados? Esta ação não pode ser desfeita.")) {
-                        localStorage.removeItem('financasAppState'); // Limpa o localStorage
+                        localStorage.removeItem('financasAppState');
                         // Reinicializar o estado para valores padrão
                         state.income = 0;
                         state.expenses = [];
@@ -1248,15 +1540,18 @@
                         state.financing = { propertyValue: 0, downPaymentPercentage: 0, annualFinancingRate: 0, periodYears: 0 };
                         state.futureEvents = [];
                         state.projectionSettings = { startMonth: new Date().getMonth() + 1, startYear: new Date().getFullYear(), months: 12 };
+                        state.assets = [];
+                        state.liabilities = [];
+                        state.netWorthHistory = [];
 
-                        updateAll(); // Atualizar UI para mostrar os dados zerados
-                        populateMonthYearSelectors(); // Repopular seletores
+                        updateAll();
+                        populateMonthYearSelectors();
                     }
                 });
             }
 
             // Renderização Inicial com o estado carregado ou padrão
-            populateMonthYearSelectors(); // Popular seletores ao carregar a página
+            populateMonthYearSelectors();
             updateAll();
         });
     </script>

@@ -119,7 +119,7 @@
         <!-- Seção da Ferramenta Interativa -->
         <section id="financas-interativa" class="bg-white p-6 rounded-2xl shadow-lg">
             <!-- Área de Resumo Superior - Ajustada para Mobile -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 <!-- Total Economizado -->
                 <div class="bg-emerald-500 text-white p-4 rounded-2xl shadow-md text-center flex flex-col justify-between">
                     <div class="flex justify-between items-center mb-2">
@@ -777,132 +777,135 @@
             let netWorthChart; 
 
             // Elementos do DOM
+            // Usando uma função auxiliar para obter elementos de forma segura
+            const getElement = (id) => document.getElementById(id);
+
             const navButtons = document.querySelectorAll('.nav-button');
             const contentSections = document.querySelectorAll('.content-section');
-            const incomeInput = document.getElementById('income');
-            const addExpenseBtn = document.getElementById('add-expense');
-            const expenseNameInput = document.getElementById('expense-name');
-            const expenseAmountInput = document.getElementById('expense-amount');
-            const expenseCategoryInput = document.getElementById('expense-category');
-            const expenseList = document.getElementById('expense-list');
-            const summaryEl = document.getElementById('summary');
-            const comparisonBarsEl = document.getElementById('comparison-bars');
+            const incomeInput = getElement('income');
+            const addExpenseBtn = getElement('add-expense');
+            const expenseNameInput = getElement('expense-name');
+            const expenseAmountInput = getElement('expense-amount');
+            const expenseCategoryInput = getElement('expense-category');
+            const expenseList = getElement('expense-list');
+            const summaryEl = getElement('summary');
+            const comparisonBarsEl = getElement('comparison-bars');
             
-            const addDebtBtn = document.getElementById('add-debt');
-            const debtNameInput = document.getElementById('debt-name');
-            const debtTotalInput = document.getElementById('debt-total');
-            const debtRateInput = document.getElementById('debt-rate');
-            const debtListEl = document.getElementById('debt-list');
-            const snowballBtn = document.getElementById('snowball-btn');
-            const avalancheBtn = document.getElementById('avalanche-btn');
-            const strategyExplanationEl = document.getElementById('strategy-explanation');
-            const extraPaymentInput = document.getElementById('extra-payment');
-            const debtSimulationResultEl = document.getElementById('debt-simulation-result');
+            const addDebtBtn = getElement('add-debt');
+            const debtNameInput = getElement('debt-name');
+            const debtTotalInput = getElement('debt-total');
+            const debtRateInput = getElement('debt-rate');
+            const debtListEl = getElement('debt-list');
+            const snowballBtn = getElement('snowball-btn');
+            const avalancheBtn = getElement('avalanche-btn');
+            const strategyExplanationEl = getElement('strategy-explanation');
+            const extraPaymentInput = getElement('extra-payment');
+            const debtSimulationResultEl = getElement('debt-simulation-result');
 
-            const essentialCostsInput = document.getElementById('essential-costs');
-            const emergencyFundResultEl = document.getElementById('emergency-fund-result');
+            const essentialCostsInput = getElement('essential-costs');
+            const emergencyFundResultEl = getElement('emergency-fund-result');
 
-            const addGoalBtn = document.getElementById('add-goal');
-            const goalNameInput = document.getElementById('goal-name');
-            const goalTargetAmountInput = document.getElementById('goal-target-amount');
-            const goalSavedAmountInput = document.getElementById('goal-saved-amount');
-            const goalListEl = document.getElementById('goal-list');
+            const addGoalBtn = getElement('add-goal');
+            const goalNameInput = getElement('goal-name');
+            const goalTargetAmountInput = getElement('goal-target-amount');
+            const goalSavedAmountInput = getElement('goal-saved-amount');
+            const goalListEl = getElement('goal-list');
 
-            const initialCapitalInput = document.getElementById('initial-capital');
-            const monthlyContributionInput = document.getElementById('monthly-contribution');
-            const annualInterestRateInput = document.getElementById('annual-interest-rate');
-            const investmentPeriodYearsInput = document.getElementById('investment-period-years');
-            const calculateInvestmentBtn = document.getElementById('calculate-investment');
-            const investmentResultEl = document.getElementById('investment-result');
+            const initialCapitalInput = getElement('initial-capital');
+            const monthlyContributionInput = getElement('monthly-contribution');
+            const annualInterestRateInput = getElement('annual-interest-rate');
+            const investmentPeriodYearsInput = getElement('investment-period-years');
+            const calculateInvestmentBtn = getElement('calculate-investment');
+            const investmentResultEl = getElement('investment-result');
 
-            const propertyValueInput = document.getElementById('property-value');
-            const downPaymentPercentageInput = document.getElementById('down-payment-percentage');
-            const annualFinancingRateInput = document.getElementById('annual-financing-rate');
-            const financingPeriodYearsInput = document.getElementById('financing-period-years');
-            const calculateFinancingBtn = document.getElementById('calculate-financing');
-            const financingResultEl = document.getElementById('financing-result');
+            const propertyValueInput = getElement('property-value');
+            const downPaymentPercentageInput = getElement('down-payment-percentage');
+            const annualFinancingRateInput = getElement('annual-financing-rate');
+            const financingPeriodYearsInput = getElement('financing-period-years');
+            const calculateFinancingBtn = getElement('calculate-financing');
+            const financingResultEl = getElement('financing-result');
 
-            const eventNameInput = document.getElementById('event-name');
-            const eventAmountInput = document.getElementById('event-amount');
-            const eventDateInput = document.getElementById('event-date');
-            const eventTypeInput = document.getElementById('event-type');
-            const addFutureEventBtn = document.getElementById('add-future-event');
-            const futureEventListEl = document.getElementById('future-event-list');
-            const projectionStartMonthSelect = document.getElementById('projection-start-month');
-            const projectionStartYearInput = document.getElementById('projection-start-year');
-            const projectionMonthsInput = document.getElementById('projection-months');
-            const calculateCashFlowBtn = document.getElementById('calculate-cash-flow');
-            const projectionTableBody = document.getElementById('projection-table-body');
-            const cashFlowChartCanvas = document.getElementById('cashFlowChart');
-            const annualCashFlowCalendar = document.getElementById('annual-cash-flow-calendar'); 
+            const eventNameInput = getElement('event-name');
+            const eventAmountInput = getElement('event-amount');
+            const eventDateInput = getElement('event-date');
+            const eventTypeInput = getElement('event-type');
+            const addFutureEventBtn = getElement('add-future-event');
+            const futureEventListEl = getElement('future-event-list');
+            const projectionStartMonthSelect = getElement('projection-start-month');
+            const projectionStartYearInput = getElement('projection-start-year');
+            const projectionMonthsInput = getElement('projection-months');
+            const calculateCashFlowBtn = getElement('calculate-cash-flow');
+            const projectionTableBody = getElement('projection-table-body');
+            const cashFlowChartCanvas = getElement('cashFlowChart');
+            const annualCashFlowCalendar = getElement('annual-cash-flow-calendar'); 
 
             // Elementos para Patrimônio Líquido
-            const assetNameInput = document.getElementById('asset-name');
-            const assetValueInput = document.getElementById('asset-value');
-            const addAssetBtn = document.getElementById('add-asset');
-            const assetListEl = document.getElementById('asset-list');
+            const assetNameInput = getElement('asset-name');
+            const assetValueInput = getElement('asset-value');
+            const addAssetBtn = getElement('add-asset');
+            const assetListEl = getElement('asset-list');
 
-            const liabilityNameInput = document.getElementById('liability-name');
-            const liabilityValueInput = document.getElementById('liability-value');
-            const addLiabilityBtn = document.getElementById('add-liability');
-            const liabilityListEl = document.getElementById('liability-list');
+            const liabilityNameInput = getElement('liability-name');
+            const liabilityValueInput = getElement('liability-value');
+            const addLiabilityBtn = getElement('add-liability');
+            const liabilityListEl = getElement('liability-list');
 
-            const totalAssetsEl = document.getElementById('total-assets');
-            const totalLiabilitiesEl = document.getElementById('total-liabilities');
-            const currentNetWorthEl = document.getElementById('current-net-worth');
-            const recordNetWorthBtn = document.getElementById('record-net-worth');
-            const netWorthChartCanvas = document.getElementById('netWorthChart');
-            const netWorthHistoryListEl = document.getElementById('net-worth-history-list');
+            const totalAssetsEl = getElement('total-assets');
+            const totalLiabilitiesEl = getElement('total-liabilities');
+            const currentNetWorthEl = getElement('current-net-worth');
+            const recordNetWorthBtn = getElement('record-net-worth');
+            const netWorthChartCanvas = getElement('netWorthChart');
+            const netWorthHistoryListEl = getElement('net-worth-history-list');
 
             // Elementos para Assinaturas
-            const subscriptionNameInput = document.getElementById('subscription-name');
-            const subscriptionAmountInput = document.getElementById('subscription-amount');
-            const subscriptionFrequencyInput = document.getElementById('subscription-frequency');
-            const subscriptionRenewalDateInput = document.getElementById('subscription-renewal-date');
-            const addSubscriptionBtn = document.getElementById('add-subscription');
-            const subscriptionListEl = document.getElementById('subscription-list');
-            const totalActiveSubscriptionsEl = document.getElementById('total-active-subscriptions');
-            const totalMonthlySubscriptionsCostEl = document.getElementById('total-monthly-subscriptions-cost'); // Old element
-            const totalMonthlySubscriptionsCostDisplay = document.getElementById('total-monthly-subscriptions-cost-display'); // New element
+            const subscriptionNameInput = getElement('subscription-name');
+            const subscriptionAmountInput = getElement('subscription-amount');
+            const subscriptionFrequencyInput = getElement('subscription-frequency');
+            const subscriptionRenewalDateInput = getElement('subscription-renewal-date');
+            const addSubscriptionBtn = getElement('add-subscription');
+            const subscriptionListEl = getElement('subscription-list');
+            const totalActiveSubscriptionsEl = getElement('total-active-subscriptions');
+            const totalMonthlySubscriptionsCostEl = getElement('total-monthly-subscriptions-cost'); // Old element
+            const totalMonthlySubscriptionsCostDisplay = getElement('total-monthly-subscriptions-cost-display'); // New element
 
             // Elementos para "Total Economizado"
-            const totalEconomizadoDisplay = document.getElementById('total-economizado-display');
-            const extraPaymentMessage = document.getElementById('extra-payment-message');
-            const summaryIncomeDisplay = document.getElementById('summary-income-display'); // New element
-            const summaryExpensesDisplay = document.getElementById('summary-expenses-display'); // New element
+            const totalEconomizadoDisplay = getElement('total-economizado-display');
+            const extraPaymentMessage = getElement('extra-payment-message');
+            const summaryIncomeDisplay = getElement('summary-income-display'); // New element
+            const summaryExpensesDisplay = getElement('summary-expenses-display'); // New element
 
             // Elementos para Resumo Geral
-            const resumoIncome = document.getElementById('resumo-income');
-            const resumoTotalExpenses = document.getElementById('resumo-total-expenses');
-            const resumoBalance = document.getElementById('resumo-balance');
-            const resumoBudgetBars = document.getElementById('resumo-budget-bars');
-            const resumoDebtStrategy = document.getElementById('resumo-debt-strategy');
-            const resumoNumDebts = document.getElementById('resumo-num-debts');
-            const resumoExtraPayment = document.getElementById('resumo-extra-payment');
-            const resumoPriorityDebt = document.getElementById('resumo-priority-debt');
-            const resumoNumGoals = document.getElementById('resumo-num-goals');
-            const resumoTotalSavedGoals = document.getElementById('resumo-total-saved-goals');
-            const resumoEmergencyFund = document.getElementById('resumo-emergency-fund');
-            const resumoInvInitial = document.getElementById('resumo-inv-initial');
-            const resumoInvMonthly = document.getElementById('resumo-inv-monthly');
-            const resumoInvRate = document.getElementById('resumo-inv-rate');
-            const resumoInvPeriod = document.getElementById('resumo-inv-period');
-            const resumoInvProjected = document.getElementById('resumo-inv-projected');
-            const resumoFinValue = document.getElementById('resumo-fin-value');
-            const resumoFinDownpayment = document.getElementById('resumo-fin-downpayment');
-            const resumoFinRate = document.getElementById('resumo-fin-rate');
-            const resumoFinPeriod = document.getElementById('resumo-fin-period');
-            const resumoFinMonthlyPayment = document.getElementById('resumo-fin-monthly-payment');
-            const resumoPatAssets = document.getElementById('resumo-pat-assets');
-            const resumoPatLiabilities = document.getElementById('resumo-pat-liabilities');
-            const resumoPatNetWorth = document.getElementById('resumo-pat-net-worth');
-            const resumoPatHistoryCount = document.getElementById('resumo-pat-history-count');
-            const resumoSubActive = document.getElementById('resumo-sub-active');
-            const resumoSubMonthlyCost = document.getElementById('resumo-sub-monthly-cost');
+            const resumoIncome = getElement('resumo-income');
+            const resumoTotalExpenses = getElement('resumo-total-expenses');
+            const resumoBalance = getElement('resumo-balance');
+            const resumoBudgetBars = getElement('resumo-budget-bars');
+            const resumoDebtStrategy = getElement('resumo-debt-strategy');
+            const resumoNumDebts = getElement('resumo-num-debts');
+            const resumoExtraPayment = getElement('resumo-extra-payment');
+            const resumoPriorityDebt = getElement('resumo-priority-debt');
+            const resumoNumGoals = getElement('resumo-num-goals');
+            const resumoTotalSavedGoals = getElement('resumo-total-saved-goals');
+            const resumoEmergencyFund = getElement('resumo-emergency-fund');
+            const resumoInvInitial = getElement('resumo-inv-initial');
+            const resumoInvMonthly = getElement('resumo-inv-monthly');
+            const resumoInvRate = getElement('resumo-inv-rate');
+            const resumoInvPeriod = getElement('resumo-inv-period');
+            const resumoInvProjected = getElement('resumo-inv-projected');
+            const resumoFinValue = getElement('resumo-fin-value');
+            const resumoFinDownpayment = getElement('resumo-fin-downpayment');
+            const resumoFinRate = getElement('resumo-fin-rate');
+            const resumoFinPeriod = getElement('resumo-fin-period');
+            const resumoFinMonthlyPayment = getElement('resumo-fin-monthly-payment');
+            const resumoPatAssets = getElement('resumo-pat-assets');
+            const resumoPatLiabilities = getElement('resumo-pat-liabilities');
+            const resumoPatNetWorth = getElement('resumo-pat-net-worth');
+            const resumoPatHistoryCount = getElement('resumo-pat-history-count');
+            const resumoSubActive = getElement('resumo-sub-active');
+            const resumoSubMonthlyCost = getElement('resumo-sub-monthly-cost');
 
 
             // Botão de Reiniciar (agora existe no HTML)
-            const resetDataBtn = document.getElementById('reset-data-btn');
+            const resetDataBtn = getElement('reset-data-btn');
 
             // Função para Salvar o Estado
             const saveState = () => {
@@ -911,22 +914,24 @@
 
             // Funções de Renderização
             const renderExpenses = () => {
-                expenseList.innerHTML = '';
-                if (state.expenses.length === 0) {
-                    expenseList.innerHTML = '<p class="text-slate-400 text-center">Nenhuma despesa adicionada.</p>';
-                } else {
-                    state.expenses.forEach((exp, index) => {
-                        const expEl = document.createElement('div');
-                        expEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
-                        expEl.innerHTML = `
-                            <span>${exp.name} (${exp.category})</span>
-                            <div class="flex items-center gap-2">
-                                <span class="font-medium">R$ ${exp.amount.toFixed(2)}</span>
-                                <button data-index="${index}" class="remove-expense text-red-500 hover:text-red-700 text-lg">&times;</button>
-                            </div>
-                        `;
-                        expenseList.appendChild(expEl);
-                    });
+                if (expenseList) {
+                    expenseList.innerHTML = '';
+                    if (state.expenses.length === 0) {
+                        expenseList.innerHTML = '<p class="text-slate-400 text-center">Nenhuma despesa adicionada.</p>';
+                    } else {
+                        state.expenses.forEach((exp, index) => {
+                            const expEl = document.createElement('div');
+                            expEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
+                            expEl.innerHTML = `
+                                <span>${exp.name} (${exp.category})</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-medium">R$ ${exp.amount.toFixed(2)}</span>
+                                    <button data-index="${index}" class="remove-expense text-red-500 hover:text-red-700 text-lg">&times;</button>
+                                </div>
+                            `;
+                            expenseList.appendChild(expEl);
+                        });
+                    }
                 }
             };
 
@@ -955,13 +960,18 @@
                 });
 
                 const balance = state.income - totalExpenses;
-                summaryEl.textContent = `Saldo: R$ ${balance.toFixed(2)}`;
-                summaryEl.classList.toggle('text-red-500', balance < 0);
-                summaryEl.classList.toggle('text-green-600', balance >= 0);
+                if (summaryEl) {
+                    summaryEl.textContent = `Saldo: R$ ${balance.toFixed(2)}`;
+                    summaryEl.classList.toggle('text-red-500', balance < 0);
+                    summaryEl.classList.toggle('text-green-600', balance >= 0);
+                }
 
                 // Atualizar Gráfico
-                if (!budgetChart) {
-                    const ctx = document.getElementById('budgetChart').getContext('2d');
+                if (budgetChart) {
+                    budgetChart.destroy(); // Always destroy before re-creating for updates
+                }
+                if (getElement('budgetChart')) {
+                    const ctx = getElement('budgetChart').getContext('2d');
                     budgetChart = new Chart(ctx, {
                         type: 'doughnut',
                         data: {
@@ -990,283 +1000,297 @@
                             cutout: '60%'
                         }
                     });
-                } else {
-                    budgetChart.data.datasets[0].data = [
-                        totals.necessidades, totals.desejos, totals.dividas,
-                        totals.transporte, totals.moradia, totals.alimentacao,
-                        totals.saude, totals.educacao, totals.lazer, totals.outros
-                    ];
-                    budgetChart.update();
                 }
                 
                 // Atualizar Barras de Comparação
-                comparisonBarsEl.innerHTML = '';
-                const income = state.income > 0 ? state.income : 1;
-                const percentages = {
-                    necessidades: (totals.necessidades / income) * 100,
-                    desejos: (totals.desejos / income) * 100,
-                    poupanca: (balance > 0 ? balance / income : 0) * 100,
-                };
+                if (comparisonBarsEl) {
+                    comparisonBarsEl.innerHTML = '';
+                    const income = state.income > 0 ? state.income : 1;
+                    const percentages = {
+                        necessidades: (totals.necessidades / income) * 100,
+                        desejos: (totals.desejos / income) * 100,
+                        poupanca: (balance > 0 ? balance / income : 0) * 100,
+                    };
 
-                const createBar = (label, userPercent, targetPercent, color) => {
-                    const barHtml = `
-                        <div class="mb-2">
-                            <div class="flex justify-between mb-1">
-                                <span>${label}</span>
-                                <span>${userPercent.toFixed(1)}% (Meta: ${targetPercent}%)</span>
+                    const createBar = (label, userPercent, targetPercent, color) => {
+                        const barHtml = `
+                            <div class="mb-2">
+                                <div class="flex justify-between mb-1">
+                                    <span>${label}</span>
+                                    <span>${userPercent.toFixed(1)}% (Meta: ${targetPercent}%)</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="h-2.5 rounded-full" style="width: ${Math.min(userPercent, 100)}%; background-color: ${color};"></div>
+                                </div>
                             </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="h-2.5 rounded-full" style="width: ${Math.min(userPercent, 100)}%; background-color: ${color};"></div>
-                            </div>
-                        </div>
-                    `;
-                    comparisonBarsEl.innerHTML += barHtml;
+                        `;
+                        comparisonBarsEl.innerHTML += barHtml;
+                    }
+
+                    createBar('Necessidades', percentages.necessidades, 50, '#34D399');
+                    createBar('Desejos', percentages.desejos, 30, '#FBBF24');
+                    createBar('Poupança/Saldo', percentages.poupanca, 20, '#60A5FA');
                 }
-
-                createBar('Necessidades', percentages.necessidades, 50, '#34D399');
-                createBar('Desejos', percentages.desejos, 30, '#FBBF24');
-                createBar('Poupança/Saldo', percentages.poupanca, 20, '#60A5FA');
             };
             
             const renderDebts = () => {
-                debtListEl.innerHTML = '';
-                if (state.debts.length === 0) {
-                    debtListEl.innerHTML = '<p class="text-slate-400 text-center p-4">Nenhuma dívida adicionada.</p>';
-                    return;
-                }
+                if (debtListEl) {
+                    debtListEl.innerHTML = '';
+                    if (state.debts.length === 0) {
+                        debtListEl.innerHTML = '<p class="text-slate-400 text-center p-4">Nenhuma dívida adicionada.</p>';
+                        return;
+                    }
 
-                let sortedDebts = [...state.debts];
-                if (state.debtStrategy === 'snowball') {
-                    sortedDebts.sort((a, b) => a.total - b.total);
-                } else { // avalanche
-                    sortedDebts.sort((a, b) => b.rate - a.rate);
-                }
+                    let sortedDebts = [...state.debts];
+                    if (state.debtStrategy === 'snowball') {
+                        sortedDebts.sort((a, b) => a.total - b.total);
+                    } else { // avalanche
+                        sortedDebts.sort((a, b) => b.rate - a.rate);
+                    }
 
-                sortedDebts.forEach((debt, index) => {
-                    const debtEl = document.createElement('div');
-                    debtEl.className = 'debt-item flex justify-between items-center p-3';
-                    if (index === 0) debtEl.classList.add('bg-emerald-100', 'rounded-lg');
-                    
-                    debtEl.innerHTML = `
-                        <div>
-                            <p class="font-bold">${index + 1}. ${debt.name}</p>
-                            <p class="text-sm text-slate-600">Total: R$ ${debt.total.toFixed(2)} | Juros: ${debt.rate}% a.m.</p>
-                        </div>
-                        <button data-id="${debt.id}" class="remove-debt text-red-500 hover:text-red-700 text-lg">&times;</button>
-                    `;
-                    debtListEl.appendChild(debtEl);
-                });
-                simulateDebtPayment(); // Chamar a simulação sempre que as dívidas forem renderizadas
+                    sortedDebts.forEach((debt, index) => {
+                        const debtEl = document.createElement('div');
+                        debtEl.className = 'debt-item flex justify-between items-center p-3';
+                        if (index === 0) debtEl.classList.add('bg-emerald-100', 'rounded-lg');
+                        
+                        debtEl.innerHTML = `
+                            <div>
+                                <p class="font-bold">${index + 1}. ${debt.name}</p>
+                                <p class="text-sm text-slate-600">Total: R$ ${debt.total.toFixed(2)} | Juros: ${debt.rate}% a.m.</p>
+                            </div>
+                            <button data-id="${debt.id}" class="remove-debt text-red-500 hover:text-red-700 text-lg">&times;</button>
+                        `;
+                        debtListEl.appendChild(debtEl);
+                    });
+                    simulateDebtPayment(); // Chamar a simulação sempre que as dívidas forem renderizadas
+                }
             };
 
             const simulateDebtPayment = () => {
-                const extraPayment = state.extraPayment;
-                const sortedDebts = [...state.debts]; // Obter a lista de dívidas ordenada pela estratégia atual
-                if (state.debtStrategy === 'snowball') {
-                    sortedDebts.sort((a, b) => a.total - b.total);
-                } else { // avalanche
-                    sortedDebts.sort((a, b) => b.rate - a.rate);
-                }
+                if (debtSimulationResultEl) {
+                    const extraPayment = state.extraPayment;
+                    const sortedDebts = [...state.debts]; // Obter a lista de dívidas ordenada pela estratégia atual
+                    if (state.debtStrategy === 'snowball') {
+                        sortedDebts.sort((a, b) => a.total - b.total);
+                    } else { // avalanche
+                        sortedDebts.sort((a, b) => b.rate - a.rate);
+                    }
 
-                if (sortedDebts.length === 0 || extraPayment <= 0) {
-                    debtSimulationResultEl.innerHTML = 'Adicione dívidas e um valor extra para simular.';
-                    return;
-                }
-
-                let totalMonths = 0;
-                let remainingDebt = sortedDebts[0].total;
-                let monthlyRate = sortedDebts[0].rate / 100; // Converter % para decimal
-                let currentExtraPayment = extraPayment;
-
-                // Simulação de quitação de dívida mais precisa (para uma dívida)
-                if (monthlyRate > 0) {
-                    // Se o pagamento extra for menor ou igual ao juro mensal da dívida, ela nunca será quitada ou levará muito tempo
-                    if (currentExtraPayment <= remainingDebt * monthlyRate && remainingDebt > 0) {
-                        debtSimulationResultEl.innerHTML = `Com R$ ${extraPayment.toFixed(2)} extra, levaria muito tempo ou a dívida não diminuiria.`;
+                    if (sortedDebts.length === 0 || extraPayment <= 0) {
+                        debtSimulationResultEl.innerHTML = 'Adicione dívidas e um valor extra para simular.';
                         return;
                     }
-                    // Calcula o número de meses usando a fórmula de amortização
-                    // n = -log(1 - (i * P) / M) / log(1 + i)
-                    // Onde: i = taxa de juros mensal, P = principal, M = pagamento mensal (aqui, o extra)
-                    if (currentExtraPayment > 0) { // Garante que o pagamento não é zero
-                        totalMonths = -Math.log(1 - (monthlyRate * remainingDebt) / currentExtraPayment) / Math.log(1 + monthlyRate);
-                    } else { // Se currentExtraPayment for 0, a dívida não será paga
-                        totalMonths = Infinity;
+
+                    let totalMonths = 0;
+                    let remainingDebt = sortedDebts[0].total;
+                    let monthlyRate = sortedDebts[0].rate / 100; // Converter % para decimal
+                    let currentExtraPayment = extraPayment;
+
+                    // Simulação de quitação de dívida mais precisa (para uma dívida)
+                    if (monthlyRate > 0) {
+                        // Se o pagamento extra for menor ou igual ao juro mensal da dívida, ela nunca será quitada ou levará muito tempo
+                        if (currentExtraPayment <= remainingDebt * monthlyRate && remainingDebt > 0) {
+                            debtSimulationResultEl.innerHTML = `Com R$ ${extraPayment.toFixed(2)} extra, levaria muito tempo ou a dívida não diminuiria.`;
+                            return;
+                        }
+                        // Calcula o número de meses usando a fórmula de amortização
+                        // n = -log(1 - (i * P) / M) / log(1 + i)
+                        // Onde: i = taxa de juros mensal, P = principal, M = pagamento mensal (aqui, o extra)
+                        if (currentExtraPayment > 0) { // Garante que o pagamento não é zero
+                            totalMonths = -Math.log(1 - (monthlyRate * remainingDebt) / currentExtraPayment) / Math.log(1 + monthlyRate);
+                        } else { // Se currentExtraPayment for 0, a dívida não será paga
+                            totalMonths = Infinity;
+                        }
+                    } else { // Sem juros
+                        if (currentExtraPayment > 0) {
+                            totalMonths = remainingDebt / currentExtraPayment;
+                        } else {
+                            totalMonths = Infinity;
+                        }
                     }
-                } else { // Sem juros
-                    if (currentExtraPayment > 0) {
-                        totalMonths = remainingDebt / currentExtraPayment;
+                    
+                    if (totalMonths > 0 && totalMonths < Infinity && totalMonths < 360) { // Limite de 360 meses (30 anos)
+                        const years = Math.floor(totalMonths / 12);
+                        const monthsRemainder = Math.round(totalMonths % 12);
+                        let resultText = `Com <strong>R$ ${extraPayment.toFixed(2)} extra</strong>, você quitaria a dívida prioritária em `;
+                        if (years > 0) {
+                            resultText += `<strong>${years} ano(s)</strong> e `;
+                        }
+                        resultText += `<strong>${monthsRemainder} mês(es)</strong>.`;
+                        debtSimulationResultEl.innerHTML = resultText;
+                    } else if (totalMonths >= 360) {
+                        debtSimulationResultEl.innerHTML = `Com <strong>R$ ${extraPayment.toFixed(2)} extra</strong>, levaria mais de 30 anos para quitar a dívida prioritária. Considere renegociar!`;
                     } else {
-                        totalMonths = Infinity;
+                        debtSimulationResultEl.innerHTML = 'Adicione um valor extra para simular.';
                     }
-                }
-                
-                if (totalMonths > 0 && totalMonths < Infinity && totalMonths < 360) { // Limite de 360 meses (30 anos)
-                    const years = Math.floor(totalMonths / 12);
-                    const monthsRemainder = Math.round(totalMonths % 12);
-                    let resultText = `Com <strong>R$ ${extraPayment.toFixed(2)} extra</strong>, você quitaria a dívida prioritária em `;
-                    if (years > 0) {
-                        resultText += `<strong>${years} ano(s)</strong> e `;
-                    }
-                    resultText += `<strong>${monthsRemainder} mês(es)</strong>.`;
-                    debtSimulationResultEl.innerHTML = resultText;
-                } else if (totalMonths >= 360) {
-                    debtSimulationResultEl.innerHTML = `Com <strong>R$ ${extraPayment.toFixed(2)} extra</strong>, levaria mais de 30 anos para quitar a dívida prioritária. Considere renegociar!`;
-                } else {
-                    debtSimulationResultEl.innerHTML = 'Adicione um valor extra para simular.';
                 }
             };
 
             const renderEmergencyFundResult = () => {
-                const costs = state.essentialCosts;
-                const minFund = costs * 3;
-                const maxFund = costs * 6;
-                emergencyFundResultEl.innerHTML = `
-                    <p class="font-bold">Sua meta de reserva é:</p>
-                    <p class="text-2xl font-bold">R$ ${minFund.toFixed(2)} - R$ ${maxFund.toFixed(2)}</p>
-                `;
+                if (emergencyFundResultEl) {
+                    const costs = state.essentialCosts;
+                    const minFund = costs * 3;
+                    const maxFund = costs * 6;
+                    emergencyFundResultEl.innerHTML = `
+                        <p class="font-bold">Sua meta de reserva é:</p>
+                        <p class="text-2xl font-bold">R$ ${minFund.toFixed(2)} - R$ ${maxFund.toFixed(2)}</p>
+                    `;
+                }
             };
 
             const renderGoals = () => {
-                goalListEl.innerHTML = '';
-                if(state.goals.length === 0) {
-                    goalListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhuma meta adicionada.</p>';
-                } else {
-                    state.goals.forEach((goal, index) => {
-                        const percentage = goal.targetAmount > 0 ? (goal.savedAmount / goal.targetAmount) * 100 : 0;
-                        const goalEl = document.createElement('div');
-                        goalEl.className = 'bg-gray-100 p-3 rounded-lg flex flex-col';
-                        goalEl.innerHTML = `
-                            <div class="flex justify-between items-center mb-2">
-                                <span>${goal.name} - <strong>R$ ${goal.savedAmount.toFixed(2)} / R$ ${goal.targetAmount.toFixed(2)}</strong></span>
-                                <button data-id="${goal.id}" class="remove-goal text-red-500 hover:text-red-700 text-lg">&times;</button>
-                            </div>
-                            <div class="goal-progress-bar">
-                                <div class="goal-progress" style="width: ${Math.min(percentage, 100)}%;"></div>
-                            </div>
-                            <p class="text-sm text-slate-600 mt-1">Progresso: <strong>${percentage.toFixed(1)}%</strong></p>
-                            <div class="mt-2 text-sm">
-                                <label for="goal-saved-input-${index}" class="block font-medium mb-1">Atualizar Economizado:</label>
-                                <input type="number" id="goal-saved-input-${index}" data-id="${goal.id}" value="${goal.savedAmount}"
-                                        class="w-full p-1 border rounded-lg text-sm update-goal-saved-amount">
-                            </div>
-                        `;
-                        goalListEl.appendChild(goalEl);
-                    });
+                if (goalListEl) {
+                    goalListEl.innerHTML = '';
+                    if(state.goals.length === 0) {
+                        goalListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhuma meta adicionada.</p>';
+                    } else {
+                        state.goals.forEach((goal, index) => {
+                            const percentage = goal.targetAmount > 0 ? (goal.savedAmount / goal.targetAmount) * 100 : 0;
+                            const goalEl = document.createElement('div');
+                            goalEl.className = 'bg-gray-100 p-3 rounded-lg flex flex-col';
+                            goalEl.innerHTML = `
+                                <div class="flex justify-between items-center mb-2">
+                                    <span>${goal.name} - <strong>R$ ${goal.savedAmount.toFixed(2)} / R$ ${goal.targetAmount.toFixed(2)}</strong></span>
+                                    <button data-id="${goal.id}" class="remove-goal text-red-500 hover:text-red-700 text-lg">&times;</button>
+                                </div>
+                                <div class="goal-progress-bar">
+                                    <div class="goal-progress" style="width: ${Math.min(percentage, 100)}%;"></div>
+                                </div>
+                                <p class="text-sm text-slate-600 mt-1">Progresso: <strong>${percentage.toFixed(1)}%</strong></p>
+                                <div class="mt-2 text-sm">
+                                    <label for="goal-saved-input-${index}" class="block font-medium mb-1">Atualizar Economizado:</label>
+                                    <input type="number" id="goal-saved-input-${index}" data-id="${goal.id}" value="${goal.savedAmount}"
+                                            class="w-full p-1 border rounded-lg text-sm update-goal-saved-amount">
+                                </div>
+                            `;
+                            goalListEl.appendChild(goalEl);
+                        });
+                    }
                 }
             };
 
             const calculateInvestment = () => {
-                const initialCapital = parseFloat(initialCapitalInput.value) || 0;
-                const monthlyContribution = parseFloat(monthlyContributionInput.value) || 0;
-                const annualRate = parseFloat(annualInterestRateInput.value) || 0;
-                const periodYears = parseFloat(investmentPeriodYearsInput.value) || 0;
+                if (investmentResultEl) {
+                    const initialCapital = parseFloat(initialCapitalInput.value) || 0;
+                    const monthlyContribution = parseFloat(monthlyContributionInput.value) || 0;
+                    const annualRate = parseFloat(annualInterestRateInput.value) || 0;
+                    const periodYears = parseFloat(investmentPeriodYearsInput.value) || 0;
 
-                state.investment = { initialCapital, monthlyContribution, annualInterestRate: annualRate, periodYears };
-                saveState();
+                    state.investment = { initialCapital, monthlyContribution, annualInterestRate: annualRate, periodYears };
+                    saveState();
 
-                if ((initialCapital <= 0 && monthlyContribution <= 0) || periodYears <= 0) {
-                    investmentResultEl.innerHTML = '<p>Preencha os campos para ver a simulação do seu investimento.</p>';
-                    state.investment.projectedFutureValue = 0; // Reset projected value
-                    return;
+                    if ((initialCapital <= 0 && monthlyContribution <= 0) || periodYears <= 0) {
+                        investmentResultEl.innerHTML = '<p>Preencha os campos para ver a simulação do seu investimento.</p>';
+                        state.investment.projectedFutureValue = 0; // Reset projected value
+                        return;
+                    }
+
+                    const monthlyRate = annualRate / 100 / 12;
+                    const totalMonths = periodYears * 12;
+
+                    let futureValue = initialCapital * Math.pow((1 + monthlyRate), totalMonths);
+                    if (monthlyContribution > 0) {
+                        // Future value of a series of payments (annuity due, as payment is at the beginning of the period)
+                        // FV = P * [((1 + r)^n - 1) / r] * (1 + r)
+                        futureValue += monthlyContribution * ((Math.pow((1 + monthlyRate), totalMonths) - 1) / monthlyRate) * (1 + monthlyRate);
+                    }
+
+                    const totalInvested = initialCapital + (monthlyContribution * totalMonths);
+                    const totalInterest = futureValue - totalInvested;
+
+                    state.investment.projectedFutureValue = futureValue; // Store projected value
+                    saveState();
+
+                    investmentResultEl.innerHTML = `
+                        <p class="font-bold">Valor Total Acumulado: <span class="text-emerald-600">R$ ${futureValue.toFixed(2)}</span></p>
+                        <p class="text-sm text-slate-600">Total Investido: R$ ${totalInvested.toFixed(2)}</p>
+                        <p class="text-sm text-slate-600">Juros Ganhos: R$ ${totalInterest.toFixed(2)}</p>
+                    `;
                 }
-
-                const monthlyRate = annualRate / 100 / 12;
-                const totalMonths = periodYears * 12;
-
-                let futureValue = initialCapital * Math.pow((1 + monthlyRate), totalMonths);
-                if (monthlyContribution > 0) {
-                    // Future value of a series of payments (annuity due, as payment is at the beginning of the period)
-                    // FV = P * [((1 + r)^n - 1) / r] * (1 + r)
-                    futureValue += monthlyContribution * ((Math.pow((1 + monthlyRate), totalMonths) - 1) / monthlyRate) * (1 + monthlyRate);
-                }
-
-                const totalInvested = initialCapital + (monthlyContribution * totalMonths);
-                const totalInterest = futureValue - totalInvested;
-
-                state.investment.projectedFutureValue = futureValue; // Store projected value
-                saveState();
-
-                investmentResultEl.innerHTML = `
-                    <p class="font-bold">Valor Total Acumulado: <span class="text-emerald-600">R$ ${futureValue.toFixed(2)}</span></p>
-                    <p class="text-sm text-slate-600">Total Investido: R$ ${totalInvested.toFixed(2)}</p>
-                    <p class="text-sm text-slate-600">Juros Ganhos: R$ ${totalInterest.toFixed(2)}</p>
-                `;
             };
 
             const calculateFinancing = () => {
-                const propertyValue = parseFloat(propertyValueInput.value) || 0;
-                const downPaymentPercentage = parseFloat(downPaymentPercentageInput.value) || 0;
-                const annualRate = parseFloat(annualFinancingRateInput.value) || 0;
-                const periodYears = parseFloat(financingPeriodYearsInput.value) || 0;
+                if (financingResultEl) {
+                    const propertyValue = parseFloat(propertyValueInput.value) || 0;
+                    const downPaymentPercentage = parseFloat(downPaymentPercentageInput.value) || 0;
+                    const annualRate = parseFloat(annualFinancingRateInput.value) || 0;
+                    const periodYears = parseFloat(financingPeriodYearsInput.value) || 0;
 
-                state.financing = { propertyValue, downPaymentPercentage, annualFinancingRate: annualRate, periodYears };
-                saveState();
+                    state.financing = { propertyValue, downPaymentPercentage, annualFinancingRate: annualRate, periodYears };
+                    saveState();
 
-                if (propertyValue <= 0 || periodYears <= 0) {
-                    financingResultEl.innerHTML = '<p>Preencha os campos de valor do bem e período para simular seu financiamento.</p>';
-                    state.financing.projectedMonthlyPayment = 0; // Reset projected value
-                    return;
+                    if (propertyValue <= 0 || periodYears <= 0) {
+                        financingResultEl.innerHTML = '<p>Preencha os campos de valor do bem e período para simular seu financiamento.</p>';
+                        state.financing.projectedMonthlyPayment = 0; // Reset projected value
+                        return;
+                    }
+
+                    const downPayment = propertyValue * (downPaymentPercentage / 100);
+                    const loanAmount = propertyValue - downPayment;
+
+                    if (loanAmount <= 0) {
+                        financingResultEl.innerHTML = '<p>O valor da entrada é igual ou maior que o valor do bem. Não há financiamento necessário.</p>';
+                        state.financing.projectedMonthlyPayment = 0; // Reset projected value
+                        return;
+                    }
+
+                    const monthlyRate = annualRate / 100 / 12;
+                    const totalMonths = periodYears * 12;
+
+                    let monthlyPayment = 0;
+                    if (monthlyRate > 0) {
+                        // Formula para Tabela Price (PMT = P * [i * (1 + i)^n] / [(1 + i)^n – 1])
+                        monthlyPayment = loanAmount * (monthlyRate * Math.pow((1 + monthlyRate), totalMonths)) / (Math.pow((1 + monthlyRate), totalMonths) - 1);
+                    } else {
+                        monthlyPayment = loanAmount / totalMonths; // Sem juros
+                    }
+
+                    const totalPaid = monthlyPayment * totalMonths;
+                    const totalInterest = totalPaid - loanAmount;
+
+                    state.financing.projectedMonthlyPayment = monthlyPayment; // Store projected value
+                    saveState();
+
+                    financingResultEl.innerHTML = `
+                        <p class="font-bold">Valor da Parcela Mensal: <span class="text-emerald-600">R$ ${monthlyPayment.toFixed(2)}</span></p>
+                        <p class="text-sm text-slate-600">Valor Financiado: R$ ${loanAmount.toFixed(2)}</p>
+                        <p class="text-sm text-slate-600">Custo Total do Financiamento (com juros): <span class="text-red-500">R$ ${totalPaid.toFixed(2)}</span></p>
+                        <p class="text-sm text-slate-600">Total de Juros Pagos: R$ ${totalInterest.toFixed(2)}</p>
+                    `;
                 }
-
-                const downPayment = propertyValue * (downPaymentPercentage / 100);
-                const loanAmount = propertyValue - downPayment;
-
-                if (loanAmount <= 0) {
-                    financingResultEl.innerHTML = '<p>O valor da entrada é igual ou maior que o valor do bem. Não há financiamento necessário.</p>';
-                    state.financing.projectedMonthlyPayment = 0; // Reset projected value
-                    return;
-                }
-
-                const monthlyRate = annualRate / 100 / 12;
-                const totalMonths = periodYears * 12;
-
-                let monthlyPayment = 0;
-                if (monthlyRate > 0) {
-                    // Formula para Tabela Price (PMT = P * [i * (1 + i)^n] / [(1 + i)^n – 1])
-                    monthlyPayment = loanAmount * (monthlyRate * Math.pow((1 + monthlyRate), totalMonths)) / (Math.pow((1 + monthlyRate), totalMonths) - 1);
-                } else {
-                    monthlyPayment = loanAmount / totalMonths; // Sem juros
-                }
-
-                const totalPaid = monthlyPayment * totalMonths;
-                const totalInterest = totalPaid - loanAmount;
-
-                state.financing.projectedMonthlyPayment = monthlyPayment; // Store projected value
-                saveState();
-
-                financingResultEl.innerHTML = `
-                    <p class="font-bold">Valor da Parcela Mensal: <span class="text-emerald-600">R$ ${monthlyPayment.toFixed(2)}</span></p>
-                    <p class="text-sm text-slate-600">Valor Financiado: R$ ${loanAmount.toFixed(2)}</p>
-                    <p class="text-sm text-slate-600">Custo Total do Financiamento (com juros): <span class="text-red-500">R$ ${totalPaid.toFixed(2)}</span></p>
-                    <p class="text-sm text-slate-600">Total de Juros Pagos: R$ ${totalInterest.toFixed(2)}</p>
-                `;
             };
 
             const renderFutureEvents = () => {
-                futureEventListEl.innerHTML = '';
-                if (state.futureEvents.length === 0) {
-                    futureEventListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum evento futuro adicionado.</p>';
-                } else {
-                    state.futureEvents.sort((a, b) => a.date - b.date).forEach((event, index) => {
-                        const eventEl = document.createElement('div');
-                        eventEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
-                        const eventDate = new Date(event.date); // Ensure it's a Date object
-                        eventEl.innerHTML = `
-                            <span>${event.name} (${eventDate.toLocaleDateString('pt-BR')})</span>
-                            <div class="flex items-center gap-2">
-                                <span class="font-medium ${event.type === 'income' ? 'text-green-600' : 'text-red-500'}">
-                                    ${event.type === 'income' ? '+' : '-'} R$ ${event.amount.toFixed(2)}
-                                </span>
-                                <button data-id="${event.id}" class="remove-future-event text-red-500 hover:text-red-700 text-lg">&times;</button>
-                            </div>
-                        `;
-                        futureEventListEl.appendChild(eventEl);
-                    });
+                if (futureEventListEl) {
+                    futureEventListEl.innerHTML = '';
+                    if (state.futureEvents.length === 0) {
+                        futureEventListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum evento futuro adicionado.</p>';
+                    } else {
+                        state.futureEvents.sort((a, b) => a.date - b.date).forEach((event, index) => {
+                            const eventEl = document.createElement('div');
+                            eventEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
+                            const eventDate = new Date(event.date); // Ensure it's a Date object
+                            eventEl.innerHTML = `
+                                <span>${event.name} (${eventDate.toLocaleDateString('pt-BR')})</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-medium ${event.type === 'income' ? 'text-green-600' : 'text-red-500'}">
+                                        ${event.type === 'income' ? '+' : '-'} R$ ${event.amount.toFixed(2)}
+                                    </span>
+                                    <button data-id="${event.id}" class="remove-future-event text-red-500 hover:text-red-700 text-lg">&times;</button>
+                                </div>
+                            `;
+                            futureEventListEl.appendChild(eventEl);
+                        });
+                    }
                 }
             };
 
             const calculateCashFlowProjection = () => {
+                if (!projectionStartMonthSelect || !projectionStartYearInput || !projectionMonthsInput || !annualCashFlowCalendar || !cashFlowChartCanvas) {
+                    // Elements not found, skip calculation to prevent errors
+                    return;
+                }
+
                 const startMonth = parseInt(projectionStartMonthSelect.value);
                 const startYear = parseInt(projectionStartYearInput.value);
                 const numMonths = parseInt(projectionMonthsInput.value);
@@ -1292,7 +1316,9 @@
                 let currentBalance = state.income - totalMonthlyExpensesFromBudget; 
 
                 annualCashFlowCalendar.innerHTML = ''; // Clear previous calendar
-                projectionTableBody.innerHTML = ''; // Clear previous table (if still used)
+                if (projectionTableBody) { // Check if table body exists
+                    projectionTableBody.innerHTML = ''; // Clear previous table (if still used)
+                }
 
                 const monthsNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
@@ -1343,94 +1369,98 @@
                     annualCashFlowCalendar.appendChild(monthCard);
 
                     // Populate the table (if still desired, otherwise remove this block)
-                    const row = document.createElement('tr');
-                    row.className = 'border-b last:border-b-0';
-                    row.innerHTML = `
-                        <td class="py-2 px-3">${monthLabel}</td>
-                        <td class="py-2 px-3">R$ ${monthStartBalance.toFixed(2)}</td>
-                        <td class="py-2 px-3 text-green-600">R$ ${totalMonthlyIncome.toFixed(2)}</td>
-                        <td class="py-2 px-3 text-red-500">R$ ${totalMonthlyExpenses.toFixed(2)}</td>
-                        <td class="py-2 px-3 font-bold ${currentBalance < 0 ? 'text-red-600' : 'text-emerald-600'}">R$ ${currentBalance.toFixed(2)}</td>
-                    `;
-                    projectionTableBody.appendChild(row);
+                    if (projectionTableBody) {
+                        const row = document.createElement('tr');
+                        row.className = 'border-b last:border-b-0';
+                        row.innerHTML = `
+                            <td class="py-2 px-3">${monthLabel}</td>
+                            <td class="py-2 px-3">R$ ${monthStartBalance.toFixed(2)}</td>
+                            <td class="py-2 px-3 text-green-600">R$ ${totalMonthlyIncome.toFixed(2)}</td>
+                            <td class="py-2 px-3 text-red-500">R$ ${totalMonthlyExpenses.toFixed(2)}</td>
+                            <td class="py-2 px-3 font-bold ${currentBalance < 0 ? 'text-red-600' : 'text-emerald-600'}">R$ ${currentBalance.toFixed(2)}</td>
+                        `;
+                        projectionTableBody.appendChild(row);
+                    }
                 }
 
                 // Renderizar Gráfico de Fluxo de Caixa
                 if (cashFlowChart) {
                     cashFlowChart.destroy();
                 }
-                const ctx = cashFlowChartCanvas.getContext('2d');
-                cashFlowChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: 'Receitas Totais',
-                                data: incomeData,
-                                borderColor: '#34D399',
-                                backgroundColor: 'rgba(52, 211, 153, 0.2)',
-                                fill: true,
-                                tension: 0.3
-                            },
-                            {
-                                label: 'Despesas Totais',
-                                data: expenseData,
-                                borderColor: '#EF4444',
-                                backgroundColor: 'rgba(239, 68, 68, 0.2)',
-                                fill: true,
-                                tension: 0.3
-                            },
-                            {
-                                label: 'Saldo Final',
-                                data: balanceData,
-                                borderColor: '#60A5FA',
-                                backgroundColor: 'rgba(96, 165, 250, 0.2)',
-                                fill: false,
-                                tension: 0.3,
-                                borderWidth: 2
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
+                if (cashFlowChartCanvas) {
+                    const ctx = cashFlowChartCanvas.getContext('2d');
+                    cashFlowChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Receitas Totais',
+                                    data: incomeData,
+                                    borderColor: '#34D399',
+                                    backgroundColor: 'rgba(52, 211, 153, 0.2)',
+                                    fill: true,
+                                    tension: 0.3
+                                },
+                                {
+                                    label: 'Despesas Totais',
+                                    data: expenseData,
+                                    borderColor: '#EF4444',
+                                    backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                                    fill: true,
+                                    tension: 0.3
+                                },
+                                {
+                                    label: 'Saldo Final',
+                                    data: balanceData,
+                                    borderColor: '#60A5FA',
+                                    backgroundColor: 'rgba(96, 165, 250, 0.2)',
+                                    fill: false,
+                                    tension: 0.3,
+                                    borderWidth: 2
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed.y !== null) {
+                                                label += 'R$ ' + context.parsed.y.toFixed(2);
+                                            }
+                                            return label;
                                         }
-                                        if (context.parsed.y !== null) {
-                                            label += 'R$ ' + context.parsed.y.toFixed(2);
-                                        }
-                                        return label;
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: false,
+                                    title: {
+                                        display: true,
+                                        text: 'Valor (R$)'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Mês/Ano'
                                     }
                                 }
                             }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: false,
-                                title: {
-                                    display: true,
-                                    text: 'Valor (R$)'
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Mês/Ano'
-                                }
-                            }
                         }
-                    }
-                });
+                    });
+                }
             };
 
             const calculateNetWorth = () => {
@@ -1438,358 +1468,390 @@
                 let totalLiabilities = state.liabilities.reduce((sum, liability) => sum + liability.value, 0);
                 let currentNetWorth = totalAssets - totalLiabilities;
 
-                totalAssetsEl.textContent = `R$ ${totalAssets.toFixed(2)}`;
-                totalLiabilitiesEl.textContent = `R$ ${totalLiabilities.toFixed(2)}`;
-                currentNetWorthEl.textContent = `R$ ${currentNetWorth.toFixed(2)}`;
-                currentNetWorthEl.classList.toggle('text-red-500', currentNetWorth < 0);
-                currentNetWorthEl.classList.toggle('text-emerald-600', currentNetWorth >= 0);
+                if (totalAssetsEl) totalAssetsEl.textContent = `R$ ${totalAssets.toFixed(2)}`;
+                if (totalLiabilitiesEl) totalLiabilitiesEl.textContent = `R$ ${totalLiabilities.toFixed(2)}`;
+                if (currentNetWorthEl) {
+                    currentNetWorthEl.textContent = `R$ ${currentNetWorth.toFixed(2)}`;
+                    currentNetWorthEl.classList.toggle('text-red-500', currentNetWorth < 0);
+                    currentNetWorthEl.classList.toggle('text-emerald-600', currentNetWorth >= 0);
+                }
 
                 renderNetWorthHistory();
             };
 
             const renderAssets = () => {
-                assetListEl.innerHTML = '';
-                if (state.assets.length === 0) {
-                    assetListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum ativo adicionado.</p>';
-                } else {
-                    state.assets.forEach((asset, index) => {
-                        const assetEl = document.createElement('div');
-                        assetEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
-                        assetEl.innerHTML = `
-                            <span>${asset.name}</span>
-                            <div class="flex items-center gap-2">
-                                <span class="font-medium text-emerald-600">R$ ${asset.value.toFixed(2)}</span>
-                                <button data-id="${asset.id}" class="remove-asset text-red-500 hover:text-red-700 text-lg">&times;</button>
-                            </div>
-                        `;
-                        assetListEl.appendChild(assetEl);
-                    });
+                if (assetListEl) {
+                    assetListEl.innerHTML = '';
+                    if (state.assets.length === 0) {
+                        assetListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum ativo adicionado.</p>';
+                    } else {
+                        state.assets.forEach((asset, index) => {
+                            const assetEl = document.createElement('div');
+                            assetEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
+                            assetEl.innerHTML = `
+                                <span>${asset.name}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-medium text-emerald-600">R$ ${asset.value.toFixed(2)}</span>
+                                    <button data-id="${asset.id}" class="remove-asset text-red-500 hover:text-red-700 text-lg">&times;</button>
+                                </div>
+                            `;
+                            assetListEl.appendChild(assetEl);
+                        });
+                    }
                 }
             };
 
             const renderLiabilities = () => {
-                liabilityListEl.innerHTML = '';
-                if (state.liabilities.length === 0) {
-                    liabilityListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum passivo adicionado.</p>';
-                } else {
-                    state.liabilities.forEach((liability, index) => {
-                        const liabilityEl = document.createElement('div');
-                        liabilityEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
-                        liabilityEl.innerHTML = `
-                            <span>${liability.name}</span>
-                            <div class="flex items-center gap-2">
-                                <span class="font-medium text-red-500">R$ ${liability.value.toFixed(2)}</span>
-                                <button data-id="${liability.id}" class="remove-liability text-red-500 hover:text-red-700 text-lg">&times;</button>
-                            </div>
-                        `;
-                        liabilityListEl.appendChild(liabilityEl);
-                    });
+                if (liabilityListEl) {
+                    liabilityListEl.innerHTML = '';
+                    if (state.liabilities.length === 0) {
+                        liabilityListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum passivo adicionado.</p>';
+                    } else {
+                        state.liabilities.forEach((liability, index) => {
+                            const liabilityEl = document.createElement('div');
+                            liabilityEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
+                            liabilityEl.innerHTML = `
+                                <span>${liability.name}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-medium text-red-500">R$ ${liability.value.toFixed(2)}</span>
+                                    <button data-id="${liability.id}" class="remove-liability text-red-500 hover:text-red-700 text-lg">&times;</button>
+                                </div>
+                            `;
+                            liabilityListEl.appendChild(liabilityEl);
+                        });
+                    }
                 }
             };
 
             const renderNetWorthHistory = () => {
-                netWorthHistoryListEl.innerHTML = '';
-                if (state.netWorthHistory.length === 0) {
-                    netWorthHistoryListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum registro de patrimônio.</p>';
-                } else {
-                    state.netWorthHistory.sort((a, b) => b.date - a.date).forEach(item => { // Sort descending by date
-                        const historyEl = document.createElement('div');
-                        historyEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
-                        const itemDate = new Date(item.date);
-                        historyEl.innerHTML = `
-                            <span>${itemDate.toLocaleDateString('pt-BR')}</span>
-                            <span class="font-medium ${item.value < 0 ? 'text-red-600' : 'text-emerald-600'}">R$ ${item.value.toFixed(2)}</span>
-                        `;
-                        netWorthHistoryListEl.appendChild(historyEl);
-                    });
+                if (netWorthHistoryListEl) {
+                    netWorthHistoryListEl.innerHTML = '';
+                    if (state.netWorthHistory.length === 0) {
+                        netWorthHistoryListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum registro de patrimônio.</p>';
+                    } else {
+                        state.netWorthHistory.sort((a, b) => b.date - a.date).forEach(item => { // Sort descending by date
+                            const historyEl = document.createElement('div');
+                            historyEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
+                            const itemDate = new Date(item.date);
+                            historyEl.innerHTML = `
+                                <span>${itemDate.toLocaleDateString('pt-BR')}</span>
+                                <span class="font-medium ${item.value < 0 ? 'text-red-600' : 'text-emerald-600'}">R$ ${item.value.toFixed(2)}</span>
+                            `;
+                            netWorthHistoryListEl.appendChild(historyEl);
+                        });
+                    }
                 }
 
                 // Renderizar Gráfico de Patrimônio Líquido
                 if (netWorthChart) {
                     netWorthChart.destroy();
                 }
-
-                const labels = state.netWorthHistory.map(item => new Date(item.date).toLocaleDateString('pt-BR'));
-                const data = state.netWorthHistory.map(item => item.value);
-
-                const ctx = netWorthChartCanvas.getContext('2d');
-                netWorthChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Patrimônio Líquido',
-                            data: data,
-                            borderColor: '#10B981', // Emerald 500
-                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                            fill: true,
-                            tension: 0.3
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false,
+                if (netWorthChartCanvas) {
+                    const ctx = netWorthChartCanvas.getContext('2d');
+                    netWorthChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Patrimônio Líquido',
+                                data: data,
+                                borderColor: '#10B981', // Emerald 500
+                                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                                fill: true,
+                                tension: 0.3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false,
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed.y !== null) {
+                                                label += 'R$ ' + context.parsed.y.toFixed(2);
+                                            }
+                                            return label;
+                                        }
+                                    }
+                                }
                             },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.parsed.y !== null) {
-                                            label += 'R$ ' + context.parsed.y.toFixed(2);
-                                        }
-                                        return label;
+                            scales: {
+                                y: {
+                                    beginAtZero: false,
+                                    title: {
+                                        display: true,
+                                        text: 'Valor (R$)'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Data'
                                     }
                                 }
                             }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: false,
-                                title: {
-                                    display: true,
-                                    text: 'Valor (R$)'
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Data'
-                                }
-                            }
                         }
-                    }
-                });
+                    });
+                }
             };
 
             const renderSubscriptions = () => {
-                subscriptionListEl.innerHTML = '';
-                let totalActive = 0;
-                let totalMonthlyCost = 0;
+                if (subscriptionListEl) {
+                    subscriptionListEl.innerHTML = '';
+                    let totalActive = 0;
+                    let totalMonthlyCost = 0;
 
-                if (state.subscriptions.length === 0) {
-                    subscriptionListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhuma assinatura adicionada.</p>';
-                } else {
-                    state.subscriptions.forEach((sub, index) => {
-                        const subEl = document.createElement('div');
-                        subEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
-                        const monthlyAmount = sub.frequency === 'yearly' ? sub.amount / 12 : sub.amount;
-                        totalMonthlyCost += monthlyAmount;
-                        totalActive++;
+                    if (state.subscriptions.length === 0) {
+                        subscriptionListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhuma assinatura adicionada.</p>';
+                    } else {
+                        state.subscriptions.forEach((sub, index) => {
+                            const subEl = document.createElement('div');
+                            subEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
+                            const monthlyAmount = sub.frequency === 'yearly' ? sub.amount / 12 : sub.amount;
+                            totalMonthlyCost += monthlyAmount;
+                            totalActive++;
 
-                        subEl.innerHTML = `
-                            <span>${sub.name} (R$ ${sub.amount.toFixed(2)} ${sub.frequency === 'yearly' ? 'anual' : 'mensal'})</span>
-                            <div class="flex items-center gap-2">
-                                <span class="font-medium text-slate-700">R$ ${monthlyAmount.toFixed(2)}/mês</span>
-                                <button data-id="${sub.id}" class="remove-subscription text-red-500 hover:text-red-700 text-lg">&times;</button>
-                            </div>
-                        `;
-                        subscriptionListEl.appendChild(subEl);
-                    });
+                            subEl.innerHTML = `
+                                <span>${sub.name} (R$ ${sub.amount.toFixed(2)} ${sub.frequency === 'yearly' ? 'anual' : 'mensal'})</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-medium text-slate-700">R$ ${monthlyAmount.toFixed(2)}/mês</span>
+                                    <button data-id="${sub.id}" class="remove-subscription text-red-500 hover:text-red-700 text-lg">&times;</button>
+                                </div>
+                            `;
+                            subscriptionListEl.appendChild(subEl);
+                        });
+                    }
+                    if (totalActiveSubscriptionsEl) totalActiveSubscriptionsEl.textContent = totalActive;
+                    if (totalMonthlySubscriptionsCostEl) totalMonthlySubscriptionsCostEl.textContent = `R$ ${totalMonthlyCost.toFixed(2)}`;
+                    if (totalMonthlySubscriptionsCostDisplay) totalMonthlySubscriptionsCostDisplay.textContent = `${totalMonthlyCost.toFixed(2)}`; // Update top display
                 }
-                totalActiveSubscriptionsEl.textContent = totalActive;
-                totalMonthlySubscriptionsCostEl.textContent = `R$ ${totalMonthlyCost.toFixed(2)}`;
-                totalMonthlySubscriptionsCostDisplay.textContent = `${totalMonthlyCost.toFixed(2)}`; // Update top display
             };
 
             // Função para calcular e exibir o total economizado
             const calculateTotalEconomizado = () => {
                 let totalSavedGoals = state.goals.reduce((sum, goal) => sum + goal.savedAmount, 0);
                 
-                totalEconomizadoDisplay.textContent = `${totalSavedGoals.toFixed(2)}`;
+                if (totalEconomizadoDisplay) totalEconomizadoDisplay.textContent = `${totalSavedGoals.toFixed(2)}`;
 
-                if (state.extraPayment > 0) {
-                    extraPaymentMessage.textContent = `(Você está pagando R$ ${state.extraPayment.toFixed(2)} extra/mês em dívidas, acelerando a quitação!)`;
-                } else {
-                    extraPaymentMessage.textContent = '';
+                if (extraPaymentMessage) {
+                    if (state.extraPayment > 0) {
+                        extraPaymentMessage.textContent = `(Você está pagando R$ ${state.extraPayment.toFixed(2)} extra/mês em dívidas, acelerando a quitação!)`;
+                    } else {
+                        extraPaymentMessage.textContent = '';
+                    }
                 }
             };
 
             // Nova função para atualizar o resumo de receitas e gastos no topo
             const updateSummaryIncomeExpenses = () => {
                 const totalExpensesFromBudget = state.expenses.reduce((sum, exp) => sum + exp.amount, 0);
-                summaryIncomeDisplay.textContent = `${state.income.toFixed(2)}`;
-                summaryExpensesDisplay.textContent = `${totalExpensesFromBudget.toFixed(2)}`;
+                if (summaryIncomeDisplay) summaryIncomeDisplay.textContent = `${state.income.toFixed(2)}`;
+                if (summaryExpensesDisplay) summaryExpensesDisplay.textContent = `${totalExpensesFromBudget.toFixed(2)}`;
             };
 
             // Funções para renderizar os detalhes expansíveis
             const renderDetailedSavedGoals = () => {
-                const detailListEl = document.getElementById('detail-economizado');
-                detailListEl.innerHTML = '';
-                if (state.goals.length === 0) {
-                    detailListEl.innerHTML = '<p class="detail-item">Nenhuma meta adicionada.</p>';
-                } else {
-                    state.goals.forEach(goal => {
-                        const itemEl = document.createElement('div');
-                        itemEl.className = 'detail-item';
-                        itemEl.innerHTML = `
-                            <span>${goal.name}</span>
-                            <span class="font-medium">R$ ${goal.savedAmount.toFixed(2)}</span>
-                        `;
-                        detailListEl.appendChild(itemEl);
-                    });
+                const detailListEl = getElement('detail-economizado');
+                if (detailListEl) {
+                    detailListEl.innerHTML = '';
+                    if (state.goals.length === 0) {
+                        detailListEl.innerHTML = '<p class="detail-item">Nenhuma meta adicionada.</p>';
+                    } else {
+                        state.goals.forEach(goal => {
+                            const itemEl = document.createElement('div');
+                            itemEl.className = 'detail-item';
+                            itemEl.innerHTML = `
+                                <span>${goal.name}</span>
+                                <span class="font-medium">R$ ${goal.savedAmount.toFixed(2)}</span>
+                            `;
+                            detailListEl.appendChild(itemEl);
+                        });
+                    }
                 }
             };
 
             const renderDetailedSubscriptions = () => {
-                const detailListEl = document.getElementById('detail-assinaturas');
-                detailListEl.innerHTML = '';
-                if (state.subscriptions.length === 0) {
-                    detailListEl.innerHTML = '<p class="detail-item">Nenhuma assinatura adicionada.</p>';
-                } else {
-                    state.subscriptions.forEach(sub => {
-                        const itemEl = document.createElement('div');
-                        itemEl.className = 'detail-item';
-                        const monthlyAmount = sub.frequency === 'yearly' ? sub.amount / 12 : sub.amount;
-                        itemEl.innerHTML = `
-                            <span>${sub.name}</span>
-                            <span class="font-medium">R$ ${monthlyAmount.toFixed(2)}/mês</span>
-                        `;
-                        detailListEl.appendChild(itemEl);
-                    });
+                const detailListEl = getElement('detail-assinaturas');
+                if (detailListEl) {
+                    detailListEl.innerHTML = '';
+                    if (state.subscriptions.length === 0) {
+                        detailListEl.innerHTML = '<p class="detail-item">Nenhuma assinatura adicionada.</p>';
+                    } else {
+                        state.subscriptions.forEach(sub => {
+                            const itemEl = document.createElement('div');
+                            itemEl.className = 'detail-item';
+                            const monthlyAmount = sub.frequency === 'yearly' ? sub.amount / 12 : sub.amount;
+                            itemEl.innerHTML = `
+                                <span>${sub.name}</span>
+                                <span class="font-medium">R$ ${monthlyAmount.toFixed(2)}/mês</span>
+                            `;
+                            detailListEl.appendChild(itemEl);
+                        });
+                    }
                 }
             };
 
             const renderDetailedIncome = () => {
-                const detailListEl = document.getElementById('detail-receitas');
-                detailListEl.innerHTML = '';
-                if (state.income === 0 && state.futureEvents.filter(e => e.type === 'income').length === 0) {
-                    detailListEl.innerHTML = '<p class="detail-item">Nenhuma receita registrada.</p>';
-                } else {
-                    const itemEl = document.createElement('div');
-                    itemEl.className = 'detail-item';
-                    itemEl.innerHTML = `
-                        <span>Renda Mensal Fixa</span>
-                        <span class="font-medium">R$ ${state.income.toFixed(2)}</span>
-                    `;
-                    detailListEl.appendChild(itemEl);
-                    state.futureEvents.filter(e => e.type === 'income').forEach(event => {
-                        const eventDate = new Date(event.date);
-                        const eventItemEl = document.createElement('div');
-                        eventItemEl.className = 'detail-item';
-                        eventItemEl.innerHTML = `
-                            <span>${event.name} (${eventDate.toLocaleDateString('pt-BR')})</span>
-                            <span class="font-medium">R$ ${event.amount.toFixed(2)}</span>
+                const detailListEl = getElement('detail-receitas');
+                if (detailListEl) {
+                    detailListEl.innerHTML = '';
+                    if (state.income === 0 && state.futureEvents.filter(e => e.type === 'income').length === 0) {
+                        detailListEl.innerHTML = '<p class="detail-item">Nenhuma receita registrada.</p>';
+                    } else {
+                        const itemEl = document.createElement('div');
+                        itemEl.className = 'detail-item';
+                        itemEl.innerHTML = `
+                            <span>Renda Mensal Fixa</span>
+                            <span class="font-medium">R$ ${state.income.toFixed(2)}</span>
                         `;
-                        detailListEl.appendChild(eventItemEl);
-                    });
+                        detailListEl.appendChild(itemEl);
+                        state.futureEvents.filter(e => e.type === 'income').forEach(event => {
+                            const eventDate = new Date(event.date);
+                            const eventItemEl = document.createElement('div');
+                            eventItemEl.className = 'detail-item';
+                            eventItemEl.innerHTML = `
+                                <span>${event.name} (${eventDate.toLocaleDateString('pt-BR')})</span>
+                                <span class="font-medium">R$ ${event.amount.toFixed(2)}</span>
+                            `;
+                            detailListEl.appendChild(eventItemEl);
+                        });
+                    }
                 }
             };
 
             const renderDetailedExpenses = () => {
-                const detailListEl = document.getElementById('detail-despesas');
-                detailListEl.innerHTML = '';
-                if (state.expenses.length === 0) {
-                    detailListEl.innerHTML = '<p class="detail-item">Nenhuma despesa adicionada.</p>';
-                } else {
-                    state.expenses.forEach(exp => {
-                        const itemEl = document.createElement('div');
-                        itemEl.className = 'detail-item';
-                        itemEl.innerHTML = `
-                            <span>${exp.name} (${exp.category})</span>
-                            <span class="font-medium">R$ ${exp.amount.toFixed(2)}</span>
-                        `;
-                        detailListEl.appendChild(itemEl);
-                    });
+                const detailListEl = getElement('detail-despesas');
+                if (detailListEl) {
+                    detailListEl.innerHTML = '';
+                    if (state.expenses.length === 0) {
+                        detailListEl.innerHTML = '<p class="detail-item">Nenhuma despesa adicionada.</p>';
+                    } else {
+                        state.expenses.forEach(exp => {
+                            const itemEl = document.createElement('div');
+                            itemEl.className = 'detail-item';
+                            itemEl.innerHTML = `
+                                <span>${exp.name} (${exp.category})</span>
+                                <span class="font-medium">R$ ${exp.amount.toFixed(2)}</span>
+                            `;
+                            detailListEl.appendChild(itemEl);
+                        });
+                    }
                 }
             };
 
             // Função para renderizar o Resumo Geral
             const renderResumoGeral = () => {
                 // Resumo do Orçamento
+                if (resumoIncome) resumoIncome.textContent = `R$ ${state.income.toFixed(2)}`;
                 const totalExpensesSummary = state.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+                if (resumoTotalExpenses) resumoTotalExpenses.textContent = `R$ ${totalExpensesSummary.toFixed(2)}`;
                 const balanceSummary = state.income - totalExpensesSummary;
-                resumoIncome.textContent = `R$ ${state.income.toFixed(2)}`;
-                resumoTotalExpenses.textContent = `R$ ${totalExpensesSummary.toFixed(2)}`;
-                resumoBalance.textContent = `R$ ${balanceSummary.toFixed(2)}`;
-                resumoBalance.classList.toggle('text-red-600', balanceSummary < 0);
-                resumoBalance.classList.toggle('text-emerald-600', balanceSummary >= 0);
+                if (resumoBalance) {
+                    resumoBalance.textContent = `R$ ${balanceSummary.toFixed(2)}`;
+                    resumoBalance.classList.toggle('text-red-600', balanceSummary < 0);
+                    resumoBalance.classList.toggle('text-emerald-600', balanceSummary >= 0);
+                }
 
                 // Re-criar barras de comparação para o resumo
-                resumoBudgetBars.innerHTML = '';
-                const income = state.income > 0 ? state.income : 1;
-                const percentages = {
-                    necessidades: (state.expenses.filter(e => e.category === 'necessidades').reduce((s, e) => s + e.amount, 0) / income) * 100,
-                    desejos: (state.expenses.filter(e => e.category === 'desejos').reduce((s, e) => s + e.amount, 0) / income) * 100,
-                    poupanca: (balanceSummary > 0 ? balanceSummary / income : 0) * 100,
-                };
-                const createResumoBar = (label, userPercent, targetPercent, color) => {
-                    const barHtml = `
-                        <div class="mb-1">
-                            <div class="flex justify-between text-xs">
-                                <span>${label}</span>
-                                <span>${userPercent.toFixed(1)}% (Meta: ${targetPercent}%)</span>
+                if (resumoBudgetBars) {
+                    resumoBudgetBars.innerHTML = '';
+                    const income = state.income > 0 ? state.income : 1;
+                    const percentages = {
+                        necessidades: (state.expenses.filter(e => e.category === 'necessidades').reduce((s, e) => s + e.amount, 0) / income) * 100,
+                        desejos: (state.expenses.filter(e => e.category === 'desejos').reduce((s, e) => s + e.amount, 0) / income) * 100,
+                        poupanca: (balanceSummary > 0 ? balanceSummary / income : 0) * 100,
+                    };
+                    const createResumoBar = (label, userPercent, targetPercent, color) => {
+                        const barHtml = `
+                            <div class="mb-1">
+                                <div class="flex justify-between text-xs">
+                                    <span>${label}</span>
+                                    <span>${userPercent.toFixed(1)}% (Meta: ${targetPercent}%)</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="h-2 rounded-full" style="width: ${Math.min(userPercent, 100)}%; background-color: ${color};"></div>
+                                </div>
                             </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="h-2 rounded-full" style="width: ${Math.min(userPercent, 100)}%; background-color: ${color};"></div>
-                            </div>
-                        </div>
-                    `;
-                    resumoBudgetBars.innerHTML += barHtml;
+                        `;
+                        resumoBudgetBars.innerHTML += barHtml;
+                    }
+                    createResumoBar('Necessidades', percentages.necessidades, 50, '#34D399');
+                    createResumoBar('Desejos', percentages.desejos, 30, '#FBBF24');
+                    createResumoBar('Poupança/Saldo', percentages.poupanca, 20, '#60A5FA');
                 }
-                createResumoBar('Necessidades', percentages.necessidades, 50, '#34D399');
-                createResumoBar('Desejos', percentages.desejos, 30, '#FBBF24');
-                createResumoBar('Poupança/Saldo', percentages.poupanca, 20, '#60A5FA');
 
 
                 // Resumo de Dívidas
-                resumoDebtStrategy.textContent = state.debtStrategy === 'snowball' ? 'Bola de Neve' : 'Avalancha';
-                resumoNumDebts.textContent = state.debts.length;
-                resumoExtraPayment.textContent = `R$ ${state.extraPayment.toFixed(2)}`;
+                if (resumoDebtStrategy) resumoDebtStrategy.textContent = state.debtStrategy === 'snowball' ? 'Bola de Neve' : 'Avalancha';
+                if (resumoNumDebts) resumoNumDebts.textContent = state.debts.length;
+                if (resumoExtraPayment) resumoExtraPayment.textContent = `R$ ${state.extraPayment.toFixed(2)}`;
                 let sortedDebtsForResumo = [...state.debts];
                 if (state.debtStrategy === 'snowball') {
                     sortedDebtsForResumo.sort((a, b) => a.total - b.total);
                 } else {
                     sortedDebtsForResumo.sort((a, b) => b.rate - a.rate);
                 }
-                resumoPriorityDebt.textContent = sortedDebtsForResumo.length > 0 ? `${sortedDebtsForResumo[0].name} (R$ ${sortedDebtsForResumo[0].total.toFixed(2)})` : 'N/A';
-                resumoPriorityDebt.classList.toggle('text-red-500', sortedDebtsForResumo.length > 0);
+                if (resumoPriorityDebt) {
+                    resumoPriorityDebt.textContent = sortedDebtsForResumo.length > 0 ? `${sortedDebtsForResumo[0].name} (R$ ${sortedDebtsForResumo[0].total.toFixed(2)})` : 'N/A';
+                    resumoPriorityDebt.classList.toggle('text-red-500', sortedDebtsForResumo.length > 0);
+                }
 
 
                 // Resumo de Metas
-                resumoNumGoals.textContent = state.goals.length;
-                resumoTotalSavedGoals.textContent = `R$ ${state.goals.reduce((sum, goal) => sum + goal.savedAmount, 0).toFixed(2)}`;
+                if (resumoNumGoals) resumoNumGoals.textContent = state.goals.length;
+                if (resumoTotalSavedGoals) resumoTotalSavedGoals.textContent = `R$ ${state.goals.reduce((sum, goal) => sum + goal.savedAmount, 0).toFixed(2)}`;
                 const minFund = state.essentialCosts * 3;
                 const maxFund = state.essentialCosts * 6;
-                resumoEmergencyFund.textContent = `R$ ${minFund.toFixed(2)} - R$ ${maxFund.toFixed(2)}`;
+                if (resumoEmergencyFund) resumoEmergencyFund.textContent = `R$ ${minFund.toFixed(2)} - R$ ${maxFund.toFixed(2)}`;
 
                 // Resumo de Investimentos
-                resumoInvInitial.textContent = `R$ ${state.investment.initialCapital.toFixed(2)}`;
-                resumoInvMonthly.textContent = `R$ ${state.investment.monthlyContribution.toFixed(2)}`;
-                resumoInvRate.textContent = `${state.investment.annualInterestRate.toFixed(2)}%`;
-                resumoInvPeriod.textContent = `${state.investment.periodYears} anos`;
-                resumoInvProjected.textContent = `R$ ${state.investment.projectedFutureValue.toFixed(2)}`;
-                resumoInvProjected.classList.toggle('text-emerald-600', state.investment.projectedFutureValue > 0);
+                if (resumoInvInitial) resumoInvInitial.textContent = `R$ ${state.investment.initialCapital.toFixed(2)}`;
+                if (resumoInvMonthly) resumoInvMonthly.textContent = `R$ ${state.investment.monthlyContribution.toFixed(2)}`;
+                if (resumoInvRate) resumoInvRate.textContent = `${state.investment.annualInterestRate.toFixed(2)}%`;
+                if (resumoInvPeriod) resumoInvPeriod.textContent = `${state.investment.periodYears} anos`;
+                if (resumoInvProjected) {
+                    resumoInvProjected.textContent = `R$ ${state.investment.projectedFutureValue.toFixed(2)}`;
+                    resumoInvProjected.classList.toggle('text-emerald-600', state.investment.projectedFutureValue > 0);
+                }
 
                 // Resumo de Financiamento
-                resumoFinValue.textContent = `R$ ${state.financing.propertyValue.toFixed(2)}`;
-                resumoFinDownpayment.textContent = `${state.financing.downPaymentPercentage.toFixed(2)}%`;
-                resumoFinRate.textContent = `${state.financing.annualFinancingRate.toFixed(2)}%`;
-                resumoFinPeriod.textContent = `${state.financing.periodYears} anos`;
-                resumoFinMonthlyPayment.textContent = `R$ ${state.financing.projectedMonthlyPayment.toFixed(2)}`;
-                resumoFinMonthlyPayment.classList.toggle('text-red-500', state.financing.projectedMonthlyPayment > 0);
+                if (resumoFinValue) resumoFinValue.textContent = `R$ ${state.financing.propertyValue.toFixed(2)}`;
+                if (resumoFinDownpayment) resumoFinDownpayment.textContent = `${state.financing.downPaymentPercentage.toFixed(2)}%`;
+                if (resumoFinRate) resumoFinRate.textContent = `${state.financing.annualFinancingRate.toFixed(2)}%`;
+                if (resumoFinPeriod) resumoFinPeriod.textContent = `${state.financing.periodYears} anos`;
+                if (resumoFinMonthlyPayment) {
+                    resumoFinMonthlyPayment.textContent = `R$ ${state.financing.projectedMonthlyPayment.toFixed(2)}`;
+                    resumoFinMonthlyPayment.classList.toggle('text-red-500', state.financing.projectedMonthlyPayment > 0);
+                }
 
                 // Resumo de Patrimônio Líquido
                 const totalAssetsResumo = state.assets.reduce((sum, asset) => sum + asset.value, 0);
                 const totalLiabilitiesResumo = state.liabilities.reduce((sum, liability) => sum + liability.value, 0);
                 const currentNetWorthResumo = totalAssetsResumo - totalLiabilitiesResumo;
-                resumoPatAssets.textContent = `R$ ${totalAssetsResumo.toFixed(2)}`;
-                resumoPatLiabilities.textContent = `R$ ${totalLiabilitiesResumo.toFixed(2)}`;
-                resumoPatNetWorth.textContent = `R$ ${currentNetWorthResumo.toFixed(2)}`;
-                resumoPatNetWorth.classList.toggle('text-red-600', currentNetWorthResumo < 0);
-                resumoPatNetWorth.classList.toggle('text-emerald-600', currentNetWorthResumo >= 0);
-                resumoPatHistoryCount.textContent = state.netWorthHistory.length;
+                if (resumoPatAssets) resumoPatAssets.textContent = `R$ ${totalAssetsResumo.toFixed(2)}`;
+                if (resumoPatLiabilities) resumoPatLiabilities.textContent = `R$ ${totalLiabilitiesResumo.toFixed(2)}`;
+                if (resumoPatNetWorth) {
+                    resumoPatNetWorth.textContent = `R$ ${currentNetWorthResumo.toFixed(2)}`;
+                    resumoPatNetWorth.classList.toggle('text-red-600', currentNetWorthResumo < 0);
+                    resumoPatNetWorth.classList.toggle('text-emerald-600', currentNetWorthResumo >= 0);
+                }
+                if (resumoPatHistoryCount) resumoPatHistoryCount.textContent = state.netWorthHistory.length;
 
                 // Resumo de Assinaturas
-                resumoSubActive.textContent = state.subscriptions.length;
+                if (resumoSubActive) resumoSubActive.textContent = state.subscriptions.length;
                 const totalMonthlySubsCostResumo = state.subscriptions.reduce((sum, sub) => sum + (sub.frequency === 'yearly' ? sub.amount / 12 : sub.amount), 0);
-                resumoSubMonthlyCost.textContent = `R$ ${totalMonthlySubsCostResumo.toFixed(2)}`;
-                resumoSubMonthlyCost.classList.toggle('text-red-500', totalMonthlySubsCostResumo > 0);
+                if (resumoSubMonthlyCost) {
+                    resumoSubMonthlyCost.textContent = `R$ ${totalMonthlySubsCostResumo.toFixed(2)}`;
+                    resumoSubMonthlyCost.classList.toggle('text-red-500', totalMonthlySubsCostResumo > 0);
+                }
             };
 
 
@@ -1810,48 +1872,51 @@
                 renderResumoGeral(); // Chamar a função de resumo geral
 
                 // Atualizar campos de input com o estado carregado
-                incomeInput.value = state.income;
-                essentialCostsInput.value = state.essentialCosts;
-                extraPaymentInput.value = state.extraPayment;
+                if (incomeInput) incomeInput.value = state.income;
+                if (essentialCostsInput) essentialCostsInput.value = state.essentialCosts;
+                if (extraPaymentInput) extraPaymentInput.value = state.extraPayment;
 
-                initialCapitalInput.value = state.investment.initialCapital;
-                monthlyContributionInput.value = state.investment.monthlyContribution;
-                annualInterestRateInput.value = state.investment.annualInterestRate;
-                investmentPeriodYearsInput.value = state.investment.periodYears;
+                if (initialCapitalInput) initialCapitalInput.value = state.investment.initialCapital;
+                if (monthlyContributionInput) monthlyContributionInput.value = state.investment.monthlyContribution;
+                if (annualInterestRateInput) annualInterestRateInput.value = state.investment.annualInterestRate;
+                if (investmentPeriodYearsInput) investmentPeriodYearsInput.value = state.investment.periodYears;
 
-                propertyValueInput.value = state.financing.propertyValue;
-                downPaymentPercentageInput.value = state.financing.downPaymentPercentage;
-                annualFinancingRateInput.value = state.financing.annualFinancingRate;
-                financingPeriodYearsInput.value = state.financing.periodYears;
+                if (propertyValueInput) propertyValueInput.value = state.financing.propertyValue;
+                if (downPaymentPercentageInput) downPaymentPercentageInput.value = state.financing.downPaymentPercentage;
+                if (annualFinancingRateInput) annualFinancingRateInput.value = state.financing.annualFinancingRate;
+                if (financingPeriodYearsInput) financingPeriodYearsInput.value = state.financing.periodYears;
 
-                projectionStartMonthSelect.value = state.projectionSettings.startMonth;
-                projectionStartYearInput.value = state.projectionSettings.startYear;
-                projectionMonthsInput.value = state.projectionSettings.months;
+                if (projectionStartMonthSelect) projectionStartMonthSelect.value = state.projectionSettings.startMonth;
+                if (projectionStartYearInput) projectionStartYearInput.value = state.projectionSettings.startYear;
+                if (projectionMonthsInput) projectionMonthsInput.value = state.projectionSettings.months;
 
                 // Definir botão de navegação e seção ativa
-                navButtons.forEach(btn => btn.classList.remove('active'));
-                const activeButton = document.querySelector(`.nav-button[data-target="${state.activeSection}"]`);
-                if (activeButton) {
-                    activeButton.classList.add('active');
-                }
+                navButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.target === state.activeSection) {
+                        btn.classList.add('active');
+                    }
+                });
                 // Only toggle content sections that are part of the main `main` tag
                 contentSections.forEach(section => {
                     section.classList.toggle('active', section.id === state.activeSection);
                 });
 
                 // Atualizar estado dos botões de estratégia de dívida
-                if (state.debtStrategy === 'snowball') {
-                    snowballBtn.classList.add('bg-emerald-200', 'text-emerald-800');
-                    snowballBtn.classList.remove('bg-gray-200');
-                    avalancheBtn.classList.add('bg-gray-200');
-                    avalancheBtn.classList.remove('bg-emerald-200', 'text-emerald-800');
-                    strategyExplanationEl.innerHTML = "<b>Método Bola de Neve:</b> Pague as dívidas da menor para a maior. Ideal para ganhar motivação rápida.";
-                } else {
-                    avalancheBtn.classList.add('bg-emerald-200', 'text-emerald-800');
-                    avalancheBtn.classList.remove('bg-gray-200');
-                    snowballBtn.classList.add('bg-gray-200');
-                    snowballBtn.classList.remove('bg-emerald-200', 'text-emerald-800');
-                    strategyExplanationEl.innerHTML = "<b>Método Avalancha:</b> Pague as dívidas com maiores juros primeiro. Ideal para economizar mais dinheiro.";
+                if (snowballBtn && avalancheBtn && strategyExplanationEl) {
+                    if (state.debtStrategy === 'snowball') {
+                        snowballBtn.classList.add('bg-emerald-200', 'text-emerald-800');
+                        snowballBtn.classList.remove('bg-gray-200');
+                        avalancheBtn.classList.add('bg-gray-200');
+                        avalancheBtn.classList.remove('bg-emerald-200', 'text-emerald-800');
+                        strategyExplanationEl.innerHTML = "<b>Método Bola de Neve:</b> Pague as dívidas da menor para a maior. Ideal para ganhar motivação rápida.";
+                    } else {
+                        avalancheBtn.classList.add('bg-emerald-200', 'text-emerald-800');
+                        avalancheBtn.classList.remove('bg-gray-200');
+                        snowballBtn.classList.add('bg-gray-200');
+                        snowballBtn.classList.remove('bg-emerald-200', 'text-emerald-800');
+                        strategyExplanationEl.innerHTML = "<b>Método Avalancha:</b> Pague as dívidas com maiores juros primeiro. Ideal para economizar mais dinheiro.";
+                    }
                 }
             };
 
@@ -1883,334 +1948,378 @@
             document.querySelectorAll('.toggle-details-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const targetId = e.target.dataset.target;
-                    const detailList = document.getElementById(targetId);
-                    detailList.classList.toggle('expanded');
-                    e.target.classList.toggle('rotated');
+                    const detailList = getElement(targetId);
+                    if (detailList) { // Check if element exists
+                        detailList.classList.toggle('expanded');
+                        e.target.classList.toggle('rotated');
 
-                    // Renderizar os detalhes apenas quando expandir
-                    if (detailList.classList.contains('expanded')) {
-                        if (targetId === 'detail-economizado') {
-                            renderDetailedSavedGoals();
-                        } else if (targetId === 'detail-assinaturas') {
-                            renderDetailedSubscriptions();
-                        } else if (targetId === 'detail-receitas') {
-                            renderDetailedIncome();
-                        } else if (targetId === 'detail-despesas') {
-                            renderDetailedExpenses();
+                        // Renderizar os detalhes apenas quando expandir
+                        if (detailList.classList.contains('expanded')) {
+                            if (targetId === 'detail-economizado') {
+                                renderDetailedSavedGoals();
+                            } else if (targetId === 'detail-assinaturas') {
+                                renderDetailedSubscriptions();
+                            } else if (targetId === 'detail-receitas') {
+                                renderDetailedIncome();
+                            } else if (targetId === 'detail-despesas') {
+                                renderDetailedExpenses();
+                            }
                         }
                     }
                 });
             });
 
-            incomeInput.addEventListener('input', (e) => {
-                state.income = parseFloat(e.target.value) || 0;
-                saveState();
-                renderChartAndSummary();
-                calculateTotalEconomizado(); 
-                calculateCashFlowProjection(); 
-                updateSummaryIncomeExpenses(); 
-                renderDetailedIncome(); // Update detailed income
-                renderResumoGeral(); 
-            });
-
-            addExpenseBtn.addEventListener('click', () => {
-                const name = expenseNameInput.value.trim();
-                const amount = parseFloat(expenseAmountInput.value);
-                const category = expenseCategoryInput.value;
-
-                if (name && amount > 0) {
-                    state.expenses.push({ id: Date.now(), name, amount, category });
-                    expenseNameInput.value = '';
-                    expenseAmountInput.value = '';
+            if (incomeInput) {
+                incomeInput.addEventListener('input', (e) => {
+                    state.income = parseFloat(e.target.value) || 0;
                     saveState();
-                    updateAll();
+                    renderChartAndSummary();
+                    calculateTotalEconomizado(); 
                     calculateCashFlowProjection(); 
                     updateSummaryIncomeExpenses(); 
-                    renderDetailedExpenses(); // Update detailed expenses
+                    renderDetailedIncome(); // Update detailed income
                     renderResumoGeral(); 
-                }
-            });
+                });
+            }
 
-            expenseList.addEventListener('click', (e) => {
-                if (e.target.classList.contains('remove-expense')) {
-                    const index = parseInt(e.target.dataset.index); 
-                    state.expenses.splice(index, 1);
+            if (addExpenseBtn) {
+                addExpenseBtn.addEventListener('click', () => {
+                    const name = expenseNameInput.value.trim();
+                    const amount = parseFloat(expenseAmountInput.value);
+                    const category = expenseCategoryInput.value;
+
+                    if (name && amount > 0) {
+                        state.expenses.push({ id: Date.now(), name, amount, category });
+                        if (expenseNameInput) expenseNameInput.value = '';
+                        if (expenseAmountInput) expenseAmountInput.value = '';
+                        saveState();
+                        updateAll();
+                        calculateCashFlowProjection(); 
+                        updateSummaryIncomeExpenses(); 
+                        renderDetailedExpenses(); // Update detailed expenses
+                        renderResumoGeral(); 
+                    }
+                });
+            }
+
+            if (expenseList) {
+                expenseList.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('remove-expense')) {
+                        const index = parseInt(e.target.dataset.index); 
+                        state.expenses.splice(index, 1);
+                        saveState();
+                        updateAll();
+                        calculateCashFlowProjection(); 
+                        updateSummaryIncomeExpenses(); 
+                        renderDetailedExpenses(); // Update detailed expenses
+                        renderResumoGeral(); 
+                    }
+                });
+            }
+            
+            if (addDebtBtn) {
+                addDebtBtn.addEventListener('click', () => {
+                    const name = debtNameInput.value.trim();
+                    const total = parseFloat(debtTotalInput.value);
+                    const rate = parseFloat(debtRateInput.value);
+                    if (name && total > 0 && rate >= 0) {
+                        state.debts.push({ id: Date.now(), name, total, rate });
+                        if (debtNameInput) debtNameInput.value = '';
+                        if (debtTotalInput) debtTotalInput.value = '';
+                        if (debtRateInput) debtRateInput.value = '';
+                        saveState();
+                        renderDebts();
+                        renderResumoGeral(); 
+                    }
+                });
+            }
+
+            if (debtListEl) {
+                debtListEl.addEventListener('click', e => {
+                    if(e.target.classList.contains('remove-debt')) {
+                        const id = parseInt(e.target.dataset.id);
+                        state.debts = state.debts.filter(d => d.id !== id);
+                        saveState();
+                        renderDebts();
+                        renderResumoGeral(); 
+                    }
+                });
+            }
+
+            if (snowballBtn) {
+                snowballBtn.addEventListener('click', () => {
+                    state.debtStrategy = 'snowball';
                     saveState();
                     updateAll();
-                    calculateCashFlowProjection(); 
-                    updateSummaryIncomeExpenses(); 
-                    renderDetailedExpenses(); // Update detailed expenses
                     renderResumoGeral(); 
-                }
-            });
-            
-            addDebtBtn.addEventListener('click', () => {
-                const name = debtNameInput.value.trim();
-                const total = parseFloat(debtTotalInput.value);
-                const rate = parseFloat(debtRateInput.value);
-                if (name && total > 0 && rate >= 0) {
-                    state.debts.push({ id: Date.now(), name, total, rate });
-                    debtNameInput.value = '';
-                    debtTotalInput.value = '';
-                    debtRateInput.value = '';
+                });
+            }
+
+            if (avalancheBtn) {
+                avalancheBtn.addEventListener('click', () => {
+                    state.debtStrategy = 'avalanche';
                     saveState();
-                    renderDebts();
+                    updateAll();
                     renderResumoGeral(); 
-                }
-            });
+                });
+            }
 
-            debtListEl.addEventListener('click', e => {
-                if(e.target.classList.contains('remove-debt')) {
-                    const id = parseInt(e.target.dataset.id);
-                    state.debts = state.debts.filter(d => d.id !== id);
+            if (extraPaymentInput) {
+                extraPaymentInput.addEventListener('input', (e) => {
+                    state.extraPayment = parseFloat(e.target.value) || 0;
                     saveState();
-                    renderDebts();
-                    renderResumoGeral(); 
-                }
-            });
-
-            snowballBtn.addEventListener('click', () => {
-                state.debtStrategy = 'snowball';
-                saveState();
-                updateAll();
-                renderResumoGeral(); 
-            });
-
-            avalancheBtn.addEventListener('click', () => {
-                state.debtStrategy = 'avalanche';
-                saveState();
-                updateAll();
-                renderResumoGeral(); 
-            });
-
-            extraPaymentInput.addEventListener('input', (e) => {
-                state.extraPayment = parseFloat(e.target.value) || 0;
-                saveState();
-                simulateDebtPayment();
-                calculateTotalEconomizado(); 
-                renderResumoGeral(); 
-            });
-
-            essentialCostsInput.addEventListener('input', (e) => {
-                state.essentialCosts = parseFloat(e.target.value) || 0;
-                saveState();
-                renderEmergencyFundResult();
-                renderResumoGeral(); 
-            });
-            
-            addGoalBtn.addEventListener('click', () => {
-                const name = goalNameInput.value.trim();
-                const targetAmount = parseFloat(goalTargetAmountInput.value);
-                const savedAmount = parseFloat(goalSavedAmountInput.value) || 0;
-                if(name && targetAmount > 0) {
-                    state.goals.push({ id: Date.now(), name, targetAmount, savedAmount });
-                    goalNameInput.value = '';
-                    goalTargetAmountInput.value = '';
-                    goalSavedAmountInput.value = '';
-                    saveState();
-                    renderGoals();
+                    simulateDebtPayment();
                     calculateTotalEconomizado(); 
-                    renderDetailedSavedGoals(); // Update detailed saved goals
                     renderResumoGeral(); 
-                }
-            });
+                });
+            }
 
-            goalListEl.addEventListener('click', e => {
-                if(e.target.classList.contains('remove-goal')) {
-                    const id = parseInt(e.target.dataset.id);
-                    state.goals = state.goals.filter(g => g.id !== id);
+            if (essentialCostsInput) {
+                essentialCostsInput.addEventListener('input', (e) => {
+                    state.essentialCosts = parseFloat(e.target.value) || 0;
                     saveState();
-                    renderGoals();
-                    calculateTotalEconomizado(); 
-                    renderDetailedSavedGoals(); // Update detailed saved goals
+                    renderEmergencyFundResult();
                     renderResumoGeral(); 
-                }
-            });
-
-            goalListEl.addEventListener('input', (e) => {
-                if (e.target.classList.contains('update-goal-saved-amount')) {
-                    const id = parseInt(e.target.dataset.id);
-                    const newSavedAmount = parseFloat(e.target.value) || 0;
-                    const goalIndex = state.goals.findIndex(g => g.id === id);
-                    if (goalIndex !== -1) {
-                        state.goals[goalIndex].savedAmount = newSavedAmount;
+                });
+            }
+            
+            if (addGoalBtn) {
+                addGoalBtn.addEventListener('click', () => {
+                    const name = goalNameInput.value.trim();
+                    const targetAmount = parseFloat(goalTargetAmountInput.value);
+                    const savedAmount = parseFloat(goalSavedAmountInput.value) || 0;
+                    if(name && targetAmount > 0) {
+                        state.goals.push({ id: Date.now(), name, targetAmount, savedAmount });
+                        if (goalNameInput) goalNameInput.value = '';
+                        if (goalTargetAmountInput) goalTargetAmountInput.value = '';
+                        if (goalSavedAmountInput) goalSavedAmountInput.value = '';
                         saveState();
                         renderGoals();
                         calculateTotalEconomizado(); 
                         renderDetailedSavedGoals(); // Update detailed saved goals
                         renderResumoGeral(); 
                     }
-                }
-            });
+                });
+            }
+
+            if (goalListEl) {
+                goalListEl.addEventListener('click', e => {
+                    if(e.target.classList.contains('remove-goal')) {
+                        const id = parseInt(e.target.dataset.id);
+                        state.goals = state.goals.filter(g => g.id !== id);
+                        saveState();
+                        renderGoals();
+                        calculateTotalEconomizado(); 
+                        renderDetailedSavedGoals(); // Update detailed saved goals
+                        renderResumoGeral(); 
+                    }
+                });
+
+                goalListEl.addEventListener('input', (e) => {
+                    if (e.target.classList.contains('update-goal-saved-amount')) {
+                        const id = parseInt(e.target.dataset.id);
+                        const newSavedAmount = parseFloat(e.target.value) || 0;
+                        const goalIndex = state.goals.findIndex(g => g.id === id);
+                        if (goalIndex !== -1) {
+                            state.goals[goalIndex].savedAmount = newSavedAmount;
+                            saveState();
+                            renderGoals();
+                            calculateTotalEconomizado(); 
+                            renderDetailedSavedGoals(); // Update detailed saved goals
+                            renderResumoGeral(); 
+                        }
+                    }
+                });
+            }
 
             // Listeners para Simulador de Investimentos
-            initialCapitalInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
-            monthlyContributionInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
-            annualInterestRateInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
-            investmentPeriodYearsInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
-            calculateInvestmentBtn.addEventListener('click', () => { calculateInvestment(); renderResumoGeral(); });
+            if (initialCapitalInput) initialCapitalInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
+            if (monthlyContributionInput) monthlyContributionInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
+            if (annualInterestRateInput) annualInterestRateInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
+            if (investmentPeriodYearsInput) investmentPeriodYearsInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
+            if (calculateInvestmentBtn) calculateInvestmentBtn.addEventListener('click', () => { calculateInvestment(); renderResumoGeral(); });
 
             // Listeners para Simulador de Financiamento
-            propertyValueInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
-            downPaymentPercentageInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
-            annualFinancingRateInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
-            financingPeriodYearsInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
-            calculateFinancingBtn.addEventListener('click', () => { calculateFinancing(); renderResumoGeral(); });
+            if (propertyValueInput) propertyValueInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
+            if (downPaymentPercentageInput) downPaymentPercentageInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
+            if (annualFinancingRateInput) annualFinancingRateInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
+            if (financingPeriodYearsInput) financingPeriodYearsInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
+            if (calculateFinancingBtn) calculateFinancingBtn.addEventListener('click', () => { calculateFinancing(); renderResumoGeral(); });
 
             // Listeners para Previsão de Fluxo de Caixa
-            addFutureEventBtn.addEventListener('click', () => {
-                const name = eventNameInput.value.trim();
-                const amount = parseFloat(eventAmountInput.value);
-                const date = eventDateInput.value;
-                const type = eventTypeInput.value;
+            if (addFutureEventBtn) {
+                addFutureEventBtn.addEventListener('click', () => {
+                    const name = eventNameInput.value.trim();
+                    const amount = parseFloat(eventAmountInput.value);
+                    const date = eventDateInput.value;
+                    const type = eventTypeInput.value;
 
-                if (name && amount > 0 && date) {
-                    state.futureEvents.push({ id: Date.now(), name, amount, date: new Date(date), type });
-                    eventNameInput.value = '';
-                    eventAmountInput.value = '';
-                    eventDateInput.value = '';
-                    saveState();
-                    renderFutureEvents();
-                    calculateCashFlowProjection();
-                    renderDetailedIncome(); // Update detailed income
-                    renderDetailedExpenses(); // Update detailed expenses
-                    renderResumoGeral(); 
-                }
-            });
+                    if (name && amount > 0 && date) {
+                        state.futureEvents.push({ id: Date.now(), name, amount, date: new Date(date), type });
+                        if (eventNameInput) eventNameInput.value = '';
+                        if (eventAmountInput) eventAmountInput.value = '';
+                        if (eventDateInput) eventDateInput.value = '';
+                        saveState();
+                        renderFutureEvents();
+                        calculateCashFlowProjection();
+                        renderDetailedIncome(); // Update detailed income
+                        renderDetailedExpenses(); // Update detailed expenses
+                        renderResumoGeral(); 
+                    }
+                });
+            }
 
-            futureEventListEl.addEventListener('click', e => {
-                if(e.target.classList.contains('remove-future-event')) {
-                    const id = parseInt(e.target.dataset.id);
-                    state.futureEvents = state.futureEvents.filter(event => event.id !== id);
-                    saveState();
-                    renderFutureEvents();
-                    calculateCashFlowProjection();
-                    renderDetailedIncome(); // Update detailed income
-                    renderDetailedExpenses(); // Update detailed expenses
-                    renderResumoGeral(); 
-                }
-            });
+            if (futureEventListEl) {
+                futureEventListEl.addEventListener('click', e => {
+                    if(e.target.classList.contains('remove-future-event')) {
+                        const id = parseInt(e.target.dataset.id);
+                        state.futureEvents = state.futureEvents.filter(event => event.id !== id);
+                        saveState();
+                        renderFutureEvents();
+                        calculateCashFlowProjection();
+                        renderDetailedIncome(); // Update detailed income
+                        renderDetailedExpenses(); // Update detailed expenses
+                        renderResumoGeral(); 
+                    }
+                });
+            }
 
-            projectionStartMonthSelect.addEventListener('change', () => { calculateCashFlowProjection(); renderResumoGeral(); });
-            projectionStartYearInput.addEventListener('input', () => { calculateCashFlowProjection(); renderResumoGeral(); });
-            projectionMonthsInput.addEventListener('input', () => { calculateCashFlowProjection(); renderResumoGeral(); });
-            calculateCashFlowBtn.addEventListener('click', () => { calculateCashFlowProjection(); renderResumoGeral(); });
+            if (projectionStartMonthSelect) projectionStartMonthSelect.addEventListener('change', () => { calculateCashFlowProjection(); renderResumoGeral(); });
+            if (projectionStartYearInput) projectionStartYearInput.addEventListener('input', () => { calculateCashFlowProjection(); renderResumoGeral(); });
+            if (projectionMonthsInput) projectionMonthsInput.addEventListener('input', () => { calculateCashFlowProjection(); renderResumoGeral(); });
+            if (calculateCashFlowBtn) calculateCashFlowBtn.addEventListener('click', () => { calculateCashFlowProjection(); renderResumoGeral(); });
 
             // Listeners para Patrimônio Líquido
-            addAssetBtn.addEventListener('click', () => {
-                const name = assetNameInput.value.trim();
-                const value = parseFloat(assetValueInput.value);
-                if (name && value >= 0) {
-                    state.assets.push({ id: Date.now(), name, value });
-                    assetNameInput.value = '';
-                    assetValueInput.value = '';
-                    saveState();
-                    renderAssets();
-                    calculateNetWorth();
-                    renderResumoGeral(); 
-                }
-            });
+            if (addAssetBtn) {
+                addAssetBtn.addEventListener('click', () => {
+                    const name = assetNameInput.value.trim();
+                    const value = parseFloat(assetValueInput.value);
+                    if (name && value >= 0) {
+                        state.assets.push({ id: Date.now(), name, value });
+                        if (assetNameInput) assetNameInput.value = '';
+                        if (assetValueInput) assetValueInput.value = '';
+                        saveState();
+                        renderAssets();
+                        calculateNetWorth();
+                        renderResumoGeral(); 
+                    }
+                });
+            }
 
-            assetListEl.addEventListener('click', e => {
-                if (e.target.classList.contains('remove-asset')) {
-                    const id = parseInt(e.target.dataset.id);
-                    state.assets = state.assets.filter(asset => asset.id !== id);
-                    saveState();
-                    renderAssets();
-                    calculateNetWorth();
-                    renderResumoGeral(); 
-                }
-            });
+            if (assetListEl) {
+                assetListEl.addEventListener('click', e => {
+                    if (e.target.classList.contains('remove-asset')) {
+                        const id = parseInt(e.target.dataset.id);
+                        state.assets = state.assets.filter(asset => asset.id !== id);
+                        saveState();
+                        renderAssets();
+                        calculateNetWorth();
+                        renderResumoGeral(); 
+                    }
+                });
+            }
 
-            addLiabilityBtn.addEventListener('click', () => {
-                const name = liabilityNameInput.value.trim();
-                const value = parseFloat(liabilityValueInput.value);
-                if (name && value >= 0) {
-                    state.liabilities.push({ id: Date.now(), name, value });
-                    liabilityNameInput.value = '';
-                    liabilityValueInput.value = '';
-                    saveState();
-                    renderLiabilities();
-                    calculateNetWorth();
-                    renderResumoGeral(); 
-                }
-            });
+            if (addLiabilityBtn) {
+                addLiabilityBtn.addEventListener('click', () => {
+                    const name = liabilityNameInput.value.trim();
+                    const value = parseFloat(liabilityValueInput.value);
+                    if (name && value >= 0) {
+                        state.liabilities.push({ id: Date.now(), name, value });
+                        if (liabilityNameInput) liabilityNameInput.value = '';
+                        if (liabilityValueInput) liabilityValueInput.value = '';
+                        saveState();
+                        renderLiabilities();
+                        calculateNetWorth();
+                        renderResumoGeral(); 
+                    }
+                });
+            }
 
-            liabilityListEl.addEventListener('click', e => {
-                if (e.target.classList.contains('remove-liability')) {
-                    const id = parseInt(e.target.dataset.id);
-                    state.liabilities = state.liabilities.filter(liability => liability.id !== id);
-                    saveState();
-                    renderLiabilities();
-                    calculateNetWorth();
-                    renderResumoGeral(); 
-                }
-            });
+            if (liabilityListEl) {
+                liabilityListEl.addEventListener('click', e => {
+                    if (e.target.classList.contains('remove-liability')) {
+                        const id = parseInt(e.target.dataset.id);
+                        state.liabilities = state.liabilities.filter(liability => liability.id !== id);
+                        saveState();
+                        renderLiabilities();
+                        calculateNetWorth();
+                        renderResumoGeral(); 
+                    }
+                });
+            }
 
-            recordNetWorthBtn.addEventListener('click', () => {
-                let totalAssets = state.assets.reduce((sum, asset) => sum + asset.value, 0);
-                let totalLiabilities = state.liabilities.reduce((sum, liability) => sum + liability.value, 0);
-                let currentNetWorth = totalAssets - totalLiabilities;
-                
-                // Add only if there's a change or if it's the first record
-                const lastRecord = state.netWorthHistory[state.netWorthHistory.length - 1];
-                const today = new Date();
-                today.setHours(0, 0, 0, 0); // Normalize date to compare only day, month, year
+            if (recordNetWorthBtn) {
+                recordNetWorthBtn.addEventListener('click', () => {
+                    let totalAssets = state.assets.reduce((sum, asset) => sum + asset.value, 0);
+                    let totalLiabilities = state.liabilities.reduce((sum, liability) => sum + liability.value, 0);
+                    let currentNetWorth = totalAssets - totalLiabilities;
+                    
+                    // Add only if there's a change or if it's the first record
+                    const lastRecord = state.netWorthHistory[state.netWorthHistory.length - 1];
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0); // Normalize date to compare only day, month, year
 
-                if (!lastRecord || lastRecord.value !== currentNetWorth || new Date(lastRecord.date).toDateString() !== today.toDateString()) {
-                    state.netWorthHistory.push({ date: today, value: currentNetWorth });
-                    saveState();
-                    renderNetWorthHistory();
-                    renderResumoGeral(); 
-                    // Optionally, provide feedback to the user that it was recorded
-                } else {
-                    // Optionally, inform the user that net worth hasn't changed or was already recorded today
-                }
-            });
+                    if (!lastRecord || lastRecord.value !== currentNetWorth || new Date(lastRecord.date).toDateString() !== today.toDateString()) {
+                        state.netWorthHistory.push({ date: today, value: currentNetWorth });
+                        saveState();
+                        renderNetWorthHistory();
+                        renderResumoGeral(); 
+                        // Optionally, provide feedback to the user that it was recorded
+                    } else {
+                        // Optionally, inform the user that net worth hasn't changed or was already recorded today
+                    }
+                });
+            }
 
             // Listeners para Assinaturas
-            addSubscriptionBtn.addEventListener('click', () => {
-                const name = subscriptionNameInput.value.trim();
-                const amount = parseFloat(subscriptionAmountInput.value);
-                const frequency = subscriptionFrequencyInput.value;
-                const renewalDate = subscriptionRenewalDateInput.value;
+            if (addSubscriptionBtn) {
+                addSubscriptionBtn.addEventListener('click', () => {
+                    const name = subscriptionNameInput.value.trim();
+                    const amount = parseFloat(subscriptionAmountInput.value);
+                    const frequency = subscriptionFrequencyInput.value;
+                    const renewalDate = subscriptionRenewalDateInput.value;
 
-                if (name && amount > 0) {
-                    state.subscriptions.push({ id: Date.now(), name, amount, frequency, renewalDate: renewalDate ? new Date(renewalDate) : null });
-                    subscriptionNameInput.value = '';
-                    subscriptionAmountInput.value = '';
-                    subscriptionRenewalDateInput.value = '';
-                    saveState();
-                    renderSubscriptions();
-                    renderDetailedSubscriptions(); // Update detailed subscriptions
-                    renderResumoGeral();
-                }
-            });
+                    if (name && amount > 0) {
+                        state.subscriptions.push({ id: Date.now(), name, amount, frequency, renewalDate: renewalDate ? new Date(renewalDate) : null });
+                        if (subscriptionNameInput) subscriptionNameInput.value = '';
+                        if (subscriptionAmountInput) subscriptionAmountInput.value = '';
+                        if (subscriptionRenewalDateInput) subscriptionRenewalDateInput.value = '';
+                        saveState();
+                        renderSubscriptions();
+                        renderDetailedSubscriptions(); // Update detailed subscriptions
+                        renderResumoGeral();
+                    }
+                });
+            }
 
-            subscriptionListEl.addEventListener('click', e => {
-                if (e.target.classList.contains('remove-subscription')) {
-                    const id = parseInt(e.target.dataset.id);
-                    state.subscriptions = state.subscriptions.filter(sub => sub.id !== id);
-                    saveState();
-                    renderSubscriptions();
-                    renderDetailedSubscriptions(); // Update detailed subscriptions
-                    renderResumoGeral();
-                }
-            });
+            if (subscriptionListEl) {
+                subscriptionListEl.addEventListener('click', e => {
+                    if (e.target.classList.contains('remove-subscription')) {
+                        const id = parseInt(e.target.dataset.id);
+                        state.subscriptions = state.subscriptions.filter(sub => sub.id !== id);
+                        saveState();
+                        renderSubscriptions();
+                        renderDetailedSubscriptions(); // Update detailed subscriptions
+                        renderResumoGuresumoGeral();
+                    }
+                });
+            }
 
             // Função para popular os seletores de mês e ano
             const populateMonthYearSelectors = () => {
-                const monthsNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-                projectionStartMonthSelect.innerHTML = '';
-                monthsNames.forEach((name, index) => {
-                    const option = document.createElement('option');
-                    option.value = index + 1; // Mês 1-12
-                    option.textContent = name;
-                    projectionStartMonthSelect.appendChild(option);
-                });
+                if (projectionStartMonthSelect && projectionStartYearInput) {
+                    const monthsNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+                    projectionStartMonthSelect.innerHTML = '';
+                    monthsNames.forEach((name, index) => {
+                        const option = document.createElement('option');
+                        option.value = index + 1; // Mês 1-12
+                        option.textContent = name;
+                        projectionStartMonthSelect.appendChild(option);
+                    });
 
-                const currentYear = new Date().getFullYear();
-                projectionStartYearInput.value = currentYear;
+                    const currentYear = new Date().getFullYear();
+                    projectionStartYearInput.value = currentYear;
+                }
             };
 
             // Reiniciar Dados (se existir no HTML)

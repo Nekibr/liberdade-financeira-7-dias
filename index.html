@@ -20,6 +20,18 @@
             color: #10B981; /* Emerald 600 */
             border: 1px solid #D1FAE5; /* Emerald 100 */
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0.5rem; /* Ajuste para caber o conteúdo */
+            aspect-ratio: 1 / 1; /* Torna o botão quadrado */
+            min-width: 80px; /* Tamanho mínimo para mobile */
+            max-width: 120px; /* Tamanho máximo para desktop */
+            height: auto; /* Altura automática para manter o aspecto */
+            font-size: 0.875rem; /* text-sm */
+            line-height: 1.25rem; /* leading-tight */
         }
         .nav-button.active {
             background-color: #10B981; /* Emerald 500 */
@@ -31,6 +43,10 @@
             background-color: #D1FAE5; /* Emerald 100 */
             color: #065F46; /* Emerald 900 */
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .nav-button i {
+            font-size: 1.5rem; /* Ajuste o tamanho do ícone */
+            margin-bottom: 0.25rem;
         }
 
         .content-section { display: none; }
@@ -65,14 +81,41 @@
                 <p class="mt-2 text-slate-600">Aplique os conceitos do Método 7 Dias de forma prática e visualize seu progresso.</p>
             </header>
 
-            <nav class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8">
-                <button data-target="passo1" class="nav-button active font-medium py-2 px-4 rounded-full">Passo 1: Orçamento</button>
-                <button data-target="passo2" class="nav-button font-medium py-2 px-4 rounded-full">Passo 2: Plano de Dívidas</button>
-                <button data-target="passo3" class="nav-button font-medium py-2 px-4 rounded-full">Passo 3: Metas e Futuro</button>
-                <button data-target="passo4-investimento" class="nav-button font-medium py-2 px-4 rounded-full">Passo 4: Investimentos</button>
-                <button data-target="passo5-financiamento" class="nav-button font-medium py-2 px-4 rounded-full">Passo 5: Financiamento</button>
-                <button data-target="passo6-fluxo-caixa" class="nav-button font-medium py-2 px-4 rounded-full">Passo 6: Fluxo de Caixa Futuro</button>
-                <button data-target="passo7-patrimonio" class="nav-button font-medium py-2 px-4 rounded-full">Passo 7: Meu Patrimônio Líquido</button>
+            <!-- Área de Total Economizado -->
+            <div class="bg-emerald-500 text-white p-4 rounded-xl shadow-md mb-8 text-center">
+                <h2 class="text-xl font-semibold">Total Economizado: <span id="total-economizado-display" class="text-2xl font-bold">R$ 0,00</span></h2>
+                <p id="extra-payment-message" class="text-sm mt-1"></p>
+            </div>
+
+            <nav class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 gap-3 md:gap-4 mb-8">
+                <button data-target="passo1" class="nav-button active font-medium py-2 px-4 rounded-2xl">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Orçamento</span>
+                </button>
+                <button data-target="passo2" class="nav-button font-medium py-2 px-4 rounded-2xl">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <span>Dívidas</span>
+                </button>
+                <button data-target="passo3" class="nav-button font-medium py-2 px-4 rounded-2xl">
+                    <i class="fas fa-bullseye"></i>
+                    <span>Metas</span>
+                </button>
+                <button data-target="passo4-investimento" class="nav-button font-medium py-2 px-4 rounded-2xl">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Investimentos</span>
+                </button>
+                <button data-target="passo5-financiamento" class="nav-button font-medium py-2 px-4 rounded-2xl">
+                    <i class="fas fa-home"></i>
+                    <span>Financiamento</span>
+                </button>
+                <button data-target="passo6-fluxo-caixa" class="nav-button font-medium py-2 px-4 rounded-2xl">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Fluxo de Caixa</span>
+                </button>
+                <button data-target="passo7-patrimonio" class="nav-button font-medium py-2 px-4 rounded-2xl">
+                    <i class="fas fa-wallet"></i>
+                    <span>Patrimônio</span>
+                </button>
             </nav>
 
             <main>
@@ -577,6 +620,10 @@
             const recordNetWorthBtn = document.getElementById('record-net-worth');
             const netWorthChartCanvas = document.getElementById('netWorthChart');
             const netWorthHistoryListEl = document.getElementById('net-worth-history-list');
+
+            // Elementos para "Total Economizado"
+            const totalEconomizadoDisplay = document.getElementById('total-economizado-display');
+            const extraPaymentMessage = document.getElementById('extra-payment-message');
 
             // Botão de Reiniciar (se existir no HTML)
             const resetDataBtn = document.getElementById('reset-data-btn');
@@ -1204,6 +1251,20 @@
                 });
             };
 
+            // Função para calcular e exibir o total economizado
+            const calculateTotalEconomizado = () => {
+                let totalSavedGoals = state.goals.reduce((sum, goal) => sum + goal.savedAmount, 0);
+                
+                totalEconomizadoDisplay.textContent = `R$ ${totalSavedGoals.toFixed(2)}`;
+
+                if (state.extraPayment > 0) {
+                    extraPaymentMessage.textContent = `(Você está pagando R$ ${state.extraPayment.toFixed(2)} extra/mês em dívidas, acelerando a quitação!)`;
+                } else {
+                    extraPaymentMessage.textContent = '';
+                }
+            };
+
+
             // Função de Atualização Completa do UI
             const updateAll = () => {
                 renderExpenses();
@@ -1212,9 +1273,10 @@
                 renderEmergencyFundResult();
                 renderGoals();
                 renderFutureEvents();
-                renderAssets(); // Renderizar ativos
-                renderLiabilities(); // Renderizar passivos
-                calculateNetWorth(); // Calcular e renderizar patrimônio líquido
+                renderAssets(); 
+                renderLiabilities(); 
+                calculateNetWorth(); 
+                calculateTotalEconomizado(); // Chamar a nova função aqui
 
                 // Atualizar campos de input com o estado carregado
                 incomeInput.value = state.income;
@@ -1285,6 +1347,7 @@
                 state.income = parseFloat(e.target.value) || 0;
                 saveState();
                 renderChartAndSummary();
+                calculateTotalEconomizado(); // Update total economizado
             });
 
             addExpenseBtn.addEventListener('click', () => {
@@ -1349,6 +1412,7 @@
                 state.extraPayment = parseFloat(e.target.value) || 0;
                 saveState();
                 simulateDebtPayment();
+                calculateTotalEconomizado(); // Update total economizado
             });
 
             essentialCostsInput.addEventListener('input', (e) => {
@@ -1368,6 +1432,7 @@
                     goalSavedAmountInput.value = '';
                     saveState();
                     renderGoals();
+                    calculateTotalEconomizado(); // Update total economizado
                 }
             });
 
@@ -1377,6 +1442,7 @@
                     state.goals = state.goals.filter(g => g.id !== id);
                     saveState();
                     renderGoals();
+                    calculateTotalEconomizado(); // Update total economizado
                 }
             });
 
@@ -1389,6 +1455,7 @@
                         state.goals[goalIndex].savedAmount = newSavedAmount;
                         saveState();
                         renderGoals();
+                        calculateTotalEconomizado(); // Update total economizado
                     }
                 }
             });

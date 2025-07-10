@@ -392,27 +392,36 @@
                         
                         <div class="grid md:grid-cols-2 gap-8">
                             <div>
-                                <div class="mb-4">
-                                    <label for="property-value" class="block font-medium mb-1">Valor do Imóvel/Bem (R$)</label>
-                                    <input type="number" id="property-value" placeholder="Ex: 300000" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
+                                <h3 class="font-bold text-lg mb-2">Adicionar Dívida</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-4 bg-stone-50 rounded-lg">
+                                    <input type="text" id="debt-name" placeholder="Nome da dívida" class="sm:col-span-2 p-2 border rounded-lg">
+                                    <input type="number" id="debt-total" placeholder="Valor Total (R$)" class="p-2 border rounded-lg">
+                                    <input type="number" id="debt-rate" placeholder="Juros (% a.m.)" class="p-2 border rounded-lg">
+                                    <button id="add-debt" class="sm:col-span-2 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar Dívida</button>
                                 </div>
-                                <div class="mb-4">
-                                    <label for="down-payment-percentage" class="block font-medium mb-1">Entrada (%)</label>
-                                    <input type="number" id="down-payment-percentage" placeholder="Ex: 20" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
+                                <div class="mt-4">
+                                    <h3 class="font-bold text-lg mb-2">Escolha sua Estratégia</h3>
+                                    <div class="flex gap-2 mb-4">
+                                        <button id="snowball-btn" class="flex-1 bg-emerald-200 text-emerald-800 p-2 rounded-lg font-medium">Bola de Neve</button>
+                                        <button id="avalanche-btn" class="flex-1 bg-gray-200 p-2 rounded-lg font-medium">Avalancha</button>
+                                    </div>
+                                    <p id="strategy-explanation" class="text-sm text-slate-600 p-3 bg-blue-50 rounded-lg"><b>Método Bola de Neve:</b> Pague as dívidas da menor para a maior. Ideal para ganhar motivação rápida.</p>
                                 </div>
-                                <div class="mb-4">
-                                    <label for="annual-financing-rate" class="block font-medium mb-1">Taxa de Juros Anual (%)</label>
-                                    <input type="number" id="annual-financing-rate" placeholder="Ex: 9.5" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
+                                <!-- Simulador de Quitação de Dívidas -->
+                                <div class="mt-6 pt-6 border-t border-gray-200">
+                                    <h3 class="font-bold text-lg mb-2">Simulador de Quitação Rápida</h3>
+                                    <p class="text-sm text-slate-600 mb-2">Veja em quanto tempo você quitaria a dívida prioritária pagando um valor extra por mês:</p>
+                                    <input type="number" id="extra-payment" placeholder="Pagamento Extra Mensal (R$)" class="w-full p-2 border rounded-lg mb-2">
+                                    <div id="debt-simulation-result" class="bg-blue-100 text-blue-800 p-3 rounded-lg text-sm">
+                                        Adicione dívidas e um valor extra para simular.
+                                    </div>
                                 </div>
-                                <div class="mb-4">
-                                    <label for="financing-period-years" class="block font-medium mb-1">Período (Anos)</label>
-                                    <input type="number" id="financing-period-years" placeholder="Ex: 30" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
-                                </div>
-                                <button id="calculate-financing" class="w-full bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Simular Financiamento</button>
                             </div>
-                            <div class="bg-stone-50 p-6 rounded-xl flex items-center justify-center">
-                                <div id="financing-result" class="text-center text-slate-700">
-                                    <p>Preencha os campos para ver a simulação do seu financiamento.</p>
+                        
+                            <div>
+                                <h3 class="font-bold text-lg mb-2">Sua Lista de Prioridades</h3>
+                                <div id="debt-list" class="bg-stone-50 rounded-lg p-2 min-h-[200px]">
+                                    <!-- Dívidas listadas aqui -->
                                 </div>
                             </div>
                         </div>
@@ -910,6 +919,16 @@
             // Função para Salvar o Estado
             const saveState = () => {
                 localStorage.setItem('financasAppState', JSON.stringify(state));
+            };
+
+            // Utility for debouncing
+            const debounce = (func, delay) => {
+                let timeout;
+                return function(...args) {
+                    const context = this;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(context, args), delay);
+                };
             };
 
             // Funções de Renderização
@@ -1974,18 +1993,19 @@
                 });
             });
 
-            if (incomeInput) {
-                incomeInput.addEventListener('input', (e) => {
-                    state.income = parseFloat(e.target.value) || 0;
-                    saveState();
-                    renderChartAndSummary();
-                    calculateTotalEconomizado(); 
-                    calculateCashFlowProjection(); 
-                    updateSummaryIncomeExpenses(); 
-                    renderDetailedIncome(); // Update detailed income
-                    renderResumoGeral(); 
-                });
-            }
+            // Debounced functions for inputs
+            const debouncedIncomeInput = debounce((e) => {
+                state.income = parseFloat(e.target.value) || 0;
+                saveState();
+                renderChartAndSummary();
+                calculateTotalEconomizado(); 
+                calculateCashFlowProjection(); 
+                updateSummaryIncomeExpenses(); 
+                renderDetailedIncome(); 
+                renderResumoGeral(); 
+            }, 300); // 300ms debounce
+
+            if (incomeInput) incomeInput.addEventListener('input', debouncedIncomeInput);
 
             if (addExpenseBtn) {
                 addExpenseBtn.addEventListener('click', () => {
@@ -1997,11 +2017,11 @@
                         state.expenses.push({ id: Date.now(), name, amount, category });
                         if (expenseNameInput) expenseNameInput.value = '';
                         if (expenseAmountInput) expenseAmountInput.value = '';
-                        saveState();
+                        saveState(); // Save immediately after adding
                         updateAll();
                         calculateCashFlowProjection(); 
                         updateSummaryIncomeExpenses(); 
-                        renderDetailedExpenses(); // Update detailed expenses
+                        renderDetailedExpenses(); 
                         renderResumoGeral(); 
                     }
                 });
@@ -2012,11 +2032,11 @@
                     if (e.target.classList.contains('remove-expense')) {
                         const index = parseInt(e.target.dataset.index); 
                         state.expenses.splice(index, 1);
-                        saveState();
+                        saveState(); // Save immediately after removing
                         updateAll();
                         calculateCashFlowProjection(); 
                         updateSummaryIncomeExpenses(); 
-                        renderDetailedExpenses(); // Update detailed expenses
+                        renderDetailedExpenses(); 
                         renderResumoGeral(); 
                     }
                 });
@@ -2032,7 +2052,7 @@
                         if (debtNameInput) debtNameInput.value = '';
                         if (debtTotalInput) debtTotalInput.value = '';
                         if (debtRateInput) debtRateInput.value = '';
-                        saveState();
+                        saveState(); // Save immediately after adding
                         renderDebts();
                         renderResumoGeral(); 
                     }
@@ -2044,7 +2064,7 @@
                     if(e.target.classList.contains('remove-debt')) {
                         const id = parseInt(e.target.dataset.id);
                         state.debts = state.debts.filter(d => d.id !== id);
-                        saveState();
+                        saveState(); // Save immediately after removing
                         renderDebts();
                         renderResumoGeral(); 
                     }
@@ -2054,7 +2074,7 @@
             if (snowballBtn) {
                 snowballBtn.addEventListener('click', () => {
                     state.debtStrategy = 'snowball';
-                    saveState();
+                    saveState(); // Save immediately after strategy change
                     updateAll();
                     renderResumoGeral(); 
                 });
@@ -2063,30 +2083,28 @@
             if (avalancheBtn) {
                 avalancheBtn.addEventListener('click', () => {
                     state.debtStrategy = 'avalanche';
-                    saveState();
+                    saveState(); // Save immediately after strategy change
                     updateAll();
                     renderResumoGeral(); 
                 });
             }
 
-            if (extraPaymentInput) {
-                extraPaymentInput.addEventListener('input', (e) => {
-                    state.extraPayment = parseFloat(e.target.value) || 0;
-                    saveState();
-                    simulateDebtPayment();
-                    calculateTotalEconomizado(); 
-                    renderResumoGeral(); 
-                });
-            }
+            const debouncedExtraPaymentInput = debounce((e) => {
+                state.extraPayment = parseFloat(e.target.value) || 0;
+                saveState();
+                simulateDebtPayment();
+                calculateTotalEconomizado(); 
+                renderResumoGeral(); 
+            }, 300);
+            if (extraPaymentInput) extraPaymentInput.addEventListener('input', debouncedExtraPaymentInput);
 
-            if (essentialCostsInput) {
-                essentialCostsInput.addEventListener('input', (e) => {
-                    state.essentialCosts = parseFloat(e.target.value) || 0;
-                    saveState();
-                    renderEmergencyFundResult();
-                    renderResumoGeral(); 
-                });
-            }
+            const debouncedEssentialCostsInput = debounce((e) => {
+                state.essentialCosts = parseFloat(e.target.value) || 0;
+                saveState();
+                renderEmergencyFundResult();
+                renderResumoGeral(); 
+            }, 300);
+            if (essentialCostsInput) essentialCostsInput.addEventListener('input', debouncedEssentialCostsInput);
             
             if (addGoalBtn) {
                 addGoalBtn.addEventListener('click', () => {
@@ -2098,10 +2116,10 @@
                         if (goalNameInput) goalNameInput.value = '';
                         if (goalTargetAmountInput) goalTargetAmountInput.value = '';
                         if (goalSavedAmountInput) goalSavedAmountInput.value = '';
-                        saveState();
+                        saveState(); // Save immediately after adding
                         renderGoals();
                         calculateTotalEconomizado(); 
-                        renderDetailedSavedGoals(); // Update detailed saved goals
+                        renderDetailedSavedGoals(); 
                         renderResumoGeral(); 
                     }
                 });
@@ -2112,15 +2130,15 @@
                     if(e.target.classList.contains('remove-goal')) {
                         const id = parseInt(e.target.dataset.id);
                         state.goals = state.goals.filter(g => g.id !== id);
-                        saveState();
+                        saveState(); // Save immediately after removing
                         renderGoals();
                         calculateTotalEconomizado(); 
-                        renderDetailedSavedGoals(); // Update detailed saved goals
+                        renderDetailedSavedGoals(); 
                         renderResumoGeral(); 
                     }
                 });
 
-                goalListEl.addEventListener('input', (e) => {
+                const debouncedUpdateGoalSavedAmount = debounce((e) => {
                     if (e.target.classList.contains('update-goal-saved-amount')) {
                         const id = parseInt(e.target.dataset.id);
                         const newSavedAmount = parseFloat(e.target.value) || 0;
@@ -2130,26 +2148,29 @@
                             saveState();
                             renderGoals();
                             calculateTotalEconomizado(); 
-                            renderDetailedSavedGoals(); // Update detailed saved goals
+                            renderDetailedSavedGoals(); 
                             renderResumoGeral(); 
                         }
                     }
-                });
+                }, 300);
+                goalListEl.addEventListener('input', debouncedUpdateGoalSavedAmount);
             }
 
-            // Listeners para Simulador de Investimentos
-            if (initialCapitalInput) initialCapitalInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
-            if (monthlyContributionInput) monthlyContributionInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
-            if (annualInterestRateInput) annualInterestRateInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
-            if (investmentPeriodYearsInput) investmentPeriodYearsInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
-            if (calculateInvestmentBtn) calculateInvestmentBtn.addEventListener('click', () => { calculateInvestment(); renderResumoGeral(); });
+            // Listeners para Simulador de Investimentos (Debounced)
+            const debouncedCalculateInvestment = debounce(() => { calculateInvestment(); renderResumoGeral(); }, 300);
+            if (initialCapitalInput) initialCapitalInput.addEventListener('input', debouncedCalculateInvestment);
+            if (monthlyContributionInput) monthlyContributionInput.addEventListener('input', debouncedCalculateInvestment);
+            if (annualInterestRateInput) annualInterestRateInput.addEventListener('input', debouncedCalculateInvestment);
+            if (investmentPeriodYearsInput) investmentPeriodYearsInput.addEventListener('input', debouncedCalculateInvestment);
+            if (calculateInvestmentBtn) calculateInvestmentBtn.addEventListener('click', () => { calculateInvestment(); renderResumoGeral(); }); // No debounce on button click
 
-            // Listeners para Simulador de Financiamento
-            if (propertyValueInput) propertyValueInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
-            if (downPaymentPercentageInput) downPaymentPercentageInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
-            if (annualFinancingRateInput) annualFinancingRateInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
-            if (financingPeriodYearsInput) financingPeriodYearsInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
-            if (calculateFinancingBtn) calculateFinancingBtn.addEventListener('click', () => { calculateFinancing(); renderResumoGeral(); });
+            // Listeners para Simulador de Financiamento (Debounced)
+            const debouncedCalculateFinancing = debounce(() => { calculateFinancing(); renderResumoGeral(); }, 300);
+            if (propertyValueInput) propertyValueInput.addEventListener('input', debouncedCalculateFinancing);
+            if (downPaymentPercentageInput) downPaymentPercentageInput.addEventListener('input', debouncedCalculateFinancing);
+            if (annualFinancingRateInput) annualFinancingRateInput.addEventListener('input', debouncedCalculateFinancing);
+            if (financingPeriodYearsInput) financingPeriodYearsInput.addEventListener('input', debouncedCalculateFinancing);
+            if (calculateFinancingBtn) calculateFinancingBtn.addEventListener('click', () => { calculateFinancing(); renderResumoGeral(); }); // No debounce on button click
 
             // Listeners para Previsão de Fluxo de Caixa
             if (addFutureEventBtn) {
@@ -2164,11 +2185,11 @@
                         if (eventNameInput) eventNameInput.value = '';
                         if (eventAmountInput) eventAmountInput.value = '';
                         if (eventDateInput) eventDateInput.value = '';
-                        saveState();
+                        saveState(); // Save immediately after adding
                         renderFutureEvents();
                         calculateCashFlowProjection();
-                        renderDetailedIncome(); // Update detailed income
-                        renderDetailedExpenses(); // Update detailed expenses
+                        renderDetailedIncome(); 
+                        renderDetailedExpenses(); 
                         renderResumoGeral(); 
                     }
                 });
@@ -2179,20 +2200,21 @@
                     if(e.target.classList.contains('remove-future-event')) {
                         const id = parseInt(e.target.dataset.id);
                         state.futureEvents = state.futureEvents.filter(event => event.id !== id);
-                        saveState();
+                        saveState(); // Save immediately after removing
                         renderFutureEvents();
                         calculateCashFlowProjection();
-                        renderDetailedIncome(); // Update detailed income
-                        renderDetailedExpenses(); // Update detailed expenses
+                        renderDetailedIncome(); 
+                        renderDetailedExpenses(); 
                         renderResumoGeral(); 
                     }
                 });
             }
 
-            if (projectionStartMonthSelect) projectionStartMonthSelect.addEventListener('change', () => { calculateCashFlowProjection(); renderResumoGeral(); });
-            if (projectionStartYearInput) projectionStartYearInput.addEventListener('input', () => { calculateCashFlowProjection(); renderResumoGeral(); });
-            if (projectionMonthsInput) projectionMonthsInput.addEventListener('input', () => { calculateCashFlowProjection(); renderResumoGeral(); });
-            if (calculateCashFlowBtn) calculateCashFlowBtn.addEventListener('click', () => { calculateCashFlowProjection(); renderResumoGeral(); });
+            const debouncedCashFlowProjection = debounce(() => { calculateCashFlowProjection(); renderResumoGeral(); }, 300);
+            if (projectionStartMonthSelect) projectionStartMonthSelect.addEventListener('change', debouncedCashFlowProjection);
+            if (projectionStartYearInput) projectionStartYearInput.addEventListener('input', debouncedCashFlowProjection);
+            if (projectionMonthsInput) projectionMonthsInput.addEventListener('input', debouncedCashFlowProjection);
+            if (calculateCashFlowBtn) calculateCashFlowBtn.addEventListener('click', () => { calculateCashFlowProjection(); renderResumoGeral(); }); // No debounce on button click
 
             // Listeners para Patrimônio Líquido
             if (addAssetBtn) {
@@ -2203,7 +2225,7 @@
                         state.assets.push({ id: Date.now(), name, value });
                         if (assetNameInput) assetNameInput.value = '';
                         if (assetValueInput) assetValueInput.value = '';
-                        saveState();
+                        saveState(); // Save immediately after adding
                         renderAssets();
                         calculateNetWorth();
                         renderResumoGeral(); 
@@ -2216,7 +2238,7 @@
                     if (e.target.classList.contains('remove-asset')) {
                         const id = parseInt(e.target.dataset.id);
                         state.assets = state.assets.filter(asset => asset.id !== id);
-                        saveState();
+                        saveState(); // Save immediately after removing
                         renderAssets();
                         calculateNetWorth();
                         renderResumoGeral(); 
@@ -2232,7 +2254,7 @@
                         state.liabilities.push({ id: Date.now(), name, value });
                         if (liabilityNameInput) liabilityNameInput.value = '';
                         if (liabilityValueInput) liabilityValueInput.value = '';
-                        saveState();
+                        saveState(); // Save immediately after adding
                         renderLiabilities();
                         calculateNetWorth();
                         renderResumoGeral(); 
@@ -2245,7 +2267,7 @@
                     if (e.target.classList.contains('remove-liability')) {
                         const id = parseInt(e.target.dataset.id);
                         state.liabilities = state.liabilities.filter(liability => liability.id !== id);
-                        saveState();
+                        saveState(); // Save immediately after removing
                         renderLiabilities();
                         calculateNetWorth();
                         renderResumoGeral(); 
@@ -2264,12 +2286,11 @@
                     const today = new Date();
                     today.setHours(0, 0, 0, 0); // Normalize date to compare only day, month, year
 
-                    if (!lastRecord || lastRecord.value !== currentNetWorth || new Date(lastRecord.date).toDateString() !== today.toDateString()) {
+                    if (!lastRecord || lastRecord.value !== currentNetWorth || (lastRecord.date && new Date(lastRecord.date).toDateString() !== today.toDateString())) {
                         state.netWorthHistory.push({ date: today, value: currentNetWorth });
-                        saveState();
+                        saveState(); // Save immediately after recording
                         renderNetWorthHistory();
                         renderResumoGeral(); 
-                        // Optionally, provide feedback to the user that it was recorded
                     } else {
                         // Optionally, inform the user that net worth hasn't changed or was already recorded today
                     }
@@ -2289,9 +2310,9 @@
                         if (subscriptionNameInput) subscriptionNameInput.value = '';
                         if (subscriptionAmountInput) subscriptionAmountInput.value = '';
                         if (subscriptionRenewalDateInput) subscriptionRenewalDateInput.value = '';
-                        saveState();
+                        saveState(); // Save immediately after adding
                         renderSubscriptions();
-                        renderDetailedSubscriptions(); // Update detailed subscriptions
+                        renderDetailedSubscriptions(); 
                         renderResumoGeral();
                     }
                 });
@@ -2302,9 +2323,9 @@
                     if (e.target.classList.contains('remove-subscription')) {
                         const id = parseInt(e.target.dataset.id);
                         state.subscriptions = state.subscriptions.filter(sub => sub.id !== id);
-                        saveState();
+                        saveState(); // Save immediately after removing
                         renderSubscriptions();
-                        renderDetailedSubscriptions(); // Update detailed subscriptions
+                        renderDetailedSubscriptions(); 
                         renderResumoGeral();
                     }
                 });

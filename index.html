@@ -51,8 +51,18 @@
 
         .content-section { display: none; }
         .content-section.active { display: block; }
-        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 350px; max-height: 450px; }
-        @media (min-width: 768px) { .chart-container { height: 400px; } }
+        /* Ajuste para o chart-container ser mais flexível */
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 600px; /* Mantém um max-width para desktop */
+            margin-left: auto; 
+            margin-right: auto; 
+            height: 300px; /* Altura padrão */
+        }
+        @media (min-width: 768px) { 
+            .chart-container { height: 400px; } /* Aumenta a altura em desktop */
+        }
         .debt-item:not(:last-child) { border-bottom: 1px solid #e5e7eb; }
         strong, b { font-weight: bold; }
         .goal-progress-bar {
@@ -108,8 +118,8 @@
     <div class="container mx-auto p-4 md:p-8 max-w-4xl">
         <!-- Seção da Ferramenta Interativa -->
         <section id="financas-interativa" class="bg-white p-6 rounded-2xl shadow-lg">
-            <!-- Área de Resumo Superior -->
-            <div class="grid grid-cols-2 gap-4 mb-8">
+            <!-- Área de Resumo Superior - Ajustada para Mobile -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                 <!-- Total Economizado -->
                 <div class="bg-emerald-500 text-white p-4 rounded-2xl shadow-md text-center flex flex-col justify-between">
                     <div class="flex justify-between items-center mb-2">
@@ -160,7 +170,7 @@
                 </div>
             </div>
 
-            <nav class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 gap-3 md:gap-4 mb-8">
+            <nav class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-3 md:gap-4 mb-8">
                 <button data-target="passo1" class="nav-button active font-medium py-2 px-4 rounded-2xl">
                     <i class="fas fa-chart-pie"></i>
                     <span>Orçamento</span>

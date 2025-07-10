@@ -51,8 +51,8 @@
 
         .content-section { display: none; }
         .content-section.active { display: block; }
-        .chart-container { position: relative; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto; height: 300px; max-height: 350px; }
-        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 350px; max-height: 450px; }
+        @media (min-width: 768px) { .chart-container { height: 400px; } }
         .debt-item:not(:last-child) { border-bottom: 1px solid #e5e7eb; }
         strong, b { font-weight: bold; }
         .goal-progress-bar {
@@ -69,6 +69,38 @@
             border-radius: 9999px;
             transition: width 0.5s ease-in-out;
         }
+        /* Estilos para os detalhes expansíveis */
+        .detail-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            padding: 0 0.5rem;
+        }
+        .detail-list.expanded {
+            max-height: 200px; /* Adjust as needed */
+            padding: 0.5rem;
+            overflow-y: auto;
+        }
+        .detail-item {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        .toggle-details-btn {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .toggle-details-btn.rotated {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body class="bg-stone-50 text-slate-800 leading-relaxed">
@@ -76,15 +108,56 @@
     <div class="container mx-auto p-4 md:p-8 max-w-4xl">
         <!-- Seção da Ferramenta Interativa -->
         <section id="financas-interativa" class="bg-white p-6 rounded-2xl shadow-lg">
-            <header class="text-center mb-8">
-                <h1 class="text-3xl md:text-4xl font-bold text-emerald-600">Ferramenta Interativa: Planejamento Financeiro</h1>
-                <p class="mt-2 text-slate-600">Aplique os conceitos do Método 7 Dias de forma prática e visualize seu progresso.</p>
-            </header>
+            <!-- Área de Resumo Superior -->
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <!-- Total Economizado -->
+                <div class="bg-emerald-500 text-white p-4 rounded-2xl shadow-md text-center flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-lg font-semibold">Economizado</p>
+                        <i class="fas fa-chevron-down text-xl toggle-details-btn" data-target="detail-economizado"></i>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold">R$ <span id="total-economizado-display">0,00</span></h2>
+                    <p id="extra-payment-message" class="text-xs mt-1 opacity-90"></p>
+                    <div id="detail-economizado" class="detail-list text-sm text-left">
+                        <!-- Detalhes de metas economizadas -->
+                    </div>
+                </div>
 
-            <!-- Área de Total Economizado -->
-            <div class="bg-emerald-500 text-white p-4 rounded-xl shadow-md mb-8 text-center">
-                <h2 class="text-xl font-semibold">Total Economizado: <span id="total-economizado-display" class="text-2xl font-bold">R$ 0,00</span></h2>
-                <p id="extra-payment-message" class="text-sm mt-1"></p>
+                <!-- Assinaturas -->
+                <div class="bg-red-500 text-white p-4 rounded-2xl shadow-md text-center flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-lg font-semibold">Assinaturas</p>
+                        <i class="fas fa-chevron-down text-xl toggle-details-btn" data-target="detail-assinaturas"></i>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold">R$ <span id="total-monthly-subscriptions-cost-display">0,00</span>/mês</h2>
+                    <div id="detail-assinaturas" class="detail-list text-sm text-left">
+                        <!-- Detalhes de assinaturas -->
+                    </div>
+                </div>
+
+                <!-- Receitas -->
+                <div class="bg-green-600 text-white p-4 rounded-2xl shadow-md text-center flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-lg font-semibold">Receitas</p>
+                        <i class="fas fa-chevron-down text-xl toggle-details-btn" data-target="detail-receitas"></i>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold">R$ <span id="summary-income-display">0,00</span></h2>
+                    <div id="detail-receitas" class="detail-list text-sm text-left">
+                        <!-- Detalhes de receitas -->
+                    </div>
+                </div>
+
+                <!-- Despesas -->
+                <div class="bg-red-600 text-white p-4 rounded-2xl shadow-md text-center flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-lg font-semibold">Despesas</p>
+                        <i class="fas fa-chevron-down text-xl toggle-details-btn" data-target="detail-despesas"></i>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold">R$ <span id="summary-expenses-display">0,00</span></h2>
+                    <div id="detail-despesas" class="detail-list text-sm text-left">
+                        <!-- Detalhes de despesas -->
+                    </div>
+                </div>
             </div>
 
             <nav class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 gap-3 md:gap-4 mb-8">
@@ -108,13 +181,21 @@
                     <i class="fas fa-home"></i>
                     <span>Financiamento</span>
                 </button>
-                <button data-target="passo6-fluxo-caixa" class="nav-button font-medium py-2 px-4 rounded-2xl">
+                <button data-target="passo6-patrimonio" class="nav-button font-medium py-2 px-4 rounded-2xl">
+                    <i class="fas fa-wallet"></i>
+                    <span>Patrimônio</span>
+                </button>
+                <button data-target="passo7-fluxo-caixa" class="nav-button font-medium py-2 px-4 rounded-2xl">
                     <i class="fas fa-exchange-alt"></i>
                     <span>Fluxo de Caixa</span>
                 </button>
-                <button data-target="passo7-patrimonio" class="nav-button font-medium py-2 px-4 rounded-2xl">
-                    <i class="fas fa-wallet"></i>
-                    <span>Patrimônio</span>
+                <button data-target="passo8-assinaturas" class="nav-button font-medium py-2 px-4 rounded-2xl">
+                    <i class="fas fa-receipt"></i>
+                    <span>Assinaturas</span>
+                </button>
+                <button data-target="passo9-resumo-geral" class="nav-button font-medium py-2 px-4 rounded-2xl">
+                    <i class="fas fa-list-alt"></i>
+                    <span>Resumo Geral</span>
                 </button>
             </nav>
 
@@ -142,6 +223,13 @@
                                             <option value="necessidades">Necessidades</option>
                                             <option value="desejos">Desejos</option>
                                             <option value="dividas">Dívidas</option>
+                                            <option value="transporte">Transporte</option>
+                                            <option value="moradia">Moradia</option>
+                                            <option value="alimentacao">Alimentação</option>
+                                            <option value="saude">Saúde</option>
+                                            <option value="educacao">Educação</option>
+                                            <option value="lazer">Lazer</option>
+                                            <option value="outros">Outros</option>
                                         </select>
                                         <button id="add-expense" class="col-span-2 sm:col-span-1 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar</button>
                                     </div>
@@ -321,85 +409,10 @@
                     </div>
                 </section>
 
-                <!-- Seção 6: Previsão de Fluxo de Caixa Detalhada -->
-                <section id="passo6-fluxo-caixa" class="content-section">
+                <!-- Seção 6: Meu Patrimônio Líquido -->
+                <section id="passo6-patrimonio" class="content-section">
                     <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 6: Previsão de Fluxo de Caixa Futuro</h2>
-                        <p class="text-slate-600 mb-6">Planeje e visualize seu saldo financeiro para os próximos meses, incluindo eventos futuros.</p>
-                        
-                        <div class="grid md:grid-cols-2 gap-8 items-start">
-                            <!-- Inputs para Eventos Futuros -->
-                            <div>
-                                <h3 class="font-bold text-lg mb-2">Adicionar Evento Futuro</h3>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-4 bg-stone-50 rounded-lg">
-                                    <input type="text" id="event-name" placeholder="Nome do evento" class="sm:col-span-2 p-2 border rounded-lg">
-                                    <input type="number" id="event-amount" placeholder="Valor (R$)" class="p-2 border rounded-lg">
-                                    <input type="date" id="event-date" class="p-2 border rounded-lg">
-                                    <select id="event-type" class="p-2 border rounded-lg bg-white">
-                                        <option value="income">Receita</option>
-                                        <option value="expense">Despesa</option>
-                                    </select>
-                                    <button id="add-future-event" class="sm:col-span-2 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar Evento</button>
-                                </div>
-                                <div id="future-event-list" class="space-y-2 mt-4 max-h-60 overflow-y-auto pr-2">
-                                    <!-- Eventos futuros serão adicionados aqui -->
-                                </div>
-                            </div>
-
-                            <!-- Configurações e Tabela de Projeção -->
-                            <div class="bg-stone-50 p-6 rounded-xl">
-                                <h3 class="font-bold text-lg mb-2">Configurações da Projeção</h3>
-                                <div class="mb-4">
-                                    <label for="projection-start-month" class="block font-medium mb-1">Mês de Início</label>
-                                    <select id="projection-start-month" class="w-full p-2 border rounded-lg bg-white">
-                                        <!-- Opções de meses geradas por JS -->
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="projection-start-year" class="block font-medium mb-1">Ano de Início</label>
-                                    <input type="number" id="projection-start-year" class="w-full p-2 border rounded-lg">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="projection-months" class="block font-medium mb-1">Meses para Projetar</label>
-                                    <input type="number" id="projection-months" value="12" min="1" max="60" class="w-full p-2 border rounded-lg">
-                                </div>
-                                <button id="calculate-cash-flow" class="w-full bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Gerar Projeção</button>
-
-                                <div id="cash-flow-projection-result" class="mt-6 pt-4 border-t border-gray-200">
-                                    <h3 class="font-bold text-lg mb-2">Sua Projeção de Fluxo de Caixa</h3>
-                                    <div class="overflow-x-auto">
-                                        <table class="min-w-full bg-white rounded-lg shadow-sm text-sm">
-                                            <thead>
-                                                <tr class="bg-gray-100 text-left">
-                                                    <th class="py-2 px-3 border-b">Mês/Ano</th>
-                                                    <th class="py-2 px-3 border-b">Saldo Inicial</th>
-                                                    <th class="py-2 px-3 border-b">Receitas (Eventos)</th>
-                                                    <th class="py-2 px-3 border-b">Despesas (Eventos)</th>
-                                                    <th class="py-2 px-3 border-b">Saldo Final</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="projection-table-body">
-                                                <tr><td colspan="5" class="text-center py-4 text-slate-400">Gere a projeção para visualizar.</td></tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <!-- Novo elemento para o gráfico de fluxo de caixa -->
-                                    <div class="mt-6">
-                                        <h3 class="font-bold text-lg mb-2 text-center">Gráfico de Fluxo de Caixa</h3>
-                                        <div class="chart-container">
-                                            <canvas id="cashFlowChart"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Seção 7: Meu Patrimônio Líquido -->
-                <section id="passo7-patrimonio" class="content-section">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 7: Meu Patrimônio Líquido</h2>
+                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 6: Meu Patrimônio Líquido</h2>
                         <p class="text-slate-600 mb-6">Calcule e acompanhe a evolução do seu patrimônio líquido. A verdadeira medida da sua riqueza!</p>
                         
                         <div class="grid md:grid-cols-2 gap-8 items-start">
@@ -453,10 +466,208 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- Seção 7: Fluxo de Caixa Futuro -->
+                <section id="passo7-fluxo-caixa" class="content-section">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm">
+                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 7: Previsão de Fluxo de Caixa Futuro</h2>
+                        <p class="text-slate-600 mb-6">Planeje e visualize seu saldo financeiro para os próximos meses, incluindo eventos futuros.</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-8 items-start">
+                            <!-- Inputs para Eventos Futuros -->
+                            <div>
+                                <h3 class="font-bold text-lg mb-2">Adicionar Evento Futuro</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-4 bg-stone-50 rounded-lg">
+                                    <input type="text" id="event-name" placeholder="Nome do evento" class="sm:col-span-2 p-2 border rounded-lg">
+                                    <input type="number" id="event-amount" placeholder="Valor (R$)" class="p-2 border rounded-lg">
+                                    <input type="date" id="event-date" class="p-2 border rounded-lg">
+                                    <select id="event-type" class="p-2 border rounded-lg bg-white">
+                                        <option value="income">Receita</option>
+                                        <option value="expense">Despesa</option>
+                                    </select>
+                                    <button id="add-future-event" class="sm:col-span-2 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar Evento</button>
+                                </div>
+                                <div id="future-event-list" class="space-y-2 mt-4 max-h-60 overflow-y-auto pr-2">
+                                    <!-- Eventos futuros serão adicionados aqui -->
+                                </div>
+                            </div>
+
+                            <!-- Configurações e Tabela de Projeção -->
+                            <div class="bg-stone-50 p-6 rounded-xl">
+                                <h3 class="font-bold text-lg mb-2">Configurações da Projeção</h3>
+                                <div class="mb-4">
+                                    <label for="projection-start-month" class="block font-medium mb-1">Mês de Início</label>
+                                    <select id="projection-start-month" class="w-full p-2 border rounded-lg bg-white">
+                                        <!-- Opções de meses geradas por JS -->
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="projection-start-year" class="block font-medium mb-1">Ano de Início</label>
+                                    <input type="number" id="projection-start-year" class="w-full p-2 border rounded-lg">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="projection-months" class="block font-medium mb-1">Meses para Projetar</label>
+                                    <input type="number" id="projection-months" value="12" min="1" max="60" class="w-full p-2 border rounded-lg">
+                                </div>
+                                <button id="calculate-cash-flow" class="w-full bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Gerar Projeção</button>
+
+                                <div id="cash-flow-projection-result" class="mt-6 pt-4 border-t border-gray-200">
+                                    <h3 class="font-bold text-lg mb-2">Sua Projeção de Fluxo de Caixa (Tabela)</h3>
+                                    <div class="overflow-x-auto">
+                                        <table class="min-w-full bg-white rounded-lg shadow-sm text-sm">
+                                            <thead>
+                                                <tr class="bg-gray-100 text-left">
+                                                    <th class="py-2 px-3 border-b">Mês/Ano</th>
+                                                    <th class="py-2 px-3 border-b">Saldo Inicial</th>
+                                                    <th class="py-2 px-3 border-b">Receitas (Eventos)</th>
+                                                    <th class="py-2 px-3 border-b">Despesas (Eventos)</th>
+                                                    <th class="py-2 px-3 border-b">Saldo Final</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="projection-table-body">
+                                                <tr><td colspan="5" class="text-center py-4 text-slate-400">Gere a projeção para visualizar.</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <h3 class="font-bold text-lg mb-2 mt-6 text-center">Calendário Anual de Fluxo de Caixa</h3>
+                                    <div id="annual-cash-flow-calendar" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
+                                        <!-- Cards de meses serão adicionados aqui -->
+                                    </div>
+
+                                    <!-- Gráfico de Fluxo de Caixa -->
+                                    <div class="mt-6">
+                                        <h3 class="font-bold text-lg mb-2 text-center">Gráfico de Fluxo de Caixa</h3>
+                                        <div class="chart-container">
+                                            <canvas id="cashFlowChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Seção 8: Gerenciador de Assinaturas (NOVA) -->
+                <section id="passo8-assinaturas" class="content-section">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm">
+                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 8: Gerenciador de Assinaturas</h2>
+                        <p class="text-slate-600 mb-6">Controle seus gastos recorrentes e identifique oportunidades de economia.</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-8 items-start">
+                            <div>
+                                <h3 class="font-bold text-lg mb-2">Adicionar Assinatura/Conta Recorrente</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-4 bg-stone-50 rounded-lg">
+                                    <input type="text" id="subscription-name" placeholder="Nome do serviço (Ex: Netflix)" class="sm:col-span-2 p-2 border rounded-lg">
+                                    <input type="number" id="subscription-amount" placeholder="Valor (R$)" class="p-2 border rounded-lg">
+                                    <select id="subscription-frequency" class="p-2 border rounded-lg bg-white">
+                                        <option value="monthly">Mensal</option>
+                                        <option value="yearly">Anual</option>
+                                    </select>
+                                    <input type="date" id="subscription-renewal-date" class="p-2 border rounded-lg">
+                                    <button id="add-subscription" class="sm:col-span-2 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar Assinatura</button>
+                                </div>
+                                <div id="subscription-list" class="space-y-2 mt-4 max-h-60 overflow-y-auto pr-2">
+                                    <!-- Assinaturas serão adicionadas aqui -->
+                                </div>
+                            </div>
+
+                            <div class="bg-stone-50 p-6 rounded-xl">
+                                <h3 class="font-bold text-lg mb-2 text-center">Resumo de Assinaturas</h3>
+                                <div id="subscription-summary" class="text-center mb-4">
+                                    <p class="text-sm text-slate-600">Total de Assinaturas Ativas: <span class="font-bold" id="total-active-subscriptions">0</span></p>
+                                    <p class="text-2xl font-bold mt-2">Custo Mensal Total: <span class="text-red-500" id="total-monthly-subscriptions-cost">R$ 0,00</span></p>
+                                </div>
+                                <p class="text-sm text-slate-600 mt-4 text-center">Revise suas assinaturas regularmente para cortar gastos desnecessários!</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Seção 9: Resumo Geral (NOVO POSICIONAMENTO) -->
+                <section id="passo9-resumo-geral" class="content-section">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm">
+                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 9: Resumo Geral</h2>
+                        <p class="text-slate-600 mb-6">Uma visão consolidada do seu planejamento financeiro.</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <!-- Resumo do Orçamento -->
+                            <div class="bg-stone-50 p-6 rounded-xl">
+                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Orçamento Mensal</h3>
+                                <p class="text-sm text-slate-700">Renda Líquida: <span class="font-semibold" id="resumo-income">R$ 0,00</span></p>
+                                <p class="text-sm text-slate-700">Total Despesas: <span class="font-semibold" id="resumo-total-expenses">R$ 0,00</span></p>
+                                <p class="text-lg font-bold mt-2">Saldo: <span id="resumo-balance" class="text-emerald-600">R$ 0,00</span></p>
+                                <div class="mt-4">
+                                    <h4 class="font-bold text-sm mb-2">Distribuição (50/30/20)</h4>
+                                    <div id="resumo-budget-bars" class="space-y-1">
+                                        <!-- Barras de resumo do orçamento -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Resumo de Dívidas -->
+                            <div class="bg-stone-50 p-6 rounded-xl">
+                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Plano de Dívidas</h3>
+                                <p class="text-sm text-slate-700">Estratégia Atual: <span class="font-semibold" id="resumo-debt-strategy">Bola de Neve</span></p>
+                                <p class="text-sm text-slate-700">Dívidas Registradas: <span class="font-semibold" id="resumo-num-debts">0</span></p>
+                                <p class="text-sm text-slate-700">Pagamento Extra Mensal: <span class="font-semibold" id="resumo-extra-payment">R$ 0,00</span></p>
+                                <p class="text-lg font-bold mt-2">Dívida Prioritária: <span id="resumo-priority-debt" class="text-red-500">N/A</span></p>
+                            </div>
+
+                            <!-- Resumo de Metas -->
+                            <div class="bg-stone-50 p-6 rounded-xl">
+                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Metas e Futuro</h3>
+                                <p class="text-sm text-slate-700">Metas Registradas: <span class="font-semibold" id="resumo-num-goals">0</span></p>
+                                <p class="text-lg font-bold mt-2">Total Economizado para Metas: <span class="text-emerald-600" id="resumo-total-saved-goals">R$ 0,00</span></p>
+                                <p class="text-sm text-slate-700">Reserva de Emergência Ideal: <span class="font-semibold" id="resumo-emergency-fund">R$ 0,00 - R$ 0,00</span></p>
+                            </div>
+
+                            <!-- Resumo de Investimentos -->
+                            <div class="bg-stone-50 p-6 rounded-xl">
+                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Simulador de Investimentos</h3>
+                                <p class="text-sm text-slate-700">Capital Inicial: <span class="font-semibold" id="resumo-inv-initial">R$ 0,00</span></p>
+                                <p class="text-sm text-slate-700">Aporte Mensal: <span class="font-semibold" id="resumo-inv-monthly">R$ 0,00</span></p>
+                                <p class="text-sm text-slate-700">Taxa Anual: <span class="font-semibold" id="resumo-inv-rate">0%</span></p>
+                                <p class="text-sm text-slate-700">Período: <span class="font-semibold" id="resumo-inv-period">0 anos</span></p>
+                                <p class="text-lg font-bold mt-2">Valor Acumulado (Projetado): <span class="text-emerald-600" id="resumo-inv-projected">R$ 0,00</span></p>
+                            </div>
+
+                            <!-- Resumo de Financiamento -->
+                            <div class="bg-stone-50 p-6 rounded-xl">
+                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Simulador de Financiamento</h3>
+                                <p class="text-sm text-slate-700">Valor do Bem: <span class="font-semibold" id="resumo-fin-value">R$ 0,00</span></p>
+                                <p class="text-sm text-slate-700">Entrada: <span class="font-semibold" id="resumo-fin-downpayment">0%</span></p>
+                                <p class="text-sm text-slate-700">Taxa Anual: <span class="font-semibold" id="resumo-fin-rate">0%</span></p>
+                                <p class="text-sm text-slate-700">Período: <span class="font-semibold" id="resumo-fin-period">0 anos</span></p>
+                                <p class="text-lg font-bold mt-2">Parcela Mensal (Projetada): <span class="text-red-500" id="resumo-fin-monthly-payment">R$ 0,00</span></p>
+                            </div>
+
+                            <!-- Resumo de Patrimônio Líquido -->
+                            <div class="bg-stone-50 p-6 rounded-xl">
+                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Patrimônio Líquido</h3>
+                                <p class="text-sm text-slate-700">Total Ativos: <span class="font-semibold" id="resumo-pat-assets">R$ 0,00</span></p>
+                                <p class="text-sm text-slate-700">Total Passivos: <span class="font-semibold" id="resumo-pat-liabilities">R$ 0,00</span></p>
+                                <p class="text-lg font-bold mt-2">Patrimônio Líquido Atual: <span class="text-emerald-600" id="resumo-pat-net-worth">R$ 0,00</span></p>
+                                <p class="text-sm text-slate-700 mt-2">Registros de Histórico: <span class="font-semibold" id="resumo-pat-history-count">0</span></p>
+                            </div>
+
+                            <!-- Resumo de Assinaturas -->
+                            <div class="bg-stone-50 p-6 rounded-xl">
+                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Assinaturas e Recorrentes</h3>
+                                <p class="text-sm text-slate-700">Assinaturas Ativas: <span class="font-semibold" id="resumo-sub-active">0</span></p>
+                                <p class="text-lg font-bold mt-2">Custo Mensal Total: <span class="text-red-500" id="resumo-sub-monthly-cost">R$ 0,00</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </main>
 
             <footer class="text-center mt-12 text-sm text-slate-500">
                 <p>Ferramenta interativa para te ajudar a conquistar sua liberdade financeira.</p>
+                <div class="mt-4">
+                    <button id="reset-data-btn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition">Reiniciar Todos os Dados</button>
+                    <p class="text-sm text-slate-500 mt-2">Isso apagará todas as informações salvas nesta ferramenta.</p>
+                </div>
             </footer>
         </section>
     </div>
@@ -478,13 +689,15 @@
                     initialCapital: 0,
                     monthlyContribution: 0,
                     annualInterestRate: 0,
-                    periodYears: 0
+                    periodYears: 0,
+                    projectedFutureValue: 0 // Adicionado para armazenar o resultado do investimento
                 },
                 financing: {
                     propertyValue: 0,
                     downPaymentPercentage: 0,
                     annualFinancingRate: 0,
-                    periodYears: 0
+                    periodYears: 0,
+                    projectedMonthlyPayment: 0 // Adicionado para armazenar o resultado do financiamento
                 },
                 // Novos estados para Previsão de Fluxo de Caixa
                 futureEvents: [],
@@ -496,7 +709,9 @@
                 // Novos estados para Patrimônio Líquido
                 assets: [],
                 liabilities: [],
-                netWorthHistory: [] // [{ date: 'YYYY-MM-DD', value: 1234.56 }]
+                netWorthHistory: [], // [{ date: 'YYYY-MM-DD', value: 1234.56 }]
+                // Novo estado para Assinaturas
+                subscriptions: [] // [{ id: Date.now(), name: '', amount: 0, frequency: 'monthly', renewalDate: '' }]
             };
 
             // Carregar estado salvo do localStorage
@@ -513,8 +728,8 @@
                     state.debtStrategy = parsedState.debtStrategy || 'snowball';
                     state.essentialCosts = parsedState.essentialCosts !== undefined ? parsedState.essentialCosts : 0;
                     state.extraPayment = parsedState.extraPayment !== undefined ? parsedState.extraPayment : 0;
-                    state.investment = parsedState.investment || { initialCapital: 0, monthlyContribution: 0, annualInterestRate: 0, periodYears: 0 };
-                    state.financing = parsedState.financing || { propertyValue: 0, downPaymentPercentage: 0, annualFinancingRate: 0, periodYears: 0 };
+                    state.investment = parsedState.investment || { initialCapital: 0, monthlyContribution: 0, annualInterestRate: 0, periodYears: 0, projectedFutureValue: 0 };
+                    state.financing = parsedState.financing || { propertyValue: 0, downPaymentPercentage: 0, annualFinancingRate: 0, periodYears: 0, projectedMonthlyPayment: 0 };
                     state.futureEvents = Array.isArray(parsedState.futureEvents) ? parsedState.futureEvents : [];
                     // Garantir que a data dos eventos futuros seja carregada como objeto Date
                     state.futureEvents.forEach(event => {
@@ -530,6 +745,13 @@
                     state.netWorthHistory.forEach(item => {
                         if (typeof item.date === 'string') {
                             item.date = new Date(item.date);
+                        }
+                    });
+                    // Carregar novo estado de Assinaturas
+                    state.subscriptions = Array.isArray(parsedState.subscriptions) ? parsedState.subscriptions : [];
+                    state.subscriptions.forEach(sub => {
+                        if (typeof sub.renewalDate === 'string') {
+                            sub.renewalDate = new Date(sub.renewalDate);
                         }
                     });
 
@@ -602,6 +824,7 @@
             const calculateCashFlowBtn = document.getElementById('calculate-cash-flow');
             const projectionTableBody = document.getElementById('projection-table-body');
             const cashFlowChartCanvas = document.getElementById('cashFlowChart');
+            const annualCashFlowCalendar = document.getElementById('annual-cash-flow-calendar'); 
 
             // Elementos para Patrimônio Líquido
             const assetNameInput = document.getElementById('asset-name');
@@ -621,11 +844,54 @@
             const netWorthChartCanvas = document.getElementById('netWorthChart');
             const netWorthHistoryListEl = document.getElementById('net-worth-history-list');
 
+            // Elementos para Assinaturas
+            const subscriptionNameInput = document.getElementById('subscription-name');
+            const subscriptionAmountInput = document.getElementById('subscription-amount');
+            const subscriptionFrequencyInput = document.getElementById('subscription-frequency');
+            const subscriptionRenewalDateInput = document.getElementById('subscription-renewal-date');
+            const addSubscriptionBtn = document.getElementById('add-subscription');
+            const subscriptionListEl = document.getElementById('subscription-list');
+            const totalActiveSubscriptionsEl = document.getElementById('total-active-subscriptions');
+            const totalMonthlySubscriptionsCostEl = document.getElementById('total-monthly-subscriptions-cost'); // Old element
+            const totalMonthlySubscriptionsCostDisplay = document.getElementById('total-monthly-subscriptions-cost-display'); // New element
+
             // Elementos para "Total Economizado"
             const totalEconomizadoDisplay = document.getElementById('total-economizado-display');
             const extraPaymentMessage = document.getElementById('extra-payment-message');
+            const summaryIncomeDisplay = document.getElementById('summary-income-display'); // New element
+            const summaryExpensesDisplay = document.getElementById('summary-expenses-display'); // New element
 
-            // Botão de Reiniciar (se existir no HTML)
+            // Elementos para Resumo Geral
+            const resumoIncome = document.getElementById('resumo-income');
+            const resumoTotalExpenses = document.getElementById('resumo-total-expenses');
+            const resumoBalance = document.getElementById('resumo-balance');
+            const resumoBudgetBars = document.getElementById('resumo-budget-bars');
+            const resumoDebtStrategy = document.getElementById('resumo-debt-strategy');
+            const resumoNumDebts = document.getElementById('resumo-num-debts');
+            const resumoExtraPayment = document.getElementById('resumo-extra-payment');
+            const resumoPriorityDebt = document.getElementById('resumo-priority-debt');
+            const resumoNumGoals = document.getElementById('resumo-num-goals');
+            const resumoTotalSavedGoals = document.getElementById('resumo-total-saved-goals');
+            const resumoEmergencyFund = document.getElementById('resumo-emergency-fund');
+            const resumoInvInitial = document.getElementById('resumo-inv-initial');
+            const resumoInvMonthly = document.getElementById('resumo-inv-monthly');
+            const resumoInvRate = document.getElementById('resumo-inv-rate');
+            const resumoInvPeriod = document.getElementById('resumo-inv-period');
+            const resumoInvProjected = document.getElementById('resumo-inv-projected');
+            const resumoFinValue = document.getElementById('resumo-fin-value');
+            const resumoFinDownpayment = document.getElementById('resumo-fin-downpayment');
+            const resumoFinRate = document.getElementById('resumo-fin-rate');
+            const resumoFinPeriod = document.getElementById('resumo-fin-period');
+            const resumoFinMonthlyPayment = document.getElementById('resumo-fin-monthly-payment');
+            const resumoPatAssets = document.getElementById('resumo-pat-assets');
+            const resumoPatLiabilities = document.getElementById('resumo-pat-liabilities');
+            const resumoPatNetWorth = document.getElementById('resumo-pat-net-worth');
+            const resumoPatHistoryCount = document.getElementById('resumo-pat-history-count');
+            const resumoSubActive = document.getElementById('resumo-sub-active');
+            const resumoSubMonthlyCost = document.getElementById('resumo-sub-monthly-cost');
+
+
+            // Botão de Reiniciar (agora existe no HTML)
             const resetDataBtn = document.getElementById('reset-data-btn');
 
             // Função para Salvar o Estado
@@ -659,10 +925,22 @@
                     necessidades: 0,
                     desejos: 0,
                     dividas: 0,
+                    transporte: 0,
+                    moradia: 0,
+                    alimentacao: 0,
+                    saude: 0,
+                    educacao: 0,
+                    lazer: 0,
+                    outros: 0,
                 };
                 let totalExpenses = 0;
                 state.expenses.forEach(exp => {
-                    totals[exp.category] += exp.amount;
+                    if (totals[exp.category] !== undefined) { // Ensure category exists
+                        totals[exp.category] += exp.amount;
+                    } else {
+                        // If a new category is added dynamically, handle it or default
+                        totals['outros'] += exp.amount; 
+                    }
                     totalExpenses += exp.amount;
                 });
 
@@ -677,10 +955,19 @@
                     budgetChart = new Chart(ctx, {
                         type: 'doughnut',
                         data: {
-                            labels: ['Necessidades', 'Desejos', 'Dívidas'],
+                            labels: ['Necessidades', 'Desejos', 'Dívidas', 'Transporte', 'Moradia', 'Alimentação', 'Saúde', 'Educação', 'Lazer', 'Outros'],
                             datasets: [{
-                                data: [totals.necessidades, totals.desejos, totals.dividas],
-                                backgroundColor: ['#34D399', '#FBBF24', '#F87171'],
+                                data: [
+                                    totals.necessidades, totals.desejos, totals.dividas,
+                                    totals.transporte, totals.moradia, totals.alimentacao,
+                                    totals.saude, totals.educacao, totals.lazer, totals.outros
+                                ],
+                                backgroundColor: [
+                                    '#34D399', '#FBBF24', '#F87171', // Needs, Wants, Debts
+                                    '#60A5FA', '#A78BFA', '#FCA5A5', // Blue, Purple, Light Red
+                                    '#38B2AC', '#ED8936', '#4299E1', // Teal, Orange, Light Blue
+                                    '#ECC94B' // Yellow
+                                ],
                                 borderWidth: 0,
                             }]
                         },
@@ -694,7 +981,11 @@
                         }
                     });
                 } else {
-                    budgetChart.data.datasets[0].data = [totals.necessidades, totals.desejos, totals.dividas];
+                    budgetChart.data.datasets[0].data = [
+                        totals.necessidades, totals.desejos, totals.dividas,
+                        totals.transporte, totals.moradia, totals.alimentacao,
+                        totals.saude, totals.educacao, totals.lazer, totals.outros
+                    ];
                     budgetChart.update();
                 }
                 
@@ -866,6 +1157,7 @@
 
                 if ((initialCapital <= 0 && monthlyContribution <= 0) || periodYears <= 0) {
                     investmentResultEl.innerHTML = '<p>Preencha os campos para ver a simulação do seu investimento.</p>';
+                    state.investment.projectedFutureValue = 0; // Reset projected value
                     return;
                 }
 
@@ -881,6 +1173,9 @@
 
                 const totalInvested = initialCapital + (monthlyContribution * totalMonths);
                 const totalInterest = futureValue - totalInvested;
+
+                state.investment.projectedFutureValue = futureValue; // Store projected value
+                saveState();
 
                 investmentResultEl.innerHTML = `
                     <p class="font-bold">Valor Total Acumulado: <span class="text-emerald-600">R$ ${futureValue.toFixed(2)}</span></p>
@@ -900,6 +1195,7 @@
 
                 if (propertyValue <= 0 || periodYears <= 0) {
                     financingResultEl.innerHTML = '<p>Preencha os campos de valor do bem e período para simular seu financiamento.</p>';
+                    state.financing.projectedMonthlyPayment = 0; // Reset projected value
                     return;
                 }
 
@@ -908,6 +1204,7 @@
 
                 if (loanAmount <= 0) {
                     financingResultEl.innerHTML = '<p>O valor da entrada é igual ou maior que o valor do bem. Não há financiamento necessário.</p>';
+                    state.financing.projectedMonthlyPayment = 0; // Reset projected value
                     return;
                 }
 
@@ -924,6 +1221,9 @@
 
                 const totalPaid = monthlyPayment * totalMonths;
                 const totalInterest = totalPaid - loanAmount;
+
+                state.financing.projectedMonthlyPayment = monthlyPayment; // Store projected value
+                saveState();
 
                 financingResultEl.innerHTML = `
                     <p class="font-bold">Valor da Parcela Mensal: <span class="text-emerald-600">R$ ${monthlyPayment.toFixed(2)}</span></p>
@@ -965,8 +1265,7 @@
                 saveState();
 
                 if (numMonths <= 0) {
-                    projectionTableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-slate-400">Gere a projeção para visualizar.</td></tr>';
-                    // Clear chart if no months to project
+                    annualCashFlowCalendar.innerHTML = '<p class="text-slate-400 text-center col-span-full">Gere a projeção para visualizar o calendário.</p>';
                     if (cashFlowChart) {
                         cashFlowChart.destroy();
                         cashFlowChart = null;
@@ -974,18 +1273,16 @@
                     return;
                 }
 
-                // Calculate current monthly net income from Passo 1 expenses
                 let totalMonthlyExpensesFromBudget = 0;
                 state.expenses.forEach(exp => {
                     totalMonthlyExpensesFromBudget += exp.amount;
                 });
                 const monthlyNetIncomeFromBudget = state.income - totalMonthlyExpensesFromBudget;
 
-                // Initial balance for projection: current income minus current expenses
-                // This assumes the projection starts with the current month's calculated balance
                 let currentBalance = state.income - totalMonthlyExpensesFromBudget; 
 
-                projectionTableBody.innerHTML = ''; // Clear previous projection
+                annualCashFlowCalendar.innerHTML = ''; // Clear previous calendar
+                projectionTableBody.innerHTML = ''; // Clear previous table (if still used)
 
                 const monthsNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
@@ -995,16 +1292,15 @@
                 const balanceData = [];
 
                 for (let i = 0; i < numMonths; i++) {
-                    let projectionDate = new Date(startYear, startMonth - 1 + i, 1); // Month is 0-indexed for Date object
+                    let projectionDate = new Date(startYear, startMonth - 1 + i, 1);
                     let monthLabel = `${monthsNames[projectionDate.getMonth()]}/${projectionDate.getFullYear()}`;
                     labels.push(monthLabel);
 
-                    let monthStartBalance = currentBalance; // Balance at the start of THIS month
+                    let monthStartBalance = currentBalance;
 
                     let monthIncomeEvents = 0;
                     let monthExpenseEvents = 0;
 
-                    // Apply future events for this specific month
                     state.futureEvents.forEach(event => {
                         const eventDate = new Date(event.date);
                         if (eventDate.getFullYear() === projectionDate.getFullYear() && eventDate.getMonth() === projectionDate.getMonth()) {
@@ -1016,17 +1312,27 @@
                         }
                     });
 
-                    // Calculate total income and expenses for the month
-                    const totalMonthlyIncome = state.income + monthIncomeEvents; // Regular income + event income
-                    const totalMonthlyExpenses = totalMonthlyExpensesFromBudget + monthExpenseEvents; // Regular expenses + event expenses
+                    const totalMonthlyIncome = state.income + monthIncomeEvents;
+                    const totalMonthlyExpenses = totalMonthlyExpensesFromBudget + monthExpenseEvents;
                     
-                    // The end balance for the current month becomes the start balance for the next month
                     currentBalance = monthStartBalance + totalMonthlyIncome - totalMonthlyExpenses;
 
                     incomeData.push(totalMonthlyIncome);
                     expenseData.push(totalMonthlyExpenses);
-                    balanceData.push(currentBalance); // This is the balance at the end of the month
+                    balanceData.push(currentBalance);
 
+                    // Create month card for calendar view
+                    const monthCard = document.createElement('div');
+                    monthCard.className = `bg-white p-4 rounded-lg shadow-sm border ${currentBalance < 0 ? 'border-red-300' : 'border-emerald-300'}`;
+                    monthCard.innerHTML = `
+                        <h4 class="font-bold text-md mb-2">${monthLabel}</h4>
+                        <p class="text-sm text-slate-600">Receitas: <span class="font-medium text-green-600">R$ ${totalMonthlyIncome.toFixed(2)}</span></p>
+                        <p class="text-sm text-slate-600">Despesas: <span class="font-medium text-red-500">R$ ${totalMonthlyExpenses.toFixed(2)}</span></p>
+                        <p class="text-md font-bold mt-2">Saldo: <span class="${currentBalance < 0 ? 'text-red-600' : 'text-emerald-600'}">R$ ${currentBalance.toFixed(2)}</span></p>
+                    `;
+                    annualCashFlowCalendar.appendChild(monthCard);
+
+                    // Populate the table (if still desired, otherwise remove this block)
                     const row = document.createElement('tr');
                     row.className = 'border-b last:border-b-0';
                     row.innerHTML = `
@@ -1041,7 +1347,7 @@
 
                 // Renderizar Gráfico de Fluxo de Caixa
                 if (cashFlowChart) {
-                    cashFlowChart.destroy(); // Destruir instância anterior para evitar duplicidade
+                    cashFlowChart.destroy();
                 }
                 const ctx = cashFlowChartCanvas.getContext('2d');
                 cashFlowChart = new Chart(ctx, {
@@ -1052,7 +1358,7 @@
                             {
                                 label: 'Receitas Totais',
                                 data: incomeData,
-                                borderColor: '#34D399', // Emerald 500
+                                borderColor: '#34D399',
                                 backgroundColor: 'rgba(52, 211, 153, 0.2)',
                                 fill: true,
                                 tension: 0.3
@@ -1060,7 +1366,7 @@
                             {
                                 label: 'Despesas Totais',
                                 data: expenseData,
-                                borderColor: '#EF4444', // Red 500
+                                borderColor: '#EF4444',
                                 backgroundColor: 'rgba(239, 68, 68, 0.2)',
                                 fill: true,
                                 tension: 0.3
@@ -1068,7 +1374,7 @@
                             {
                                 label: 'Saldo Final',
                                 data: balanceData,
-                                borderColor: '#60A5FA', // Blue 500
+                                borderColor: '#60A5FA',
                                 backgroundColor: 'rgba(96, 165, 250, 0.2)',
                                 fill: false,
                                 tension: 0.3,
@@ -1251,17 +1557,229 @@
                 });
             };
 
+            const renderSubscriptions = () => {
+                subscriptionListEl.innerHTML = '';
+                let totalActive = 0;
+                let totalMonthlyCost = 0;
+
+                if (state.subscriptions.length === 0) {
+                    subscriptionListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhuma assinatura adicionada.</p>';
+                } else {
+                    state.subscriptions.forEach((sub, index) => {
+                        const subEl = document.createElement('div');
+                        subEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
+                        const monthlyAmount = sub.frequency === 'yearly' ? sub.amount / 12 : sub.amount;
+                        totalMonthlyCost += monthlyAmount;
+                        totalActive++;
+
+                        subEl.innerHTML = `
+                            <span>${sub.name} (R$ ${sub.amount.toFixed(2)} ${sub.frequency === 'yearly' ? 'anual' : 'mensal'})</span>
+                            <div class="flex items-center gap-2">
+                                <span class="font-medium text-slate-700">R$ ${monthlyAmount.toFixed(2)}/mês</span>
+                                <button data-id="${sub.id}" class="remove-subscription text-red-500 hover:text-red-700 text-lg">&times;</button>
+                            </div>
+                        `;
+                        subscriptionListEl.appendChild(subEl);
+                    });
+                }
+                totalActiveSubscriptionsEl.textContent = totalActive;
+                totalMonthlySubscriptionsCostEl.textContent = `R$ ${totalMonthlyCost.toFixed(2)}`;
+                totalMonthlySubscriptionsCostDisplay.textContent = `${totalMonthlyCost.toFixed(2)}`; // Update top display
+            };
+
             // Função para calcular e exibir o total economizado
             const calculateTotalEconomizado = () => {
                 let totalSavedGoals = state.goals.reduce((sum, goal) => sum + goal.savedAmount, 0);
                 
-                totalEconomizadoDisplay.textContent = `R$ ${totalSavedGoals.toFixed(2)}`;
+                totalEconomizadoDisplay.textContent = `${totalSavedGoals.toFixed(2)}`;
 
                 if (state.extraPayment > 0) {
                     extraPaymentMessage.textContent = `(Você está pagando R$ ${state.extraPayment.toFixed(2)} extra/mês em dívidas, acelerando a quitação!)`;
                 } else {
                     extraPaymentMessage.textContent = '';
                 }
+            };
+
+            // Nova função para atualizar o resumo de receitas e gastos no topo
+            const updateSummaryIncomeExpenses = () => {
+                const totalExpensesFromBudget = state.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+                summaryIncomeDisplay.textContent = `${state.income.toFixed(2)}`;
+                summaryExpensesDisplay.textContent = `${totalExpensesFromBudget.toFixed(2)}`;
+            };
+
+            // Funções para renderizar os detalhes expansíveis
+            const renderDetailedSavedGoals = () => {
+                const detailListEl = document.getElementById('detail-economizado');
+                detailListEl.innerHTML = '';
+                if (state.goals.length === 0) {
+                    detailListEl.innerHTML = '<p class="detail-item">Nenhuma meta adicionada.</p>';
+                } else {
+                    state.goals.forEach(goal => {
+                        const itemEl = document.createElement('div');
+                        itemEl.className = 'detail-item';
+                        itemEl.innerHTML = `
+                            <span>${goal.name}</span>
+                            <span class="font-medium">R$ ${goal.savedAmount.toFixed(2)}</span>
+                        `;
+                        detailListEl.appendChild(itemEl);
+                    });
+                }
+            };
+
+            const renderDetailedSubscriptions = () => {
+                const detailListEl = document.getElementById('detail-assinaturas');
+                detailListEl.innerHTML = '';
+                if (state.subscriptions.length === 0) {
+                    detailListEl.innerHTML = '<p class="detail-item">Nenhuma assinatura adicionada.</p>';
+                } else {
+                    state.subscriptions.forEach(sub => {
+                        const itemEl = document.createElement('div');
+                        itemEl.className = 'detail-item';
+                        const monthlyAmount = sub.frequency === 'yearly' ? sub.amount / 12 : sub.amount;
+                        itemEl.innerHTML = `
+                            <span>${sub.name}</span>
+                            <span class="font-medium">R$ ${monthlyAmount.toFixed(2)}/mês</span>
+                        `;
+                        detailListEl.appendChild(itemEl);
+                    });
+                }
+            };
+
+            const renderDetailedIncome = () => {
+                const detailListEl = document.getElementById('detail-receitas');
+                detailListEl.innerHTML = '';
+                if (state.income === 0 && state.futureEvents.filter(e => e.type === 'income').length === 0) {
+                    detailListEl.innerHTML = '<p class="detail-item">Nenhuma receita registrada.</p>';
+                } else {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'detail-item';
+                    itemEl.innerHTML = `
+                        <span>Renda Mensal Fixa</span>
+                        <span class="font-medium">R$ ${state.income.toFixed(2)}</span>
+                    `;
+                    detailListEl.appendChild(itemEl);
+                    state.futureEvents.filter(e => e.type === 'income').forEach(event => {
+                        const eventDate = new Date(event.date);
+                        const eventItemEl = document.createElement('div');
+                        eventItemEl.className = 'detail-item';
+                        eventItemEl.innerHTML = `
+                            <span>${event.name} (${eventDate.toLocaleDateString('pt-BR')})</span>
+                            <span class="font-medium">R$ ${event.amount.toFixed(2)}</span>
+                        `;
+                        detailListEl.appendChild(eventItemEl);
+                    });
+                }
+            };
+
+            const renderDetailedExpenses = () => {
+                const detailListEl = document.getElementById('detail-despesas');
+                detailListEl.innerHTML = '';
+                if (state.expenses.length === 0) {
+                    detailListEl.innerHTML = '<p class="detail-item">Nenhuma despesa adicionada.</p>';
+                } else {
+                    state.expenses.forEach(exp => {
+                        const itemEl = document.createElement('div');
+                        itemEl.className = 'detail-item';
+                        itemEl.innerHTML = `
+                            <span>${exp.name} (${exp.category})</span>
+                            <span class="font-medium">R$ ${exp.amount.toFixed(2)}</span>
+                        `;
+                        detailListEl.appendChild(itemEl);
+                    });
+                }
+            };
+
+            // Função para renderizar o Resumo Geral
+            const renderResumoGeral = () => {
+                // Resumo do Orçamento
+                const totalExpensesSummary = state.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+                const balanceSummary = state.income - totalExpensesSummary;
+                resumoIncome.textContent = `R$ ${state.income.toFixed(2)}`;
+                resumoTotalExpenses.textContent = `R$ ${totalExpensesSummary.toFixed(2)}`;
+                resumoBalance.textContent = `R$ ${balanceSummary.toFixed(2)}`;
+                resumoBalance.classList.toggle('text-red-600', balanceSummary < 0);
+                resumoBalance.classList.toggle('text-emerald-600', balanceSummary >= 0);
+
+                // Re-criar barras de comparação para o resumo
+                resumoBudgetBars.innerHTML = '';
+                const income = state.income > 0 ? state.income : 1;
+                const percentages = {
+                    necessidades: (state.expenses.filter(e => e.category === 'necessidades').reduce((s, e) => s + e.amount, 0) / income) * 100,
+                    desejos: (state.expenses.filter(e => e.category === 'desejos').reduce((s, e) => s + e.amount, 0) / income) * 100,
+                    poupanca: (balanceSummary > 0 ? balanceSummary / income : 0) * 100,
+                };
+                const createResumoBar = (label, userPercent, targetPercent, color) => {
+                    const barHtml = `
+                        <div class="mb-1">
+                            <div class="flex justify-between text-xs">
+                                <span>${label}</span>
+                                <span>${userPercent.toFixed(1)}% (Meta: ${targetPercent}%)</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="h-2 rounded-full" style="width: ${Math.min(userPercent, 100)}%; background-color: ${color};"></div>
+                            </div>
+                        </div>
+                    `;
+                    resumoBudgetBars.innerHTML += barHtml;
+                }
+                createResumoBar('Necessidades', percentages.necessidades, 50, '#34D399');
+                createResumoBar('Desejos', percentages.desejos, 30, '#FBBF24');
+                createResumoBar('Poupança/Saldo', percentages.poupanca, 20, '#60A5FA');
+
+
+                // Resumo de Dívidas
+                resumoDebtStrategy.textContent = state.debtStrategy === 'snowball' ? 'Bola de Neve' : 'Avalancha';
+                resumoNumDebts.textContent = state.debts.length;
+                resumoExtraPayment.textContent = `R$ ${state.extraPayment.toFixed(2)}`;
+                let sortedDebtsForResumo = [...state.debts];
+                if (state.debtStrategy === 'snowball') {
+                    sortedDebtsForResumo.sort((a, b) => a.total - b.total);
+                } else {
+                    sortedDebtsForResumo.sort((a, b) => b.rate - a.rate);
+                }
+                resumoPriorityDebt.textContent = sortedDebtsForResumo.length > 0 ? `${sortedDebtsForResumo[0].name} (R$ ${sortedDebtsForResumo[0].total.toFixed(2)})` : 'N/A';
+                resumoPriorityDebt.classList.toggle('text-red-500', sortedDebtsForResumo.length > 0);
+
+
+                // Resumo de Metas
+                resumoNumGoals.textContent = state.goals.length;
+                resumoTotalSavedGoals.textContent = `R$ ${state.goals.reduce((sum, goal) => sum + goal.savedAmount, 0).toFixed(2)}`;
+                const minFund = state.essentialCosts * 3;
+                const maxFund = state.essentialCosts * 6;
+                resumoEmergencyFund.textContent = `R$ ${minFund.toFixed(2)} - R$ ${maxFund.toFixed(2)}`;
+
+                // Resumo de Investimentos
+                resumoInvInitial.textContent = `R$ ${state.investment.initialCapital.toFixed(2)}`;
+                resumoInvMonthly.textContent = `R$ ${state.investment.monthlyContribution.toFixed(2)}`;
+                resumoInvRate.textContent = `${state.investment.annualInterestRate.toFixed(2)}%`;
+                resumoInvPeriod.textContent = `${state.investment.periodYears} anos`;
+                resumoInvProjected.textContent = `R$ ${state.investment.projectedFutureValue.toFixed(2)}`;
+                resumoInvProjected.classList.toggle('text-emerald-600', state.investment.projectedFutureValue > 0);
+
+                // Resumo de Financiamento
+                resumoFinValue.textContent = `R$ ${state.financing.propertyValue.toFixed(2)}`;
+                resumoFinDownpayment.textContent = `${state.financing.downPaymentPercentage.toFixed(2)}%`;
+                resumoFinRate.textContent = `${state.financing.annualFinancingRate.toFixed(2)}%`;
+                resumoFinPeriod.textContent = `${state.financing.periodYears} anos`;
+                resumoFinMonthlyPayment.textContent = `R$ ${state.financing.projectedMonthlyPayment.toFixed(2)}`;
+                resumoFinMonthlyPayment.classList.toggle('text-red-500', state.financing.projectedMonthlyPayment > 0);
+
+                // Resumo de Patrimônio Líquido
+                const totalAssetsResumo = state.assets.reduce((sum, asset) => sum + asset.value, 0);
+                const totalLiabilitiesResumo = state.liabilities.reduce((sum, liability) => sum + liability.value, 0);
+                const currentNetWorthResumo = totalAssetsResumo - totalLiabilitiesResumo;
+                resumoPatAssets.textContent = `R$ ${totalAssetsResumo.toFixed(2)}`;
+                resumoPatLiabilities.textContent = `R$ ${totalLiabilitiesResumo.toFixed(2)}`;
+                resumoPatNetWorth.textContent = `R$ ${currentNetWorthResumo.toFixed(2)}`;
+                resumoPatNetWorth.classList.toggle('text-red-600', currentNetWorthResumo < 0);
+                resumoPatNetWorth.classList.toggle('text-emerald-600', currentNetWorthResumo >= 0);
+                resumoPatHistoryCount.textContent = state.netWorthHistory.length;
+
+                // Resumo de Assinaturas
+                resumoSubActive.textContent = state.subscriptions.length;
+                const totalMonthlySubsCostResumo = state.subscriptions.reduce((sum, sub) => sum + (sub.frequency === 'yearly' ? sub.amount / 12 : sub.amount), 0);
+                resumoSubMonthlyCost.textContent = `R$ ${totalMonthlySubsCostResumo.toFixed(2)}`;
+                resumoSubMonthlyCost.classList.toggle('text-red-500', totalMonthlySubsCostResumo > 0);
             };
 
 
@@ -1276,7 +1794,10 @@
                 renderAssets(); 
                 renderLiabilities(); 
                 calculateNetWorth(); 
-                calculateTotalEconomizado(); // Chamar a nova função aqui
+                calculateTotalEconomizado(); 
+                renderSubscriptions(); // Renderizar assinaturas
+                updateSummaryIncomeExpenses(); // Update new top summary
+                renderResumoGeral(); // Chamar a função de resumo geral
 
                 // Atualizar campos de input com o estado carregado
                 incomeInput.value = state.income;
@@ -1303,6 +1824,7 @@
                 if (activeButton) {
                     activeButton.classList.add('active');
                 }
+                // Only toggle content sections that are part of the main `main` tag
                 contentSections.forEach(section => {
                     section.classList.toggle('active', section.id === state.activeSection);
                 });
@@ -1334,11 +1856,38 @@
                         calculateInvestment();
                     } else if (target === 'passo5-financiamento') {
                         calculateFinancing();
-                    } else if (target === 'passo6-fluxo-caixa') {
+                    } else if (target === 'passo6-patrimonio') { 
+                        calculateNetWorth(); 
+                    } else if (target === 'passo7-fluxo-caixa') { // Fluxo de caixa agora é um passo
                         populateMonthYearSelectors();
                         calculateCashFlowProjection();
-                    } else if (target === 'passo7-patrimonio') {
-                        calculateNetWorth(); 
+                    } else if (target === 'passo8-assinaturas') { // Novo passo para assinaturas
+                        renderSubscriptions();
+                    } else if (target === 'passo9-resumo-geral') { // Resumo geral é o último passo
+                        renderResumoGeral();
+                    }
+                });
+            });
+
+            // Listeners para os botões de toggle de detalhes
+            document.querySelectorAll('.toggle-details-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const targetId = e.target.dataset.target;
+                    const detailList = document.getElementById(targetId);
+                    detailList.classList.toggle('expanded');
+                    e.target.classList.toggle('rotated');
+
+                    // Renderizar os detalhes apenas quando expandir
+                    if (detailList.classList.contains('expanded')) {
+                        if (targetId === 'detail-economizado') {
+                            renderDetailedSavedGoals();
+                        } else if (targetId === 'detail-assinaturas') {
+                            renderDetailedSubscriptions();
+                        } else if (targetId === 'detail-receitas') {
+                            renderDetailedIncome();
+                        } else if (targetId === 'detail-despesas') {
+                            renderDetailedExpenses();
+                        }
                     }
                 });
             });
@@ -1347,7 +1896,11 @@
                 state.income = parseFloat(e.target.value) || 0;
                 saveState();
                 renderChartAndSummary();
-                calculateTotalEconomizado(); // Update total economizado
+                calculateTotalEconomizado(); 
+                calculateCashFlowProjection(); 
+                updateSummaryIncomeExpenses(); 
+                renderDetailedIncome(); // Update detailed income
+                renderResumoGeral(); 
             });
 
             addExpenseBtn.addEventListener('click', () => {
@@ -1361,6 +1914,10 @@
                     expenseAmountInput.value = '';
                     saveState();
                     updateAll();
+                    calculateCashFlowProjection(); 
+                    updateSummaryIncomeExpenses(); 
+                    renderDetailedExpenses(); // Update detailed expenses
+                    renderResumoGeral(); 
                 }
             });
 
@@ -1370,6 +1927,10 @@
                     state.expenses.splice(index, 1);
                     saveState();
                     updateAll();
+                    calculateCashFlowProjection(); 
+                    updateSummaryIncomeExpenses(); 
+                    renderDetailedExpenses(); // Update detailed expenses
+                    renderResumoGeral(); 
                 }
             });
             
@@ -1384,6 +1945,7 @@
                     debtRateInput.value = '';
                     saveState();
                     renderDebts();
+                    renderResumoGeral(); 
                 }
             });
 
@@ -1393,6 +1955,7 @@
                     state.debts = state.debts.filter(d => d.id !== id);
                     saveState();
                     renderDebts();
+                    renderResumoGeral(); 
                 }
             });
 
@@ -1400,25 +1963,29 @@
                 state.debtStrategy = 'snowball';
                 saveState();
                 updateAll();
+                renderResumoGeral(); 
             });
 
             avalancheBtn.addEventListener('click', () => {
                 state.debtStrategy = 'avalanche';
                 saveState();
                 updateAll();
+                renderResumoGeral(); 
             });
 
             extraPaymentInput.addEventListener('input', (e) => {
                 state.extraPayment = parseFloat(e.target.value) || 0;
                 saveState();
                 simulateDebtPayment();
-                calculateTotalEconomizado(); // Update total economizado
+                calculateTotalEconomizado(); 
+                renderResumoGeral(); 
             });
 
             essentialCostsInput.addEventListener('input', (e) => {
                 state.essentialCosts = parseFloat(e.target.value) || 0;
                 saveState();
                 renderEmergencyFundResult();
+                renderResumoGeral(); 
             });
             
             addGoalBtn.addEventListener('click', () => {
@@ -1432,7 +1999,9 @@
                     goalSavedAmountInput.value = '';
                     saveState();
                     renderGoals();
-                    calculateTotalEconomizado(); // Update total economizado
+                    calculateTotalEconomizado(); 
+                    renderDetailedSavedGoals(); // Update detailed saved goals
+                    renderResumoGeral(); 
                 }
             });
 
@@ -1442,7 +2011,9 @@
                     state.goals = state.goals.filter(g => g.id !== id);
                     saveState();
                     renderGoals();
-                    calculateTotalEconomizado(); // Update total economizado
+                    calculateTotalEconomizado(); 
+                    renderDetailedSavedGoals(); // Update detailed saved goals
+                    renderResumoGeral(); 
                 }
             });
 
@@ -1455,24 +2026,26 @@
                         state.goals[goalIndex].savedAmount = newSavedAmount;
                         saveState();
                         renderGoals();
-                        calculateTotalEconomizado(); // Update total economizado
+                        calculateTotalEconomizado(); 
+                        renderDetailedSavedGoals(); // Update detailed saved goals
+                        renderResumoGeral(); 
                     }
                 }
             });
 
             // Listeners para Simulador de Investimentos
-            initialCapitalInput.addEventListener('input', calculateInvestment);
-            monthlyContributionInput.addEventListener('input', calculateInvestment);
-            annualInterestRateInput.addEventListener('input', calculateInvestment);
-            investmentPeriodYearsInput.addEventListener('input', calculateInvestment);
-            calculateInvestmentBtn.addEventListener('click', calculateInvestment);
+            initialCapitalInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
+            monthlyContributionInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
+            annualInterestRateInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
+            investmentPeriodYearsInput.addEventListener('input', () => { calculateInvestment(); renderResumoGeral(); });
+            calculateInvestmentBtn.addEventListener('click', () => { calculateInvestment(); renderResumoGeral(); });
 
             // Listeners para Simulador de Financiamento
-            propertyValueInput.addEventListener('input', calculateFinancing);
-            downPaymentPercentageInput.addEventListener('input', calculateFinancing);
-            annualFinancingRateInput.addEventListener('input', calculateFinancing);
-            financingPeriodYearsInput.addEventListener('input', calculateFinancing);
-            calculateFinancingBtn.addEventListener('click', calculateFinancing);
+            propertyValueInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
+            downPaymentPercentageInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
+            annualFinancingRateInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
+            financingPeriodYearsInput.addEventListener('input', () => { calculateFinancing(); renderResumoGeral(); });
+            calculateFinancingBtn.addEventListener('click', () => { calculateFinancing(); renderResumoGeral(); });
 
             // Listeners para Previsão de Fluxo de Caixa
             addFutureEventBtn.addEventListener('click', () => {
@@ -1489,6 +2062,9 @@
                     saveState();
                     renderFutureEvents();
                     calculateCashFlowProjection();
+                    renderDetailedIncome(); // Update detailed income
+                    renderDetailedExpenses(); // Update detailed expenses
+                    renderResumoGeral(); 
                 }
             });
 
@@ -1499,13 +2075,16 @@
                     saveState();
                     renderFutureEvents();
                     calculateCashFlowProjection();
+                    renderDetailedIncome(); // Update detailed income
+                    renderDetailedExpenses(); // Update detailed expenses
+                    renderResumoGeral(); 
                 }
             });
 
-            projectionStartMonthSelect.addEventListener('change', calculateCashFlowProjection);
-            projectionStartYearInput.addEventListener('input', calculateCashFlowProjection);
-            projectionMonthsInput.addEventListener('input', calculateCashFlowProjection);
-            calculateCashFlowBtn.addEventListener('click', calculateCashFlowProjection);
+            projectionStartMonthSelect.addEventListener('change', () => { calculateCashFlowProjection(); renderResumoGeral(); });
+            projectionStartYearInput.addEventListener('input', () => { calculateCashFlowProjection(); renderResumoGeral(); });
+            projectionMonthsInput.addEventListener('input', () => { calculateCashFlowProjection(); renderResumoGeral(); });
+            calculateCashFlowBtn.addEventListener('click', () => { calculateCashFlowProjection(); renderResumoGeral(); });
 
             // Listeners para Patrimônio Líquido
             addAssetBtn.addEventListener('click', () => {
@@ -1518,6 +2097,7 @@
                     saveState();
                     renderAssets();
                     calculateNetWorth();
+                    renderResumoGeral(); 
                 }
             });
 
@@ -1528,6 +2108,7 @@
                     saveState();
                     renderAssets();
                     calculateNetWorth();
+                    renderResumoGeral(); 
                 }
             });
 
@@ -1541,6 +2122,7 @@
                     saveState();
                     renderLiabilities();
                     calculateNetWorth();
+                    renderResumoGeral(); 
                 }
             });
 
@@ -1551,6 +2133,7 @@
                     saveState();
                     renderLiabilities();
                     calculateNetWorth();
+                    renderResumoGeral(); 
                 }
             });
 
@@ -1568,9 +2151,40 @@
                     state.netWorthHistory.push({ date: today, value: currentNetWorth });
                     saveState();
                     renderNetWorthHistory();
+                    renderResumoGeral(); 
                     // Optionally, provide feedback to the user that it was recorded
                 } else {
                     // Optionally, inform the user that net worth hasn't changed or was already recorded today
+                }
+            });
+
+            // Listeners para Assinaturas
+            addSubscriptionBtn.addEventListener('click', () => {
+                const name = subscriptionNameInput.value.trim();
+                const amount = parseFloat(subscriptionAmountInput.value);
+                const frequency = subscriptionFrequencyInput.value;
+                const renewalDate = subscriptionRenewalDateInput.value;
+
+                if (name && amount > 0) {
+                    state.subscriptions.push({ id: Date.now(), name, amount, frequency, renewalDate: renewalDate ? new Date(renewalDate) : null });
+                    subscriptionNameInput.value = '';
+                    subscriptionAmountInput.value = '';
+                    subscriptionRenewalDateInput.value = '';
+                    saveState();
+                    renderSubscriptions();
+                    renderDetailedSubscriptions(); // Update detailed subscriptions
+                    renderResumoGeral();
+                }
+            });
+
+            subscriptionListEl.addEventListener('click', e => {
+                if (e.target.classList.contains('remove-subscription')) {
+                    const id = parseInt(e.target.dataset.id);
+                    state.subscriptions = state.subscriptions.filter(sub => sub.id !== id);
+                    saveState();
+                    renderSubscriptions();
+                    renderDetailedSubscriptions(); // Update detailed subscriptions
+                    renderResumoGeral();
                 }
             });
 
@@ -1603,13 +2217,14 @@
                         state.debtStrategy = 'snowball';
                         state.essentialCosts = 0;
                         state.extraPayment = 0;
-                        state.investment = { initialCapital: 0, monthlyContribution: 0, annualInterestRate: 0, periodYears: 0 };
-                        state.financing = { propertyValue: 0, downPaymentPercentage: 0, annualFinancingRate: 0, periodYears: 0 };
+                        state.investment = { initialCapital: 0, monthlyContribution: 0, annualInterestRate: 0, periodYears: 0, projectedFutureValue: 0 };
+                        state.financing = { propertyValue: 0, downPaymentPercentage: 0, annualFinancingRate: 0, periodYears: 0, projectedMonthlyPayment: 0 };
                         state.futureEvents = [];
                         state.projectionSettings = { startMonth: new Date().getMonth() + 1, startYear: new Date().getFullYear(), months: 12 };
                         state.assets = [];
                         state.liabilities = [];
                         state.netWorthHistory = [];
+                        state.subscriptions = [];
 
                         updateAll();
                         populateMonthYearSelectors();
@@ -1620,6 +2235,8 @@
             // Renderização Inicial com o estado carregado ou padrão
             populateMonthYearSelectors();
             updateAll();
+            // Ensure cash flow projection is calculated on initial load since it's always visible
+            calculateCashFlowProjection(); 
         });
     </script>
 </body>

@@ -1546,6 +1546,11 @@
                 if (netWorthChart) {
                     netWorthChart.destroy();
                 }
+
+                // Define labels and data here, before chart creation
+                const labels = state.netWorthHistory.map(item => new Date(item.date).toLocaleDateString('pt-BR'));
+                const data = state.netWorthHistory.map(item => item.value);
+
                 if (netWorthChartCanvas) {
                     const ctx = netWorthChartCanvas.getContext('2d');
                     netWorthChart = new Chart(ctx, {
@@ -2300,7 +2305,7 @@
                         saveState();
                         renderSubscriptions();
                         renderDetailedSubscriptions(); // Update detailed subscriptions
-                        renderResumoGuresumoGeral();
+                        renderResumoGeral();
                     }
                 });
             }

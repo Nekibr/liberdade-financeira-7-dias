@@ -1,1163 +1,1347 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ferramenta Completa</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    :root {
-      --primary-color: #3498db;
-      --secondary-color: #2c3e50;
-      --success-color: #2ecc71;
-      --danger-color: #e74c3c;
-      --warning-color: #f39c12;
-      --info-color: #1abc9c;
-      --light-color: #ecf0f1;
-      --dark-color: #34495e;
-      --white: #ffffff;
-      --gray: #95a5a6;
-      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-      background-color: #f5f7fa;
-      color: #333;
-      line-height: 1.6;
-    }
-
-    /* Sidebar Styles */
-    nav {
-      width: 80px;
-      background: var(--secondary-color);
-      color: var(--white);
-      transition: var(--transition);
-      overflow: hidden;
-      flex-shrink: 0;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-      position: relative;
-      z-index: 10;
-    }
-
-    nav:hover {
-      width: 250px;
-    }
-
-    nav .menu-icon {
-      font-size: 24px;
-      position: absolute;
-      top: 20px;
-      left: 28px;
-      pointer-events: none;
-      transition: var(--transition);
-    }
-
-    nav:hover .menu-icon {
-      left: 20px;
-    }
-
-    nav h2 {
-      padding: 25px 20px;
-      white-space: nowrap;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      font-size: 1.5rem;
-      font-weight: 600;
-      background: linear-gradient(90deg, var(--primary-color), var(--info-color));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    nav:hover h2 {
-      opacity: 1;
-    }
-
-    nav ul {
-      list-style: none;
-      margin-top: 80px;
-      padding: 0;
-    }
-
-    nav li {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      padding: 15px 25px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: var(--transition);
-      border-left: 4px solid transparent;
-    }
-
-    nav li:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-left: 4px solid var(--primary-color);
-    }
-
-    nav li.active {
-      background: rgba(255, 255, 255, 0.1);
-      border-left: 4px solid var(--primary-color);
-    }
-
-    nav li span.icon {
-      font-size: 1.2rem;
-      min-width: 30px;
-      text-align: center;
-    }
-
-    nav li span.label {
-      display: inline-block;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
-
-    nav:hover li span.label {
-      opacity: 1;
-    }
-
-    /* Main Content Styles */
-    main {
-      flex: 1;
-      padding: 30px;
-      overflow-y: auto;
-      background: var(--light-color);
-      position: relative;
-    }
-
-    section {
-      display: none;
-      animation: fadeIn 0.5s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    section.active {
-      display: block;
-    }
-
-    h1 {
-      color: var(--secondary-color);
-      margin-bottom: 25px;
-      font-size: 2rem;
-      font-weight: 700;
-      position: relative;
-      padding-bottom: 10px;
-    }
-
-    h1::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 60px;
-      height: 4px;
-      background: linear-gradient(90deg, var(--primary-color), var(--info-color));
-      border-radius: 2px;
-    }
-
-    /* Grid Layout */
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 25px;
-      margin-bottom: 30px;
-    }
-
-    /* Chart Styles */
-    .chart-container {
-      position: relative;
-      width: 100%;
-      min-height: 300px;
-      background: var(--white);
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: var(--shadow);
-      transition: var(--transition);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .chart-container:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    canvas {
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    /* Economy Box */
-    .economia-box {
-      background: linear-gradient(135deg, var(--success-color), var(--info-color));
-      color: var(--white);
-      padding: 25px;
-      margin-top: 30px;
-      border-radius: 12px;
-      font-size: 1.4rem;
-      font-weight: 600;
-      box-shadow: var(--shadow);
-      text-align: center;
-      transition: var(--transition);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .economia-box:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Form Styles */
-    form {
-      background: var(--white);
-      padding: 20px;
-      margin-bottom: 30px;
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      transition: var(--transition);
-    }
-
-    form:hover {
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    form input, form select {
-      flex: 1 1 200px;
-      padding: 12px 15px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      transition: var(--transition);
-    }
-
-    form input:focus, form select:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-    }
-
-    form button {
-      flex: 1 1 150px;
-      padding: 12px 15px;
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 600;
-      transition: var(--transition);
-    }
-
-    form button:hover {
-      background: #2980b9;
-      transform: translateY(-2px);
-    }
-
-    /* Table Styles */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--white);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      transition: var(--transition);
-    }
-
-    table:hover {
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    th {
-      background: var(--secondary-color);
-      color: var(--white);
-      padding: 15px;
-      text-align: left;
-      font-weight: 600;
-    }
-
-    td {
-      padding: 12px 15px;
-      border-bottom: 1px solid #eee;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    /* Report Styles */
-    .report-container {
-      background: var(--white);
-      border-radius: 12px;
-      padding: 25px;
-      margin-top: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .report-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .report-summary {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-
-    .summary-card {
-      background: var(--light-color);
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    .summary-card h3 {
-      color: var(--secondary-color);
-      margin-bottom: 10px;
-      font-size: 1rem;
-    }
-
-    .summary-card .value {
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-
-    .summary-card.receitas .value {
-      color: var(--success-color);
-    }
-
-    .summary-card.gastos .value {
-      color: var(--danger-color);
-    }
-
-    .summary-card.saldo .value {
-      color: var(--primary-color);
-    }
-
-    .report-details {
-      margin-top: 30px;
-    }
-
-    .details-section {
-      margin-bottom: 25px;
-    }
-
-    .details-section h4 {
-      color: var(--secondary-color);
-      margin-bottom: 15px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid var(--light-color);
-    }
-
-    .details-list {
-      list-style: none;
-    }
-
-    .details-list li {
-      padding: 10px 15px;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .details-list li:last-child {
-      border-bottom: none;
-    }
-
-    /* Ações e Estilos Condicionais */
-    .acoes-cell {
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn-excluir {
-      background-color: var(--danger-color);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 5px 10px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      transition: var(--transition);
-    }
-
-    .btn-excluir:hover {
-      background-color: #c0392b;
-      transform: translateY(-2px);
-    }
-
-    .receita-row {
-      background-color: rgba(46, 204, 113, 0.05);
-    }
-
-    .receita-row:hover {
-      background-color: rgba(46, 204, 113, 0.1);
-    }
-
-    .gasto-row {
-      background-color: rgba(231, 76, 60, 0.05);
-    }
-
-    .gasto-row:hover {
-      background-color: rgba(231, 76, 60, 0.1);
-    }
-
-    .receita-text {
-      color: var(--light-color);
-      font-weight: 500;
-    }
-
-    .gasto-text {
-      color: var(--danger-color);
-      font-weight: 500;
-    }
-
-    .saldo-positivo {
-      color: var(--success-color);
-    }
-
-    .saldo-negativo {
-      color: var(--danger-color);
-    }
-
-    /* Responsive Adjustments */
-    @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-        height: auto;
-        overflow: auto;
-      }
-
-      nav {
-        width: 100%;
-        height: 60px;
-        overflow: visible;
-      }
-
-      nav:hover {
-        width: 100%;
-        height: auto;
-      }
-
-      nav .menu-icon {
-        pointer-events: auto;
-        cursor: pointer;
-      }
-
-      nav h2 {
-        display: none;
-      }
-
-      nav ul {
-        margin-top: 0;
-        display: none;
-      }
-
-      nav:hover ul {
-        display: block;
-      }
-
-      main {
-        padding: 20px;
-      }
-
-      .grid-container {
-        grid-template-columns: 1fr;
-      }
-
-      .chart-container {
-        min-height: 250px;
-      }
-
-      form {
-        flex-direction: column;
-      }
-
-      form input, form select, form button {
-        flex: 1 1 auto;
-        width: 100%;
-      }
-
-      .report-summary {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--primary-color);
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #2980b9;
-    }
-  </style>
-
- 
-</div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferramenta Completa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #1abc9c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --white: #ffffff;
+            --gray: #95a5a6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Sidebar Styles */
+        nav {
+            width: 80px;
+            background: var(--secondary-color);
+            color: var(--white);
+            transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Only width transition */
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Desktop Hover State */
+        @media (min-width: 769px) {
+            nav:hover {
+                width: 250px;
+            }
+        }
+
+        nav .menu-icon {
+            font-size: 24px;
+            position: absolute;
+            top: 20px;
+            left: 28px;
+            pointer-events: none; /* Default for desktop */
+            transition: left 0.3s ease;
+            cursor: default; /* Default for desktop */
+        }
+
+        @media (min-width: 769px) {
+            nav:hover .menu-icon {
+                left: 20px;
+            }
+        }
+
+        nav h2 {
+            padding: 25px 20px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        @media (min-width: 769px) {
+            nav:hover h2 {
+                opacity: 1;
+            }
+        }
+
+        nav ul {
+            list-style: none;
+            margin-top: 80px;
+            padding: 0;
+        }
+
+        nav li {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 25px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+        }
+
+        nav li:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        nav li.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        nav li span.icon {
+            font-size: 1.2rem;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        nav li span.label {
+            display: inline-block;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        @media (min-width: 769px) {
+            nav:hover li span.label {
+                opacity: 1;
+            }
+        }
+
+        /* Main Content Styles */
+        main {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: var(--light-color);
+            position: relative;
+        }
+
+        section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        section.active {
+            display: block;
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+            font-size: 2rem;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+            border-radius: 2px;
+        }
+
+        /* Grid Layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* Chart Styles */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            min-height: 300px;
+            background: var(--white);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Economy Box */
+        .economia-box {
+            background: linear-gradient(135deg, var(--success-color), var(--info-color));
+            color: var(--white);
+            padding: 25px;
+            margin-top: 30px;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .economia-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Form Styles */
+        form {
+            background: var(--white);
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            transition: var(--transition);
+        }
+
+        form:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        form input, form select {
+            flex: 1 1 200px;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        form input:focus, form select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        form button {
+            flex: 1 1 150px;
+            padding: 12px 15px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        form button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        /* Table Styles */
+        .table-responsive {
+            overflow-x: auto; /* Enables horizontal scrolling for tables */
+            border-radius: 12px; /* Apply border-radius to the container */
+            box-shadow: var(--shadow); /* Apply shadow to the container */
+            transition: var(--transition);
+            margin-bottom: 30px; /* Add some margin below the table */
+        }
+
+        .table-responsive:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            /* Remove border-radius and box-shadow from table itself */
+            min-width: 600px; /* Ensure table doesn't shrink too much on small screens */
+        }
+
+        th {
+            background: var(--secondary-color);
+            color: var(--white);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Report Styles */
+        .report-container {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .report-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: var(--light-color);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .summary-card h3 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .summary-card .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .summary-card.receitas .value {
+            color: var(--success-color);
+        }
+
+        .summary-card.gastos .value {
+            color: var(--danger-color);
+        }
+
+        .summary-card.saldo .value {
+            color: var(--primary-color);
+        }
+
+        .report-details {
+            margin-top: 30px;
+        }
+
+        .details-section {
+            margin-bottom: 25px;
+        }
+
+        .details-section h4 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        .details-list {
+            list-style: none;
+        }
+
+        .details-list li {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .details-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Ações e Estilos Condicionais */
+        .acoes-cell {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-excluir {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+
+        .btn-excluir:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .receita-row {
+            background-color: rgba(46, 204, 113, 0.05);
+        }
+
+        .receita-row:hover {
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        .gasto-row {
+            background-color: rgba(231, 76, 60, 0.05);
+        }
+
+        .gasto-row:hover {
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+        .receita-text {
+            color: var(--success-color); /* Changed to success-color for better visibility */
+            font-weight: 500;
+        }
+
+        .gasto-text {
+            color: var(--danger-color);
+            font-weight: 500;
+        }
+
+        .saldo-positivo {
+            color: var(--success-color);
+        }
+
+        .saldo-negativo {
+            color: var(--danger-color);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                height: auto;
+                overflow: auto;
+            }
+
+            nav {
+                width: 100%;
+                height: 60px; /* Fixed height for collapsed state */
+                overflow: hidden;
+                position: fixed; /* Keep nav at top */
+                top: 0;
+                left: 0;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+
+            nav.sidebar-open {
+                height: auto; /* Expand height when open */
+                max-height: 100vh; /* Limit height to viewport */
+                overflow-y: auto; /* Allow scrolling if menu is very long */
+            }
+
+            nav .menu-icon {
+                pointer-events: auto; /* Enable clicks */
+                cursor: pointer;
+                left: 20px; /* Always visible on mobile */
+            }
+
+            nav h2 {
+                display: block; /* Show title on mobile */
+                opacity: 1; /* Always visible on mobile */
+                text-align: center;
+                padding-left: 0;
+                padding-right: 0;
+                margin-left: 60px; /* Make space for menu icon */
+            }
+
+            nav ul {
+                margin-top: 0;
+                display: none; /* Hide by default */
+                padding-top: 10px; /* Add some spacing */
+            }
+
+            nav.sidebar-open ul {
+                display: block; /* Show when sidebar is open */
+            }
+
+            nav li {
+                padding: 12px 20px; /* Adjust padding for mobile */
+                justify-content: flex-start; /* Align items to start */
+            }
+
+            nav li span.label {
+                opacity: 1; /* Always show labels when sidebar is open on mobile */
+            }
+
+            main {
+                padding: 20px;
+                margin-top: 60px; /* Offset for fixed nav */
+            }
+
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                min-height: 250px;
+            }
+
+            form {
+                flex-direction: column;
+            }
+
+            form input, form select, form button {
+                flex: 1 1 auto;
+                width: 100%;
+            }
+
+            .report-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+
+        /* Custom Confirmation Modal Styles */
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .modal-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .modal-actions .btn-confirm {
+            background-color: var(--danger-color);
+            color: var(--white);
+        }
+
+        .modal-actions .btn-confirm:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .modal-actions .btn-cancel {
+            background-color: var(--gray);
+            color: var(--white);
+        }
+
+        .modal-actions .btn-cancel:hover {
+            background-color: #7f8c8d;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
-  <nav id="sidebar">
-    <div class="menu-icon">☰</div>
-    <h2>Finanças</h2>
-    <ul>
-      <li data-screen="dashboard"><span class="icon">🏠</span><span class="label">Dashboard</span></li>
-      <li data-screen="receitas"><span class="icon">💰</span><span class="label">Receitas</span></li>
-      <li data-screen="gastos"><span class="icon">🛒</span><span class="label">Gastos</span></li>
-      <li data-screen="relatorio"><span class="icon">📊</span><span class="label">Relatório</span></li>
-      <li data-screen="metas"><span class="icon">🎯</span><span class="label">Metas</span></li>
-    </ul>
-  </nav>
+    <nav id="sidebar">
+        <div class="menu-icon">☰</div>
+        <h2>Finanças</h2>
+        <ul>
+            <li data-screen="dashboard"><span class="icon">🏠</span><span class="label">Dashboard</span></li>
+            <li data-screen="receitas"><span class="icon">💰</span><span class="label">Receitas</span></li>
+            <li data-screen="gastos"><span class="icon">🛒</span><span class="label">Gastos</span></li>
+            <li data-screen="relatorio"><span class="icon">📊</span><span class="label">Relatório</span></li>
+            <li data-screen="metas"><span class="icon">🎯</span><span class="label">Metas</span></li>
+        </ul>
+    </nav>
 
-  <main>
-    <section id="dashboard" class="active">
-      <h1>Dashboard</h1>
-       <div class="economia-box">
-        💸 Saldo do Mês: <span id="economia-mes">R$ 0,00</span>
-      </div>
-      <br>
-      <div class="grid-container">
-        <div class="chart-container"><canvas id="chart-comparativo"></canvas></div>
-        <div class="chart-container"><canvas id="chart-receitas-mes"></canvas></div>
-        <div class="chart-container"><canvas id="chart-despesas-mes"></canvas></div>
-        <div class="chart-container"><canvas id="chart-mes-comparativo"></canvas></div>
-        <div class="chart-container"><canvas id="chart-meta"></canvas></div>
-        <div class="chart-container"><canvas id="chart-anual"></canvas></div>
-      </div>
-     
-    </section>
+    <main>
+        <section id="dashboard" class="active">
+            <h1>Dashboard</h1>
+            <div class="economia-box">
+                💸 Saldo do Mês: <span id="economia-mes">R$ 0,00</span>
+            </div>
+            <br>
+            <div class="grid-container">
+                <div class="chart-container"><canvas id="chart-comparativo"></canvas></div>
+                <div class="chart-container"><canvas id="chart-receitas-mes"></canvas></div>
+                <div class="chart-container"><canvas id="chart-despesas-mes"></canvas></div>
+                <div class="chart-container"><canvas id="chart-mes-comparativo"></canvas></div>
+                <div class="chart-container"><canvas id="chart-meta"></canvas></div>
+                <div class="chart-container"><canvas id="chart-anual"></canvas></div>
+            </div>
+        </section>
 
-    <section id="receitas">
-      <h1>Receitas</h1>
-      <form id="form-receita">
-        <input name="descricao" placeholder="Descrição" required>
-        <input type="number" name="valor" placeholder="Valor R$" step="0.01" required>
-        <input type="date" name="data" required>
-        <select name="categoria">
-          <option>Salário</option>
-          <option>Bônus</option>
-          <option>Freelance</option>
-          <option>Investimentos</option>
-          <option>Outros</option>
-        </select>
-        <button type="submit">Adicionar</button>
-      </form>
-      <table>
-        <thead>
-          <tr>
-            <th>Descrição</th>
-            <th>Valor</th>
-            <th>Data</th>
-            <th>Categoria</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
+        <section id="receitas">
+            <h1>Receitas</h1>
+            <form id="form-receita">
+                <input name="descricao" placeholder="Descrição" required>
+                <input type="number" name="valor" placeholder="Valor R$" step="0.01" required>
+                <input type="date" name="data" required>
+                <select name="categoria">
+                    <option>Salário</option>
+                    <option>Bônus</option>
+                    <option>Freelance</option>
+                    <option>Investimentos</option>
+                    <option>Outros</option>
+                </select>
+                <button type="submit">Adicionar</button>
+            </form>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Valor</th>
+                            <th>Data</th>
+                            <th>Categoria</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
 
-    <section id="gastos">
-      <h1>Gastos</h1>
-      <form id="form-gasto">
-        <input name="descricao" placeholder="Descrição" required>
-        <input type="number" name="valor" placeholder="Valor R$" step="0.01" required>
-        <input type="date" name="data" required>
-        <select name="categoria">
-          <option>Moradia</option>
-          <option>Alimentação</option>
-          <option>Transporte</option>
-          <option>Lazer</option>
-          <option>Saúde</option>
-          <option>Educação</option>
-          <option>Dívidas</option>
-          <option>Outros</option>
-        </select>
-        <button type="submit">Adicionar</button>
-      </form>
-      <table>
-        <thead>
-          <tr>
-            <th>Descrição</th>
-            <th>Valor</th>
-            <th>Data</th>
-            <th>Categoria</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
+        <section id="gastos">
+            <h1>Gastos</h1>
+            <form id="form-gasto">
+                <input name="descricao" placeholder="Descrição" required>
+                <input type="number" name="valor" placeholder="Valor R$" step="0.01" required>
+                <input type="date" name="data" required>
+                <select name="categoria">
+                    <option>Moradia</option>
+                    <option>Alimentação</option>
+                    <option>Transporte</option>
+                    <option>Lazer</option>
+                    <option>Saúde</option>
+                    <option>Educação</option>
+                    <option>Dívidas</option>
+                    <option>Outros</option>
+                </select>
+                <button type="submit">Adicionar</button>
+            </form>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Valor</th>
+                            <th>Data</th>
+                            <th>Categoria</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
 
-    <section id="relatorio">
-      <h1>Relatório Mensal</h1>
-      <form id="form-relatorio">
-        <input type="month" id="mes-relatorio">
-        <button type="button" id="btn-gerar-relatorio">Gerar Relatório</button>
-      </form>
-      <div id="relatorio-conteudo" class="report-container"></div>
-    </section>
+        <section id="relatorio">
+            <h1>Relatório Mensal</h1>
+            <form id="form-relatorio">
+                <input type="month" id="mes-relatorio">
+                <button type="button" id="btn-gerar-relatorio">Gerar Relatório</button>
+            </form>
+            <div id="relatorio-conteudo" class="report-container"></div>
+        </section>
 
-    <section id="metas">
-      <h1>Metas</h1>
-      <form id="form-meta">
-        <input name="nome" placeholder="Nome da Meta" required>
-        <input type="number" name="valorTotal" placeholder="Valor Total R$" step="0.01" required>
-        <input type="number" name="valorGuardado" placeholder="Valor Guardado R$" step="0.01" required>
-        <button type="submit">Adicionar</button>
-      </form>
-      <table>
-        <thead>
-          <tr>
-            <th>Meta</th>
-            <th>Total</th>
-            <th>Guardado</th>
-            <th>Progresso</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
-  </main>
+        <section id="metas">
+            <h1>Metas</h1>
+            <form id="form-meta">
+                <input name="nome" placeholder="Nome da Meta" required>
+                <input type="number" name="valorTotal" placeholder="Valor Total R$" step="0.01" required>
+                <input type="number" name="valorGuardado" placeholder="Valor Guardado R$" step="0.01" required>
+                <button type="submit">Adicionar</button>
+            </form>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Meta</th>
+                            <th>Total</th>
+                            <th>Guardado</th>
+                            <th>Progresso</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 
-  <script>
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmationModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modalMessage"></h3>
+            <div class="modal-actions">
+                <button class="btn-confirm" id="modalConfirmBtn">Confirmar</button>
+                <button class="btn-cancel" id="modalCancelBtn">Cancelar</button>
+            </div>
+        </div>
+    </div>
 
-    document.querySelectorAll('.filtros-dashboard button').forEach(btn => {
-  btn.addEventListener('click', function() {
-    // Atualizar gráficos conforme período selecionado
-    const periodo = this.dataset.periodo;
-    atualizarDashboard(periodo);
-  });
-});
-    // Funções para carregar e salvar dados no localStorage
-    const load = k => JSON.parse(localStorage.getItem(k)) || [];
-    const save = (k, d) => localStorage.setItem(k, JSON.stringify(d));
-    
-    // Carregar dados iniciais
-    let receitas = load('receitas');
-    let gastos = load('gastos');
-    let metas = load('metas');
+    <script>
+        // Custom Confirmation Modal Logic
+        const confirmationModal = document.getElementById('confirmationModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+        const modalCancelBtn = document.getElementById('modalCancelBtn');
 
-    // Navegação entre seções
-    document.querySelectorAll('nav li').forEach(i => {
-      i.onclick = () => {
-        document.querySelectorAll('nav li').forEach(li => li.classList.remove('active'));
-        i.classList.add('active');
-        document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
-        document.getElementById(i.dataset.screen).classList.add('active');
-        if (i.dataset.screen === 'dashboard') atualizarDashboard();
-      };
-    });
+        let resolveModalPromise;
 
-    // Função para renderizar tabelas com opção de exclusão
-    function renderTable(data, sel, tipo) {
-      document.querySelector(sel + ' tbody').innerHTML = data.map((e, index) => {
-        const progresso = e.valorTotal ? (e.valorGuardado / e.valorTotal * 100).toFixed(1) + '%' : '';
-        const rowClass = tipo === 'receita' ? 'receita-row' : tipo === 'gasto' ? 'gasto-row' : '';
-        const valorClass = tipo === 'receita' ? 'receita-text' : tipo === 'gasto' ? 'gasto-text' : '';
-        
-        return `
-          <tr class="${rowClass}">
-            <td>${e.descricao || e.nome}</td>
-            <td class="${valorClass}">${e.valor != null ? 'R$ ' + e.valor.toFixed(2) : ''}</td>
-            <td>${e.data || ''}</td>
-            <td>${e.categoria || ''}</td>
-            ${e.valorTotal != null ? `<td>${progresso}</td>` : '<td></td>'}
-            <td class="acoes-cell">
-              <button class="btn-excluir" data-index="${index}" data-tipo="${tipo}">Excluir</button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-      
-      // Adicionar eventos de clique aos botões de exclusão
-      document.querySelectorAll(`${sel} .btn-excluir`).forEach(btn => {
-        btn.onclick = function() {
-          const index = parseInt(this.dataset.index);
-          const tipo = this.dataset.tipo;
-          
-          if (confirm('Tem certeza que deseja excluir este item?')) {
-            if (tipo === 'receita') {
-              receitas.splice(index, 1);
-              save('receitas', receitas);
-              renderTable(receitas, '#receitas table', 'receita');
-            } else if (tipo === 'gasto') {
-              gastos.splice(index, 1);
-              save('gastos', gastos);
-              renderTable(gastos, '#gastos table', 'gasto');
-            } else if (tipo === 'meta') {
-              metas.splice(index, 1);
-              save('metas', metas);
-              renderTable(metas, '#metas table', 'meta');
+        /**
+         * Displays a custom confirmation modal and returns a Promise that resolves to true (confirm) or false (cancel).
+         * @param {string} message The message to display in the modal.
+         * @returns {Promise<boolean>} A promise that resolves with the user's choice.
+         */
+        function showConfirmationModal(message) {
+            modalMessage.textContent = message;
+            confirmationModal.classList.add('show');
+
+            return new Promise(resolve => {
+                resolveModalPromise = resolve;
+            });
+        }
+
+        modalConfirmBtn.addEventListener('click', () => {
+            confirmationModal.classList.remove('show');
+            if (resolveModalPromise) {
+                resolveModalPromise(true);
             }
-            
+        });
+
+        modalCancelBtn.addEventListener('click', () => {
+            confirmationModal.classList.remove('show');
+            if (resolveModalPromise) {
+                resolveModalPromise(false);
+            }
+        });
+
+        // Sidebar Toggle Logic for Mobile
+        const sidebar = document.getElementById('sidebar');
+        const menuIcon = document.querySelector('nav .menu-icon');
+
+        menuIcon.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-open');
+        });
+
+        // Close sidebar when a menu item is clicked on mobile
+        document.querySelectorAll('nav li').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('sidebar-open');
+                }
+            });
+        });
+
+        // Functions to load and save data in localStorage
+        const load = k => JSON.parse(localStorage.getItem(k)) || [];
+        const save = (k, d) => localStorage.setItem(k, JSON.stringify(d));
+
+        // Load initial data
+        let receitas = load('receitas');
+        let gastos = load('gastos');
+        let metas = load('metas');
+
+        // Navigation between sections
+        document.querySelectorAll('nav li').forEach(i => {
+            i.onclick = () => {
+                document.querySelectorAll('nav li').forEach(li => li.classList.remove('active'));
+                i.classList.add('active');
+                document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
+                document.getElementById(i.dataset.screen).classList.add('active');
+                if (i.dataset.screen === 'dashboard') atualizarDashboard();
+            };
+        });
+
+        // Function to render tables with deletion option
+        function renderTable(data, sel, tipo) {
+            document.querySelector(sel + ' tbody').innerHTML = data.map((e, index) => {
+                const progresso = e.valorTotal ? (e.valorGuardado / e.valorTotal * 100).toFixed(1) + '%' : '';
+                const rowClass = tipo === 'receita' ? 'receita-row' : tipo === 'gasto' ? 'gasto-row' : '';
+                const valorClass = tipo === 'receita' ? 'receita-text' : tipo === 'gasto' ? 'gasto-text' : '';
+
+                return `
+                    <tr class="${rowClass}">
+                        <td>${e.descricao || e.nome}</td>
+                        <td class="${valorClass}">${e.valor != null ? 'R$ ' + e.valor.toFixed(2) : ''}</td>
+                        <td>${e.data || ''}</td>
+                        <td>${e.categoria || ''}</td>
+                        ${e.valorTotal != null ? `<td>${progresso}</td>` : '<td></td>'}
+                        <td class="acoes-cell">
+                            <button class="btn-excluir" data-index="${index}" data-tipo="${tipo}">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Add click events to deletion buttons
+            document.querySelectorAll(`${sel} .btn-excluir`).forEach(btn => {
+                btn.onclick = async function() { // Added async here
+                    const index = parseInt(this.dataset.index);
+                    const tipo = this.dataset.tipo;
+
+                    // Replaced native confirm with custom modal
+                    const confirmed = await showConfirmationModal('Tem certeza que deseja excluir este item?');
+
+                    if (confirmed) {
+                        if (tipo === 'receita') {
+                            receitas.splice(index, 1);
+                            save('receitas', receitas);
+                            renderTable(receitas, '#receitas table', 'receita');
+                        } else if (tipo === 'gasto') {
+                            gastos.splice(index, 1);
+                            save('gastos', gastos);
+                            renderTable(gastos, '#gastos table', 'gasto');
+                        } else if (tipo === 'meta') {
+                            metas.splice(index, 1);
+                            save('metas', metas);
+                            renderTable(metas, '#metas table', 'meta');
+                        }
+                        atualizarDashboard();
+                    }
+                };
+            });
+        }
+
+        // Update tables on load with type classes
+        renderTable(receitas, '#receitas table', 'receita');
+        renderTable(gastos, '#gastos table', 'gasto');
+        renderTable(metas, '#metas table', 'meta');
+
+        // Revenue form
+        document.getElementById('form-receita').onsubmit = e => {
+            e.preventDefault();
+            const f = e.target;
+            receitas.push({
+                descricao: f.descricao.value,
+                valor: +f.valor.value,
+                data: f.data.value,
+                categoria: f.categoria.value
+            });
+            save('receitas', receitas);
+            renderTable(receitas, '#receitas table', 'receita');
+            f.reset();
             atualizarDashboard();
-          }
         };
-      });
-    }
 
-    // Atualizar tabelas ao carregar com classes de tipo
-    renderTable(receitas, '#receitas table', 'receita');
-    renderTable(gastos, '#gastos table', 'gasto');
-    renderTable(metas, '#metas table', 'meta');
+        // Expense form
+        document.getElementById('form-gasto').onsubmit = e => {
+            e.preventDefault();
+            const f = e.target;
+            gastos.push({
+                descricao: f.descricao.value,
+                valor: +f.valor.value,
+                data: f.data.value,
+                categoria: f.categoria.value
+            });
+            save('gastos', gastos);
+            renderTable(gastos, '#gastos table', 'gasto');
+            f.reset();
+            atualizarDashboard();
+        };
 
-    // Formulário de receitas
-    document.getElementById('form-receita').onsubmit = e => {
-      e.preventDefault();
-      const f = e.target;
-      receitas.push({
-        descricao: f.descricao.value,
-        valor: +f.valor.value,
-        data: f.data.value,
-        categoria: f.categoria.value
-      });
-      save('receitas', receitas);
-      renderTable(receitas, '#receitas table', 'receita');
-      f.reset();
-      atualizarDashboard();
-    };
+        // Goals form
+        document.getElementById('form-meta').onsubmit = e => {
+            e.preventDefault();
+            const f = e.target;
+            metas.push({
+                nome: f.nome.value,
+                valorTotal: +f.valorTotal.value,
+                valorGuardado: +f.valorGuardado.value
+            });
+            save('metas', metas);
+            renderTable(metas, '#metas table', 'meta');
+            f.reset();
+            atualizarDashboard();
+        };
 
-    // Formulário de gastos
-    document.getElementById('form-gasto').onsubmit = e => {
-      e.preventDefault();
-      const f = e.target;
-      gastos.push({
-        descricao: f.descricao.value,
-        valor: +f.valor.value,
-        data: f.data.value,
-        categoria: f.categoria.value
-      });
-      save('gastos', gastos);
-      renderTable(gastos, '#gastos table', 'gasto');
-      f.reset();
-      atualizarDashboard();
-    };
-
-    // Formulário de metas
-    document.getElementById('form-meta').onsubmit = e => {
-      e.preventDefault();
-      const f = e.target;
-      metas.push({
-        nome: f.nome.value,
-        valorTotal: +f.valorTotal.value,
-        valorGuardado: +f.valorGuardado.value
-      });
-      save('metas', metas);
-      renderTable(metas, '#metas table', 'meta');
-      f.reset();
-      atualizarDashboard();
-    };
-
-    // Gerar relatório
-    document.getElementById('btn-gerar-relatorio').onclick = () => {
-      const mes = document.getElementById('mes-relatorio').value;
-      if (!mes) return alert('Selecione um mês');
-      
-      const mesFormatado = new Date(mes + '-01').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-      const de = mes + '-01', ate = mes + '-31';
-      const R = receitas.filter(r => r.data >= de && r.data <= ate);
-      const G = gastos.filter(d => d.data >= de && d.data <= ate);
-      const soma = a => a.reduce((t, i) => t + (i.valor || 0), 0);
-      const totalReceitas = soma(R);
-      const totalGastos = soma(G);
-      const saldo = totalReceitas - totalGastos;
-
-      let html = `
-        <div class="report-header">
-          <h2>Relatório Mensal</h2>
-          <span class="report-date">${mesFormatado}</span>
-        </div>
-        
-        <div class="report-summary">
-          <div class="summary-card receitas">
-            <h3>Receitas</h3>
-            <div class="value">R$ ${totalReceitas.toFixed(2)}</div>
-          </div>
-          
-          <div class="summary-card gastos">
-            <h3>Gastos</h3>
-            <div class="value">R$ ${totalGastos.toFixed(2)}</div>
-          </div>
-          
-          <div class="summary-card saldo">
-            <h3>Saldo</h3>
-            <div class="value ${saldo >= 0 ? 'saldo-positivo' : 'saldo-negativo'}">R$ ${saldo.toFixed(2)}</div>
-          </div>
-        </div>
-        
-        <div class="report-details">
-          <div class="details-section">
-            <h4>Receitas</h4>
-            <ul class="details-list">
-              ${R.map(r => `
-                <li>
-                  <span>${r.descricao} <small>(${r.categoria})</small></span>
-                  <span class="receita-value">R$ ${r.valor.toFixed(2)}</span>
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-          
-          <div class="details-section">
-            <h4>Gastos</h4>
-            <ul class="details-list">
-              ${G.map(g => `
-                <li>
-                  <span>${g.descricao} <small>(${g.categoria})</small></span>
-                  <span class="gasto-value">R$ ${g.valor.toFixed(2)}</span>
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-        </div>
-      `;
-      
-      document.getElementById('relatorio-conteudo').innerHTML = html;
-    };
-
-    // Gráficos do Dashboard
-    let charts = {};
-    function atualizarDashboard() {
-      const mesAtual = new Date().toISOString().slice(0, 7);
-      const mesAnterior = new Date();
-      mesAnterior.setMonth(mesAnterior.getMonth() - 1);
-      const mesAnteriorStr = mesAnterior.toISOString().slice(0, 7);
-      
-      // Filtrar dados
-      const RM = receitas.filter(r => r.data.startsWith(mesAtual));
-      const GM = gastos.filter(g => g.data.startsWith(mesAtual));
-      const RAM = receitas.filter(r => r.data.startsWith(mesAnteriorStr));
-      const GAM = gastos.filter(g => g.data.startsWith(mesAnteriorStr));
-      
-      // Calcular totais
-      const soma = a => a.reduce((s, i) => s + (i.valor || 0), 0);
-      const totalReceitas = soma(RM);
-      const totalGastos = soma(GM);
-      const saldo = totalReceitas - totalGastos;
-      
-      // Atualizar box de economia com cor conforme saldo
-      const economiaBox = document.getElementById('economia-mes');
-      economiaBox.innerText = `R$ ${saldo.toFixed(2)}`;
-      economiaBox.className = saldo >= 0 ? 'receita-text' : 'gasto-text';
-
-      // Agrupar por categoria
-      const agruparPorCategoria = (arr) => {
-        return arr.reduce((o, i) => {
-          o[i.categoria] = (o[i.categoria] || 0) + (i.valor || 0);
-          return o;
-        }, {});
-      };
-
-      const receitasPorCategoria = agruparPorCategoria(RM);
-      const gastosPorCategoria = agruparPorCategoria(GM);
-      
-      // Configuração comum para os gráficos
-      const configComum = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: {
-              padding: 20,
-              font: {
-                size: 12
-              },
-              boxWidth: 12
+        // Generate report
+        document.getElementById('btn-gerar-relatorio').onclick = async () => { // Added async here
+            const mes = document.getElementById('mes-relatorio').value;
+            if (!mes) {
+                await showConfirmationModal('Selecione um mês para gerar o relatório.'); // Replaced alert
+                return;
             }
-          },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                return `${context.dataset.label}: R$ ${context.raw.toFixed(2)}`;
-              }
-            }
-          },
-          title: {
-            display: true,
-            font: {
-              size: 14
-            }
-          }
-        }
-      };
 
-      // Cores para categorias
-      const coresCategorias = [
-        '#2ecc71', '#3498db', '#9b59b6', '#f1c40f', 
-        '#e67e22', '#e74c3c', '#1abc9c', '#34495e'
-      ];
+            const mesFormatado = new Date(mes + '-01').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+            const de = mes + '-01', ate = mes + '-31';
+            const R = receitas.filter(r => r.data >= de && r.data <= ate);
+            const G = gastos.filter(d => d.data >= de && d.data <= ate);
+            const soma = a => a.reduce((t, i) => t + (i.valor || 0), 0);
+            const totalReceitas = soma(R);
+            const totalGastos = soma(G);
+            const saldo = totalReceitas - totalGastos;
 
-      // 1. Gráfico Comparativo Receitas vs Despesas
-      if (charts['chart-comparativo']) charts['chart-comparativo'].destroy();
-      charts['chart-comparativo'] = new Chart(
-        document.getElementById('chart-comparativo'),
-        {
-          type: 'bar',
-          data: {
-            labels: ['Receitas', 'Despesas'],
-            datasets: [{
-              label: 'Valor (R$)',
-              data: [totalReceitas, totalGastos],
-              backgroundColor: ['#2ecc71', '#e74c3c'],
-              borderWidth: 1
-            }]
-          },
-          options: {
-            ...configComum,
-            scales: {
-              y: { beginAtZero: true }
-            },
-            plugins: {
-              ...configComum.plugins,
-              title: {
-                ...configComum.plugins.title,
-                text: 'Receitas vs Despesas'
-              }
-            }
-          }
-        }
-      );
+            let html = `
+                <div class="report-header">
+                    <h2>Relatório Mensal</h2>
+                    <span class="report-date">${mesFormatado}</span>
+                </div>
 
-      // 2. Gráfico de Receitas por Categoria
-      if (charts['chart-receitas-mes']) charts['chart-receitas-mes'].destroy();
-      charts['chart-receitas-mes'] = new Chart(
-        document.getElementById('chart-receitas-mes'),
-        {
-          type: 'doughnut',
-          data: {
-            labels: Object.keys(receitasPorCategoria),
-            datasets: [{
-              label: 'Receitas por Categoria',
-              data: Object.values(receitasPorCategoria),
-              backgroundColor: Object.keys(receitasPorCategoria).map((_, i) => coresCategorias[i % coresCategorias.length]),
-              borderWidth: 1
-            }]
-          },
-          options: {
-            ...configComum,
-            plugins: {
-              ...configComum.plugins,
-              title: {
-                ...configComum.plugins.title,
-                text: 'Receitas por Categoria'
-              }
-            }
-          }
-        }
-      );
+                <div class="report-summary">
+                    <div class="summary-card receitas">
+                        <h3>Receitas</h3>
+                        <div class="value">R$ ${totalReceitas.toFixed(2)}</div>
+                    </div>
 
-      // 3. Gráfico de Despesas por Categoria
-      if (charts['chart-despesas-mes']) charts['chart-despesas-mes'].destroy();
-      charts['chart-despesas-mes'] = new Chart(
-        document.getElementById('chart-despesas-mes'),
-        {
-          type: 'doughnut',
-          data: {
-            labels: Object.keys(gastosPorCategoria),
-            datasets: [{
-              label: 'Despesas por Categoria',
-              data: Object.values(gastosPorCategoria),
-              backgroundColor: Object.keys(gastosPorCategoria).map((_, i) => coresCategorias[i % coresCategorias.length]),
-              borderWidth: 1
-            }]
-          },
-          options: {
-            ...configComum,
-            plugins: {
-              ...configComum.plugins,
-              title: {
-                ...configComum.plugins.title,
-                text: 'Despesas por Categoria'
-              }
-            }
-          }
-        }
-      );
+                    <div class="summary-card gastos">
+                        <h3>Gastos</h3>
+                        <div class="value">R$ ${totalGastos.toFixed(2)}</div>
+                    </div>
 
-      // 4. Comparativo Mensal (mês atual vs mês anterior)
-      if (charts['chart-mes-comparativo']) charts['chart-mes-comparativo'].destroy();
-      charts['chart-mes-comparativo'] = new Chart(
-        document.getElementById('chart-mes-comparativo'),
-        {
-          type: 'bar',
-          data: {
-            labels: ['Mês Anterior', 'Mês Atual'],
-            datasets: [
-              {
-                label: 'Receitas',
-                data: [soma(RAM), soma(RM)],
-                backgroundColor: '#2ecc71',
-                borderWidth: 1
-              },
-              {
-                label: 'Despesas',
-                data: [soma(GAM), soma(GM)],
-                backgroundColor: '#e74c3c',
-                borderWidth: 1
-              }
-            ]
-          },
-          options: {
-            ...configComum,
-            scales: {
-              y: { beginAtZero: true }
-            },
-            plugins: {
-              ...configComum.plugins,
-              title: {
-                ...configComum.plugins.title,
-                text: 'Comparativo Mensal'
-              }
-            }
-          }
-        }
-      );
+                    <div class="summary-card saldo">
+                        <h3>Saldo</h3>
+                        <div class="value ${saldo >= 0 ? 'saldo-positivo' : 'saldo-negativo'}">R$ ${saldo.toFixed(2)}</div>
+                    </div>
+                </div>
 
-      // 5. Gráfico de Metas
-      if (charts['chart-meta']) charts['chart-meta'].destroy();
-      charts['chart-meta'] = new Chart(
-        document.getElementById('chart-meta'),
-        {
-          type: 'bar',
-          data: {
-            labels: metas.map(m => m.nome),
-            datasets: [{
-              label: 'Progresso da Meta (%)',
-              data: metas.map(m => (m.valorGuardado / m.valorTotal * 100)),
-              backgroundColor: '#3498db',
-              borderWidth: 1
-            }]
-          },
-          options: {
-            ...configComum,
-            scales: {
-              y: { 
-                beginAtZero: true,
-                max: 100,
-                title: {
-                  display: true,
-                  text: 'Percentual (%)'
+                <div class="report-details">
+                    <div class="details-section">
+                        <h4>Receitas</h4>
+                        <ul class="details-list">
+                            ${R.map(r => `
+                                <li>
+                                    <span>${r.descricao} <small>(${r.categoria})</small></span>
+                                    <span class="receita-value">R$ ${r.valor.toFixed(2)}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="details-section">
+                        <h4>Gastos</h4>
+                        <ul class="details-list">
+                            ${G.map(g => `
+                                <li>
+                                    <span>${g.descricao} <small>(${g.categoria})</small></span>
+                                    <span class="gasto-value">R$ ${g.valor.toFixed(2)}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('relatorio-conteudo').innerHTML = html;
+        };
+
+        // Dashboard Charts
+        let charts = {};
+        function atualizarDashboard() {
+            const mesAtual = new Date().toISOString().slice(0, 7);
+            const mesAnterior = new Date();
+            mesAnterior.setMonth(mesAnterior.getMonth() - 1);
+            const mesAnteriorStr = mesAnterior.toISOString().slice(0, 7);
+
+            // Filter data
+            const RM = receitas.filter(r => r.data.startsWith(mesAtual));
+            const GM = gastos.filter(g => g.data.startsWith(mesAtual));
+            const RAM = receitas.filter(r => r.data.startsWith(mesAnteriorStr));
+            const GAM = gastos.filter(g => g.data.startsWith(mesAnteriorStr));
+
+            // Calculate totals
+            const soma = a => a.reduce((s, i) => s + (i.valor || 0), 0);
+            const totalReceitas = soma(RM);
+            const totalGastos = soma(GM);
+            const saldo = totalReceitas - totalGastos;
+
+            // Update economy box with color based on balance
+            const economiaBox = document.getElementById('economia-mes');
+            economiaBox.innerText = `R$ ${saldo.toFixed(2)}`;
+            economiaBox.className = saldo >= 0 ? 'saldo-positivo' : 'saldo-negativo'; // Changed to use saldo classes
+
+            // Group by category
+            const agruparPorCategoria = (arr) => {
+                return arr.reduce((o, i) => {
+                    o[i.categoria] = (o[i.categoria] || 0) + (i.valor || 0);
+                    return o;
+                }, {});
+            };
+
+            const receitasPorCategoria = agruparPorCategoria(RM);
+            const gastosPorCategoria = agruparPorCategoria(GM);
+
+            // Common configuration for charts
+            const configComum = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 12
+                            },
+                            boxWidth: 12
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: R$ ${context.raw.toFixed(2)}`;
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        font: {
+                            size: 14
+                        }
+                    }
                 }
-              }
-            },
-            plugins: {
-              ...configComum.plugins,
-              title: {
-                ...configComum.plugins.title,
-                text: 'Progresso das Metas'
-              },
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    const meta = metas[context.dataIndex];
-                    return [
-                      `Progresso: ${context.raw.toFixed(1)}%`,
-                      `Guardado: R$ ${meta.valorGuardado.toFixed(2)}`,
-                      `Total: R$ ${meta.valorTotal.toFixed(2)}`
-                    ];
-                  }
+            };
+
+            // Colors for categories
+            const coresCategorias = [
+                '#2ecc71', '#3498db', '#9b59b6', '#f1c40f',
+                '#e67e22', '#e74c3c', '#1abc9c', '#34495e'
+            ];
+
+            // 1. Comparative Chart Revenues vs Expenses
+            if (charts['chart-comparativo']) charts['chart-comparativo'].destroy();
+            charts['chart-comparativo'] = new Chart(
+                document.getElementById('chart-comparativo'),
+                {
+                    type: 'bar',
+                    data: {
+                        labels: ['Receitas', 'Despesas'],
+                        datasets: [{
+                            label: 'Valor (R$)',
+                            data: [totalReceitas, totalGastos],
+                            backgroundColor: ['#2ecc71', '#e74c3c'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        ...configComum,
+                        scales: {
+                            y: { beginAtZero: true }
+                        },
+                        plugins: {
+                            ...configComum.plugins,
+                            title: {
+                                ...configComum.plugins.title,
+                                text: 'Receitas vs Despesas'
+                            }
+                        }
+                    }
                 }
-              }
-            }
-          }
-        }
-      );
+            );
 
-      // 6. Evolução Anual
-      const anoAtual = new Date().getFullYear();
-      const mesesAno = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-      const saldosMensais = Array.from({ length: 12 }, (_, i) => {
-        const m = (i + 1).toString().padStart(2, '0');
-        const dataStr = `${anoAtual}-${m}`;
-        const r = receitas.filter(r => r.data.startsWith(dataStr)).reduce((s, i) => s + i.valor, 0);
-        const g = gastos.filter(g => g.data.startsWith(dataStr)).reduce((s, i) => s + i.valor, 0);
-        return r - g;
-      });
-
-      if (charts['chart-anual']) charts['chart-anual'].destroy();
-      charts['chart-anual'] = new Chart(
-        document.getElementById('chart-anual'),
-        {
-          type: 'line',
-          data: {
-            labels: mesesAno,
-            datasets: [{
-              label: 'Saldo Mensal (R$)',
-              data: saldosMensais,
-              backgroundColor: 'rgba(52, 152, 219, 0.2)',
-              borderColor: '#3498db',
-              borderWidth: 3,
-              tension: 0.1,
-              fill: true
-            }]
-          },
-          options: {
-            ...configComum,
-            scales: {
-              y: { 
-                beginAtZero: false,
-                title: {
-                  display: true,
-                  text: 'Valor (R$)'
+            // 2. Revenues by Category Chart
+            if (charts['chart-receitas-mes']) charts['chart-receitas-mes'].destroy();
+            charts['chart-receitas-mes'] = new Chart(
+                document.getElementById('chart-receitas-mes'),
+                {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(receitasPorCategoria),
+                        datasets: [{
+                            label: 'Receitas por Categoria',
+                            data: Object.values(receitasPorCategoria),
+                            backgroundColor: Object.keys(receitasPorCategoria).map((_, i) => coresCategorias[i % coresCategorias.length]),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        ...configComum,
+                        plugins: {
+                            ...configComum.plugins,
+                            title: {
+                                ...configComum.plugins.title,
+                                text: 'Receitas por Categoria'
+                            }
+                        }
+                    }
                 }
-              }
-            },
-            plugins: {
-              ...configComum.plugins,
-              title: {
-                ...configComum.plugins.title,
-                text: 'Evolução Anual'
-              }
-            }
-          }
-        }
-      );
-    }
+            );
 
-    // Inicialização
-    document.querySelector('nav li[data-screen="dashboard"]').classList.add('active');
-    atualizarDashboard();
-  </script>
+            // 3. Expenses by Category Chart
+            if (charts['chart-despesas-mes']) charts['chart-despesas-mes'].destroy();
+            charts['chart-despesas-mes'] = new Chart(
+                document.getElementById('chart-despesas-mes'),
+                {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(gastosPorCategoria),
+                        datasets: [{
+                            label: 'Despesas por Categoria',
+                            data: Object.values(gastosPorCategoria),
+                            backgroundColor: Object.keys(gastosPorCategoria).map((_, i) => coresCategorias[i % coresCategorias.length]),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        ...configComum,
+                        plugins: {
+                            ...configComum.plugins,
+                            title: {
+                                ...configComum.plugins.title,
+                                text: 'Despesas por Categoria'
+                            }
+                        }
+                    }
+                }
+            );
+
+            // 4. Monthly Comparison (current month vs previous month)
+            if (charts['chart-mes-comparativo']) charts['chart-mes-comparativo'].destroy();
+            charts['chart-mes-comparativo'] = new Chart(
+                document.getElementById('chart-mes-comparativo'),
+                {
+                    type: 'bar',
+                    data: {
+                        labels: ['Mês Anterior', 'Mês Atual'],
+                        datasets: [
+                            {
+                                label: 'Receitas',
+                                data: [soma(RAM), soma(RM)],
+                                backgroundColor: '#2ecc71',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Despesas',
+                                data: [soma(GAM), soma(GM)],
+                                backgroundColor: '#e74c3c',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        ...configComum,
+                        scales: {
+                            y: { beginAtZero: true }
+                        },
+                        plugins: {
+                            ...configComum.plugins,
+                            title: {
+                                ...configComum.plugins.title,
+                                text: 'Comparativo Mensal'
+                            }
+                        }
+                    }
+                }
+            );
+
+            // 5. Goals Chart
+            if (charts['chart-meta']) charts['chart-meta'].destroy();
+            charts['chart-meta'] = new Chart(
+                document.getElementById('chart-meta'),
+                {
+                    type: 'bar',
+                    data: {
+                        labels: metas.map(m => m.nome),
+                        datasets: [{
+                            label: 'Progresso da Meta (%)',
+                            data: metas.map(m => (m.valorGuardado / m.valorTotal * 100)),
+                            backgroundColor: '#3498db',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        ...configComum,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Percentual (%)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            ...configComum.plugins,
+                            title: {
+                                ...configComum.plugins.title,
+                                text: 'Progresso das Metas'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const meta = metas[context.dataIndex];
+                                        return [
+                                            `Progresso: ${context.raw.toFixed(1)}%`,
+                                            `Guardado: R$ ${meta.valorGuardado.toFixed(2)}`,
+                                            `Total: R$ ${meta.valorTotal.toFixed(2)}`
+                                        ];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+
+            // 6. Annual Evolution
+            const anoAtual = new Date().getFullYear();
+            const mesesAno = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            const saldosMensais = Array.from({ length: 12 }, (_, i) => {
+                const m = (i + 1).toString().padStart(2, '0');
+                const dataStr = `${anoAtual}-${m}`;
+                const r = receitas.filter(r => r.data.startsWith(dataStr)).reduce((s, i) => s + i.valor, 0);
+                const g = gastos.filter(g => g.data.startsWith(dataStr)).reduce((s, i) => s + i.valor, 0);
+                return r - g;
+            });
+
+            if (charts['chart-anual']) charts['chart-anual'].destroy();
+            charts['chart-anual'] = new Chart(
+                document.getElementById('chart-anual'),
+                {
+                    type: 'line',
+                    data: {
+                        labels: mesesAno,
+                        datasets: [{
+                            label: 'Saldo Mensal (R$)',
+                            data: saldosMensais,
+                            backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                            borderColor: '#3498db',
+                            borderWidth: 3,
+                            tension: 0.1,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        ...configComum,
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                title: {
+                                    display: true,
+                                    text: 'Valor (R$)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            ...configComum.plugins,
+                            title: {
+                                ...configComum.plugins.title,
+                                text: 'Evolução Anual'
+                            }
+                        }
+                    }
+                }
+            );
+        }
+
+        // Initialisation
+        document.querySelector('nav li[data-screen="dashboard"]').classList.add('active');
+        atualizarDashboard();
+    </script>
 </body>
 </html>

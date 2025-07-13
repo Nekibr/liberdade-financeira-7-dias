@@ -1,2388 +1,1163 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ferramenta Interativa: Planejamento Financeiro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome CDN for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        /* Estilos para os botões de navegação aprimorados */
-        .nav-button {
-            transition: all 0.3s ease;
-            background-color: white;
-            color: #10B981; /* Emerald 600 */
-            border: 1px solid #D1FAE5; /* Emerald 100 */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 0.5rem; /* Ajuste para caber o conteúdo */
-            aspect-ratio: 1 / 1; /* Torna o botão quadrado */
-            min-width: 80px; /* Tamanho mínimo para mobile */
-            max-width: 120px; /* Tamanho máximo para desktop */
-            height: auto; /* Altura automática para manter o aspecto */
-            font-size: 0.875rem; /* text-sm */
-            line-height: 1.25rem; /* leading-tight */
-        }
-        .nav-button.active {
-            background-color: #10B981; /* Emerald 500 */
-            color: white;
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
-            transform: translateY(-2px);
-        }
-        .nav-button:not(.active):hover {
-            background-color: #D1FAE5; /* Emerald 100 */
-            color: #065F46; /* Emerald 900 */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .nav-button i {
-            font-size: 1.5rem; /* Ajuste o tamanho do ícone */
-            margin-bottom: 0.25rem;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ferramenta Completa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2c3e50;
+      --success-color: #2ecc71;
+      --danger-color: #e74c3c;
+      --warning-color: #f39c12;
+      --info-color: #1abc9c;
+      --light-color: #ecf0f1;
+      --dark-color: #34495e;
+      --white: #ffffff;
+      --gray: #95a5a6;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
 
-        .content-section { display: none; }
-        .content-section.active { display: block; }
-        /* Ajuste para o chart-container ser mais flexível */
-        .chart-container { 
-            position: relative; 
-            width: 100%; 
-            max-width: 600px; /* Mantém um max-width para desktop */
-            margin-left: auto; 
-            margin-right: auto; 
-            height: 300px; /* Altura padrão */
-        }
-        @media (min-width: 768px) { 
-            .chart-container { height: 400px; } /* Aumenta a altura em desktop */
-        }
-        .debt-item:not(:last-child) { border-bottom: 1px solid #e5e7eb; }
-        strong, b { font-weight: bold; }
-        .goal-progress-bar {
-            width: 100%;
-            background-color: #e2e8f0; /* Tailwind slate-200 */
-            border-radius: 9999px; /* full rounded */
-            height: 12px; /* h-3 */
-            overflow: hidden;
-            margin-top: 0.5rem;
-        }
-        .goal-progress {
-            height: 100%;
-            background-color: #10B981; /* Emerald 500 */
-            border-radius: 9999px;
-            transition: width 0.5s ease-in-out;
-        }
-        /* Estilos para os detalhes expansíveis */
-        .detail-list {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            background-color: rgba(255,255,255,0.1);
-            border-radius: 0.5rem;
-            margin-top: 0.5rem;
-            padding: 0 0.5rem;
-        }
-        .detail-list.expanded {
-            max-height: 200px; /* Adjust as needed */
-            padding: 0.5rem;
-            overflow-y: auto;
-        }
-        .detail-item {
-            padding: 0.25rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .detail-item:last-child {
-            border-bottom: none;
-        }
-        .toggle-details-btn {
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        .toggle-details-btn.rotated {
-            transform: rotate(180deg);
-        }
-    </style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Sidebar Styles */
+    nav {
+      width: 80px;
+      background: var(--secondary-color);
+      color: var(--white);
+      transition: var(--transition);
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 10;
+    }
+
+    nav:hover {
+      width: 250px;
+    }
+
+    nav .menu-icon {
+      font-size: 24px;
+      position: absolute;
+      top: 20px;
+      left: 28px;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    nav:hover .menu-icon {
+      left: 20px;
+    }
+
+    nav h2 {
+      padding: 25px 20px;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      font-size: 1.5rem;
+      font-weight: 600;
+      background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    nav:hover h2 {
+      opacity: 1;
+    }
+
+    nav ul {
+      list-style: none;
+      margin-top: 80px;
+      padding: 0;
+    }
+
+    nav li {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 25px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition);
+      border-left: 4px solid transparent;
+    }
+
+    nav li:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--primary-color);
+    }
+
+    nav li.active {
+      background: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--primary-color);
+    }
+
+    nav li span.icon {
+      font-size: 1.2rem;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    nav li span.label {
+      display: inline-block;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    nav:hover li span.label {
+      opacity: 1;
+    }
+
+    /* Main Content Styles */
+    main {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+      background: var(--light-color);
+      position: relative;
+    }
+
+    section {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    section.active {
+      display: block;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      margin-bottom: 25px;
+      font-size: 2rem;
+      font-weight: 700;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+      border-radius: 2px;
+    }
+
+    /* Grid Layout */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    /* Chart Styles */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      min-height: 300px;
+      background: var(--white);
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .chart-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* Economy Box */
+    .economia-box {
+      background: linear-gradient(135deg, var(--success-color), var(--info-color));
+      color: var(--white);
+      padding: 25px;
+      margin-top: 30px;
+      border-radius: 12px;
+      font-size: 1.4rem;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: var(--transition);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .economia-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Form Styles */
+    form {
+      background: var(--white);
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      transition: var(--transition);
+    }
+
+    form:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    form input, form select {
+      flex: 1 1 200px;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    form input:focus, form select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+
+    form button {
+      flex: 1 1 150px;
+      padding: 12px 15px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    form button:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+    }
+
+    /* Table Styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    table:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    th {
+      background: var(--secondary-color);
+      color: var(--white);
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Report Styles */
+    .report-container {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 25px;
+      margin-top: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .report-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .summary-card {
+      background: var(--light-color);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .summary-card h3 {
+      color: var(--secondary-color);
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    .summary-card .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .summary-card.receitas .value {
+      color: var(--success-color);
+    }
+
+    .summary-card.gastos .value {
+      color: var(--danger-color);
+    }
+
+    .summary-card.saldo .value {
+      color: var(--primary-color);
+    }
+
+    .report-details {
+      margin-top: 30px;
+    }
+
+    .details-section {
+      margin-bottom: 25px;
+    }
+
+    .details-section h4 {
+      color: var(--secondary-color);
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--light-color);
+    }
+
+    .details-list {
+      list-style: none;
+    }
+
+    .details-list li {
+      padding: 10px 15px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .details-list li:last-child {
+      border-bottom: none;
+    }
+
+    /* Ações e Estilos Condicionais */
+    .acoes-cell {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-excluir {
+      background-color: var(--danger-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: var(--transition);
+    }
+
+    .btn-excluir:hover {
+      background-color: #c0392b;
+      transform: translateY(-2px);
+    }
+
+    .receita-row {
+      background-color: rgba(46, 204, 113, 0.05);
+    }
+
+    .receita-row:hover {
+      background-color: rgba(46, 204, 113, 0.1);
+    }
+
+    .gasto-row {
+      background-color: rgba(231, 76, 60, 0.05);
+    }
+
+    .gasto-row:hover {
+      background-color: rgba(231, 76, 60, 0.1);
+    }
+
+    .receita-text {
+      color: var(--light-color);
+      font-weight: 500;
+    }
+
+    .gasto-text {
+      color: var(--danger-color);
+      font-weight: 500;
+    }
+
+    .saldo-positivo {
+      color: var(--success-color);
+    }
+
+    .saldo-negativo {
+      color: var(--danger-color);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        height: auto;
+        overflow: auto;
+      }
+
+      nav {
+        width: 100%;
+        height: 60px;
+        overflow: visible;
+      }
+
+      nav:hover {
+        width: 100%;
+        height: auto;
+      }
+
+      nav .menu-icon {
+        pointer-events: auto;
+        cursor: pointer;
+      }
+
+      nav h2 {
+        display: none;
+      }
+
+      nav ul {
+        margin-top: 0;
+        display: none;
+      }
+
+      nav:hover ul {
+        display: block;
+      }
+
+      main {
+        padding: 20px;
+      }
+
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-container {
+        min-height: 250px;
+      }
+
+      form {
+        flex-direction: column;
+      }
+
+      form input, form select, form button {
+        flex: 1 1 auto;
+        width: 100%;
+      }
+
+      .report-summary {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #2980b9;
+    }
+  </style>
+
+ 
+</div>
 </head>
-<body class="bg-stone-50 text-slate-800 leading-relaxed">
-
-    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
-        <!-- Seção da Ferramenta Interativa -->
-        <section id="financas-interativa" class="bg-white p-6 rounded-2xl shadow-lg">
-            <!-- Área de Resumo Superior - Ajustada para Mobile -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                <!-- Total Economizado -->
-                <div class="bg-emerald-500 text-white p-4 rounded-2xl shadow-md text-center flex flex-col justify-between">
-                    <div class="flex justify-between items-center mb-2">
-                        <p class="text-lg font-semibold">Economizado</p>
-                        <i class="fas fa-chevron-down text-xl toggle-details-btn" data-target="detail-economizado"></i>
-                    </div>
-                    <h2 class="text-3xl md:text-4xl font-bold">R$ <span id="total-economizado-display">0,00</span></h2>
-                    <p id="extra-payment-message" class="text-xs mt-1 opacity-90"></p>
-                    <div id="detail-economizado" class="detail-list text-sm text-left">
-                        <!-- Detalhes de metas economizadas -->
-                    </div>
-                </div>
-
-                <!-- Assinaturas -->
-                <div class="bg-red-500 text-white p-4 rounded-2xl shadow-md text-center flex flex-col justify-between">
-                    <div class="flex justify-between items-center mb-2">
-                        <p class="text-lg font-semibold">Assinaturas</p>
-                        <i class="fas fa-chevron-down text-xl toggle-details-btn" data-target="detail-assinaturas"></i>
-                    </div>
-                    <h2 class="text-3xl md:text-4xl font-bold">R$ <span id="total-monthly-subscriptions-cost-display">0,00</span>/mês</h2>
-                    <div id="detail-assinaturas" class="detail-list text-sm text-left">
-                        <!-- Detalhes de assinaturas -->
-                    </div>
-                </div>
-
-                <!-- Receitas -->
-                <div class="bg-green-600 text-white p-4 rounded-2xl shadow-md text-center flex flex-col justify-between">
-                    <div class="flex justify-between items-center mb-2">
-                        <p class="text-lg font-semibold">Receitas</p>
-                        <i class="fas fa-chevron-down text-xl toggle-details-btn" data-target="detail-receitas"></i>
-                    </div>
-                    <h2 class="text-3xl md:text-4xl font-bold">R$ <span id="summary-income-display">0,00</span></h2>
-                    <div id="detail-receitas" class="detail-list text-sm text-left">
-                        <!-- Detalhes de receitas -->
-                    </div>
-                </div>
-
-                <!-- Despesas -->
-                <div class="bg-red-600 text-white p-4 rounded-2xl shadow-md text-center flex flex-col justify-between">
-                    <div class="flex justify-between items-center mb-2">
-                        <p class="text-lg font-semibold">Despesas</p>
-                        <i class="fas fa-chevron-down text-xl toggle-details-btn" data-target="detail-despesas"></i>
-                    </div>
-                    <h2 class="text-3xl md:text-4xl font-bold">R$ <span id="summary-expenses-display">0,00</span></h2>
-                    <div id="detail-despesas" class="detail-list text-sm text-left">
-                        <!-- Detalhes de despesas -->
-                    </div>
-                </div>
-            </div>
-
-            <nav class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-3 md:gap-4 mb-8">
-                <button data-target="passo1" class="nav-button active font-medium py-2 px-4 rounded-2xl">
-                    <i class="fas fa-chart-pie"></i>
-                    <span>Orçamento</span>
-                </button>
-                <button data-target="passo2" class="nav-button font-medium py-2 px-4 rounded-2xl">
-                    <i class="fas fa-hand-holding-usd"></i>
-                    <span>Dívidas</span>
-                </button>
-                <button data-target="passo3" class="nav-button font-medium py-2 px-4 rounded-2xl">
-                    <i class="fas fa-bullseye"></i>
-                    <span>Metas</span>
-                </button>
-                <button data-target="passo4-investimento" class="nav-button font-medium py-2 px-4 rounded-2xl">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Investimentos</span>
-                </button>
-                <button data-target="passo5-financiamento" class="nav-button font-medium py-2 px-4 rounded-2xl">
-                    <i class="fas fa-home"></i>
-                    <span>Financiamento</span>
-                </button>
-                <button data-target="passo6-patrimonio" class="nav-button font-medium py-2 px-4 rounded-2xl">
-                    <i class="fas fa-wallet"></i>
-                    <span>Patrimônio</span>
-                </button>
-                <button data-target="passo7-fluxo-caixa" class="nav-button font-medium py-2 px-4 rounded-2xl">
-                    <i class="fas fa-exchange-alt"></i>
-                    <span>Fluxo de Caixa</span>
-                </button>
-                <button data-target="passo8-assinaturas" class="nav-button font-medium py-2 px-4 rounded-2xl">
-                    <i class="fas fa-receipt"></i>
-                    <span>Assinaturas</span>
-                </button>
-                <button data-target="passo9-resumo-geral" class="nav-button font-medium py-2 px-4 rounded-2xl">
-                    <i class="fas fa-list-alt"></i>
-                    <span>Resumo Geral</span>
-                </button>
-            </nav>
-
-            <main>
-                <!-- Seção 1: Raio-X Financeiro e Orçamento -->
-                <section id="passo1" class="content-section active">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 1: Raio-X Financeiro</h2>
-                        <p class="text-slate-600 mb-6">O primeiro passo é entender para onde seu dinheiro está indo. Preencha os campos abaixo para criar seu orçamento mensal e visualizar sua saúde financeira.</p>
-                        
-                        <div class="grid md:grid-cols-2 gap-8 items-start">
-                            <!-- Lado Esquerdo: Inputs -->
-                            <div>
-                                <div class="mb-4">
-                                    <label for="income" class="block font-medium mb-1">Sua Renda Mensal Líquida (R$)</label>
-                                    <input type="number" id="income" placeholder="Ex: 3000" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
-                                </div>
-
-                                <div class="mb-4">
-                                    <h3 class="font-bold text-lg mb-2">Adicionar Despesa</h3>
-                                    <div class="grid sm:grid-cols-2 gap-2">
-                                        <input type="text" id="expense-name" placeholder="Nome da despesa" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
-                                        <input type="number" id="expense-amount" placeholder="Valor (R$)" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
-                                        <select id="expense-category" class="col-span-2 sm:col-span-1 p-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-400 focus:outline-none">
-                                            <option value="necessidades">Necessidades</option>
-                                            <option value="desejos">Desejos</option>
-                                            <option value="dividas">Dívidas</option>
-                                            <option value="transporte">Transporte</option>
-                                            <option value="moradia">Moradia</option>
-                                            <option value="alimentacao">Alimentação</option>
-                                            <option value="saude">Saúde</option>
-                                            <option value="educacao">Educação</option>
-                                            <option value="lazer">Lazer</option>
-                                            <option value="outros">Outros</option>
-                                        </select>
-                                        <button id="add-expense" class="col-span-2 sm:col-span-1 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar</button>
-                                    </div>
-                                </div>
-                                
-                                <div id="expense-list" class="space-y-2 mt-4 max-h-60 overflow-y-auto pr-2">
-                                    <!-- Despesas serão adicionadas aqui -->
-                                </div>
-                            </div>
-
-                            <!-- Lado Direito: Visualização -->
-                            <div class="bg-stone-50 p-4 rounded-xl">
-                                <h3 class="font-bold text-lg mb-4 text-center">Distribuição de Gastos</h3>
-                                <div class="chart-container">
-                                    <canvas id="budgetChart"></canvas>
-                                </div>
-                                <div id="summary" class="text-center mt-4 font-semibold text-xl">
-                                    Saldo: R$ 0,00
-                                </div>
-                                <div class="mt-4 pt-4 border-t">
-                                    <h4 class="font-bold text-center mb-2">Comparativo: Você vs. Regra 50/30/20</h4>
-                                    <div id="comparison-bars" class="space-y-2 text-sm">
-                                        <!-- Barras de comparação -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Seção 2: Plano de Dívidas -->
-                <section id="passo2" class="content-section">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 2: Monte seu Plano de Dívidas</h2>
-                        <p class="text-slate-600 mb-6">Liste suas dívidas e escolha uma estratégia para quitá-las. A ferramenta irá organizar a prioridade para você focar seus esforços.</p>
-                        
-                        <div class="grid md:grid-cols-2 gap-8">
-                            <div>
-                                <h3 class="font-bold text-lg mb-2">Adicionar Dívida</h3>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-4 bg-stone-50 rounded-lg">
-                                    <input type="text" id="debt-name" placeholder="Nome da dívida" class="sm:col-span-2 p-2 border rounded-lg">
-                                    <input type="number" id="debt-total" placeholder="Valor Total (R$)" class="p-2 border rounded-lg">
-                                    <input type="number" id="debt-rate" placeholder="Juros (% a.m.)" class="p-2 border rounded-lg">
-                                    <button id="add-debt" class="sm:col-span-2 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar Dívida</button>
-                                </div>
-                                <div class="mt-4">
-                                    <h3 class="font-bold text-lg mb-2">Escolha sua Estratégia</h3>
-                                    <div class="flex gap-2 mb-4">
-                                        <button id="snowball-btn" class="flex-1 bg-emerald-200 text-emerald-800 p-2 rounded-lg font-medium">Bola de Neve</button>
-                                        <button id="avalanche-btn" class="flex-1 bg-gray-200 p-2 rounded-lg font-medium">Avalancha</button>
-                                    </div>
-                                    <p id="strategy-explanation" class="text-sm text-slate-600 p-3 bg-blue-50 rounded-lg"><b>Método Bola de Neve:</b> Pague as dívidas da menor para a maior. Ideal para ganhar motivação rápida.</p>
-                                </div>
-                                <!-- Simulador de Quitação de Dívidas -->
-                                <div class="mt-6 pt-6 border-t border-gray-200">
-                                    <h3 class="font-bold text-lg mb-2">Simulador de Quitação Rápida</h3>
-                                    <p class="text-sm text-slate-600 mb-2">Veja em quanto tempo você quitaria a dívida prioritária pagando um valor extra por mês:</p>
-                                    <input type="number" id="extra-payment" placeholder="Pagamento Extra Mensal (R$)" class="w-full p-2 border rounded-lg mb-2">
-                                    <div id="debt-simulation-result" class="bg-blue-100 text-blue-800 p-3 rounded-lg text-sm">
-                                        Adicione dívidas e um valor extra para simular.
-                                    </div>
-                                </div>
-                            </div>
-                        
-                            <div>
-                                <h3 class="font-bold text-lg mb-2">Sua Lista de Prioridades</h3>
-                                <div id="debt-list" class="bg-stone-50 rounded-lg p-2 min-h-[200px]">
-                                    <!-- Dívidas listadas aqui -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Seção 3: Metas e Futuro -->
-                <section id="passo3" class="content-section">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 3: Construindo seu Futuro</h2>
-                        <p class="text-slate-600 mb-6">Defina suas metas e entenda os primeiros passos para poupar e investir. Ter um propósito claro é o que mantém a motivação.</p>
-                        
-                        <div class="grid md:grid-cols-2 gap-8">
-                            <!-- Calculadora Reserva -->
-                            <div class="bg-stone-50 p-6 rounded-xl">
-                                <h3 class="font-bold text-lg mb-2">Calculadora de Reserva de Emergência</h3>
-                                <p class="text-sm text-slate-600 mb-4">Sua reserva deve cobrir de 3 a 6 meses de seus custos essenciais.</p>
-                                <label for="essential-costs" class="block font-medium mb-1">Seu Custo de Vida Essencial Mensal (R$)</label>
-                                <input type="number" id="essential-costs" placeholder="Ex: 1500" class="w-full p-2 border rounded-lg mb-4">
-                                <div id="emergency-fund-result" class="text-center bg-emerald-100 text-emerald-800 p-4 rounded-lg">
-                                    <p class="font-bold">Sua meta de reserva é:</p>
-                                    <p class="text-2xl font-bold">R$ 0,00 - R$ 0,00</p>
-                                </div>
-                            </div>
-
-                            <!-- Metas SMART -->
-                            <div class="bg-stone-50 p-6 rounded-xl">
-                                <h3 class="font-bold text-lg mb-2">Defina Suas Metas (SMART)</h3>
-                                <p class="text-sm text-slate-600 mb-4">Metas devem ser Específicas, Mensuráveis, Atingíveis, Relevantes e com Prazo.</p>
-                                <div class="space-y-2 mb-4">
-                                    <input type="text" id="goal-name" placeholder="Ex: Viagem para a praia" class="w-full p-2 border rounded-lg">
-                                    <input type="number" id="goal-target-amount" placeholder="Valor Total da Meta (R$)" class="w-full p-2 border rounded-lg">
-                                    <input type="number" id="goal-saved-amount" placeholder="Valor Já Economizado (R$)" class="w-full p-2 border rounded-lg">
-                                    <button id="add-goal" class="w-full bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar Meta</button>
-                                </div>
-                                <div id="goal-list" class="mt-4 space-y-4"></div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Seção 4: Simulador de Investimentos -->
-                <section id="passo4-investimento" class="content-section">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 4: Simulador de Investimentos</h2>
-                        <p class="text-slate-600 mb-6">Explore o poder dos juros compostos! Veja quanto seu dinheiro pode render ao longo do tempo.</p>
-                        
-                        <div class="grid md:grid-cols-2 gap-8">
-                            <div>
-                                <div class="mb-4">
-                                    <label for="initial-capital" class="block font-medium mb-1">Capital Inicial (R$)</label>
-                                    <input type="number" id="initial-capital" placeholder="Ex: 1000" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="monthly-contribution" class="block font-medium mb-1">Aporte Mensal (R$)</label>
-                                    <input type="number" id="monthly-contribution" placeholder="Ex: 200" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="annual-interest-rate" class="block font-medium mb-1">Taxa de Juros Anual (%)</label>
-                                    <input type="number" id="annual-interest-rate" placeholder="Ex: 8" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="investment-period-years" class="block font-medium mb-1">Período (Anos)</label>
-                                    <input type="number" id="investment-period-years" placeholder="Ex: 10" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
-                                </div>
-                                <button id="calculate-investment" class="w-full bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Simular Investimento</button>
-                            </div>
-                            <div class="bg-stone-50 p-6 rounded-xl flex items-center justify-center">
-                                <div id="investment-result" class="text-center text-slate-700">
-                                    <p>Preencha os campos para ver a simulação do seu investimento.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Seção 5: Simulador de Financiamento -->
-                <section id="passo5-financiamento" class="content-section">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 5: Simulador de Financiamento</h2>
-                        <p class="text-slate-600 mb-6">Calcule o valor das parcelas e o custo total do seu financiamento.</p>
-                        
-                        <div class="grid md:grid-cols-2 gap-8">
-                            <div>
-                                <h3 class="font-bold text-lg mb-2">Adicionar Dívida</h3>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-4 bg-stone-50 rounded-lg">
-                                    <input type="text" id="debt-name" placeholder="Nome da dívida" class="sm:col-span-2 p-2 border rounded-lg">
-                                    <input type="number" id="debt-total" placeholder="Valor Total (R$)" class="p-2 border rounded-lg">
-                                    <input type="number" id="debt-rate" placeholder="Juros (% a.m.)" class="p-2 border rounded-lg">
-                                    <button id="add-debt" class="sm:col-span-2 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar Dívida</button>
-                                </div>
-                                <div class="mt-4">
-                                    <h3 class="font-bold text-lg mb-2">Escolha sua Estratégia</h3>
-                                    <div class="flex gap-2 mb-4">
-                                        <button id="snowball-btn" class="flex-1 bg-emerald-200 text-emerald-800 p-2 rounded-lg font-medium">Bola de Neve</button>
-                                        <button id="avalanche-btn" class="flex-1 bg-gray-200 p-2 rounded-lg font-medium">Avalancha</button>
-                                    </div>
-                                    <p id="strategy-explanation" class="text-sm text-slate-600 p-3 bg-blue-50 rounded-lg"><b>Método Bola de Neve:</b> Pague as dívidas da menor para a maior. Ideal para ganhar motivação rápida.</p>
-                                </div>
-                                <!-- Simulador de Quitação de Dívidas -->
-                                <div class="mt-6 pt-6 border-t border-gray-200">
-                                    <h3 class="font-bold text-lg mb-2">Simulador de Quitação Rápida</h3>
-                                    <p class="text-sm text-slate-600 mb-2">Veja em quanto tempo você quitaria a dívida prioritária pagando um valor extra por mês:</p>
-                                    <input type="number" id="extra-payment" placeholder="Pagamento Extra Mensal (R$)" class="w-full p-2 border rounded-lg mb-2">
-                                    <div id="debt-simulation-result" class="bg-blue-100 text-blue-800 p-3 rounded-lg text-sm">
-                                        Adicione dívidas e um valor extra para simular.
-                                    </div>
-                                </div>
-                            </div>
-                        
-                            <div>
-                                <h3 class="font-bold text-lg mb-2">Sua Lista de Prioridades</h3>
-                                <div id="debt-list" class="bg-stone-50 rounded-lg p-2 min-h-[200px]">
-                                    <!-- Dívidas listadas aqui -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Seção 6: Meu Patrimônio Líquido -->
-                <section id="passo6-patrimonio" class="content-section">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 6: Meu Patrimônio Líquido</h2>
-                        <p class="text-slate-600 mb-6">Calcule e acompanhe a evolução do seu patrimônio líquido. A verdadeira medida da sua riqueza!</p>
-                        
-                        <div class="grid md:grid-cols-2 gap-8 items-start">
-                            <div>
-                                <!-- Adicionar Ativos -->
-                                <h3 class="font-bold text-lg mb-2">Adicionar Ativo</h3>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-4 bg-stone-50 rounded-lg">
-                                    <input type="text" id="asset-name" placeholder="Nome do ativo (Ex: Poupança, Carro)" class="sm:col-span-2 p-2 border rounded-lg">
-                                    <input type="number" id="asset-value" placeholder="Valor (R$)" class="p-2 border rounded-lg">
-                                    <button id="add-asset" class="sm:col-span-2 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar Ativo</button>
-                                </div>
-                                <div id="asset-list" class="space-y-2 mt-4 max-h-40 overflow-y-auto pr-2">
-                                    <!-- Ativos serão adicionados aqui -->
-                                </div>
-
-                                <!-- Adicionar Passivos -->
-                                <h3 class="font-bold text-lg mb-2 mt-6">Adicionar Passivo</h3>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-4 bg-stone-50 rounded-lg">
-                                    <input type="text" id="liability-name" placeholder="Nome do passivo (Ex: Dívida Cartão, Financiamento)" class="sm:col-span-2 p-2 border rounded-lg">
-                                    <input type="number" id="liability-value" placeholder="Valor (R$)" class="p-2 border rounded-lg">
-                                    <button id="add-liability" class="sm:col-span-2 bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition">Adicionar Passivo</button>
-                                </div>
-                                <div id="liability-list" class="space-y-2 mt-4 max-h-40 overflow-y-auto pr-2">
-                                    <!-- Passivos serão adicionados aqui -->
-                                </div>
-
-                                <div class="mt-6 pt-6 border-t border-gray-200">
-                                    <button id="record-net-worth" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition">Registrar Patrimônio Atual</button>
-                                    <p class="text-sm text-slate-600 mt-2 text-center">Isso salvará o seu patrimônio líquido atual para acompanhar a evolução.</p>
-                                </div>
-                            </div>
-
-                            <!-- Resumo e Gráfico de Patrimônio Líquido -->
-                            <div class="bg-stone-50 p-6 rounded-xl">
-                                <h3 class="font-bold text-lg mb-2 text-center">Seu Patrimônio Líquido Atual</h3>
-                                <div id="net-worth-summary" class="text-center mb-4">
-                                    <p class="text-sm text-slate-600">Total de Ativos: <span class="font-bold text-emerald-600" id="total-assets">R$ 0,00</span></p>
-                                    <p class="text-sm text-slate-600">Total de Passivos: <span class="font-bold text-red-500" id="total-liabilities">R$ 0,00</span></p>
-                                    <p class="text-3xl font-bold mt-2" id="current-net-worth">R$ 0,00</p>
-                                </div>
-                                <div class="mt-6">
-                                    <h3 class="font-bold text-lg mb-2 text-center">Evolução do Patrimônio Líquido</h3>
-                                    <div class="chart-container">
-                                        <canvas id="netWorthChart"></canvas>
-                                    </div>
-                                    <div id="net-worth-history-list" class="space-y-2 mt-4 max-h-40 overflow-y-auto pr-2">
-                                        <!-- Histórico de registros será exibido aqui -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Seção 7: Fluxo de Caixa Futuro -->
-                <section id="passo7-fluxo-caixa" class="content-section">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 7: Previsão de Fluxo de Caixa Futuro</h2>
-                        <p class="text-slate-600 mb-6">Planeje e visualize seu saldo financeiro para os próximos meses, incluindo eventos futuros.</p>
-                        
-                        <div class="grid md:grid-cols-2 gap-8 items-start">
-                            <!-- Inputs para Eventos Futuros -->
-                            <div>
-                                <h3 class="font-bold text-lg mb-2">Adicionar Evento Futuro</h3>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-4 bg-stone-50 rounded-lg">
-                                    <input type="text" id="event-name" placeholder="Nome do evento" class="sm:col-span-2 p-2 border rounded-lg">
-                                    <input type="number" id="event-amount" placeholder="Valor (R$)" class="p-2 border rounded-lg">
-                                    <input type="date" id="event-date" class="p-2 border rounded-lg">
-                                    <select id="event-type" class="p-2 border rounded-lg bg-white">
-                                        <option value="income">Receita</option>
-                                        <option value="expense">Despesa</option>
-                                    </select>
-                                    <button id="add-future-event" class="sm:col-span-2 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar Evento</button>
-                                </div>
-                                <div id="future-event-list" class="space-y-2 mt-4 max-h-60 overflow-y-auto pr-2">
-                                    <!-- Eventos futuros serão adicionados aqui -->
-                                </div>
-                            </div>
-
-                            <!-- Configurações e Tabela de Projeção -->
-                            <div class="bg-stone-50 p-6 rounded-xl">
-                                <h3 class="font-bold text-lg mb-2">Configurações da Projeção</h3>
-                                <div class="mb-4">
-                                    <label for="projection-start-month" class="block font-medium mb-1">Mês de Início</label>
-                                    <select id="projection-start-month" class="w-full p-2 border rounded-lg bg-white">
-                                        <!-- Opções de meses geradas por JS -->
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="projection-start-year" class="block font-medium mb-1">Ano de Início</label>
-                                    <input type="number" id="projection-start-year" class="w-full p-2 border rounded-lg">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="projection-months" class="block font-medium mb-1">Meses para Projetar</label>
-                                    <input type="number" id="projection-months" value="12" min="1" max="60" class="w-full p-2 border rounded-lg">
-                                </div>
-                                <button id="calculate-cash-flow" class="w-full bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Gerar Projeção</button>
-
-                                <div id="cash-flow-projection-result" class="mt-6 pt-4 border-t border-gray-200">
-                                    <h3 class="font-bold text-lg mb-2">Sua Projeção de Fluxo de Caixa (Tabela)</h3>
-                                    <div class="overflow-x-auto">
-                                        <table class="min-w-full bg-white rounded-lg shadow-sm text-sm">
-                                            <thead>
-                                                <tr class="bg-gray-100 text-left">
-                                                    <th class="py-2 px-3 border-b">Mês/Ano</th>
-                                                    <th class="py-2 px-3 border-b">Saldo Inicial</th>
-                                                    <th class="py-2 px-3 border-b">Receitas (Eventos)</th>
-                                                    <th class="py-2 px-3 border-b">Despesas (Eventos)</th>
-                                                    <th class="py-2 px-3 border-b">Saldo Final</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="projection-table-body">
-                                                <tr><td colspan="5" class="text-center py-4 text-slate-400">Gere a projeção para visualizar.</td></tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    
-                                    <h3 class="font-bold text-lg mb-2 mt-6 text-center">Calendário Anual de Fluxo de Caixa</h3>
-                                    <div id="annual-cash-flow-calendar" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
-                                        <!-- Cards de meses serão adicionados aqui -->
-                                    </div>
-
-                                    <!-- Gráfico de Fluxo de Caixa -->
-                                    <div class="mt-6">
-                                        <h3 class="font-bold text-lg mb-2 text-center">Gráfico de Fluxo de Caixa</h3>
-                                        <div class="chart-container">
-                                            <canvas id="cashFlowChart"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Seção 8: Gerenciador de Assinaturas (NOVA) -->
-                <section id="passo8-assinaturas" class="content-section">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 8: Gerenciador de Assinaturas</h2>
-                        <p class="text-slate-600 mb-6">Controle seus gastos recorrentes e identifique oportunidades de economia.</p>
-                        
-                        <div class="grid md:grid-cols-2 gap-8 items-start">
-                            <div>
-                                <h3 class="font-bold text-lg mb-2">Adicionar Assinatura/Conta Recorrente</h3>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-4 bg-stone-50 rounded-lg">
-                                    <input type="text" id="subscription-name" placeholder="Nome do serviço (Ex: Netflix)" class="sm:col-span-2 p-2 border rounded-lg">
-                                    <input type="number" id="subscription-amount" placeholder="Valor (R$)" class="p-2 border rounded-lg">
-                                    <select id="subscription-frequency" class="p-2 border rounded-lg bg-white">
-                                        <option value="monthly">Mensal</option>
-                                        <option value="yearly">Anual</option>
-                                    </select>
-                                    <input type="date" id="subscription-renewal-date" class="p-2 border rounded-lg">
-                                    <button id="add-subscription" class="sm:col-span-2 bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition">Adicionar Assinatura</button>
-                                </div>
-                                <div id="subscription-list" class="space-y-2 mt-4 max-h-60 overflow-y-auto pr-2">
-                                    <!-- Assinaturas serão adicionadas aqui -->
-                                </div>
-                            </div>
-
-                            <div class="bg-stone-50 p-6 rounded-xl">
-                                <h3 class="font-bold text-lg mb-2 text-center">Resumo de Assinaturas</h3>
-                                <div id="subscription-summary" class="text-center mb-4">
-                                    <p class="text-sm text-slate-600">Total de Assinaturas Ativas: <span class="font-bold" id="total-active-subscriptions">0</span></p>
-                                    <p class="text-2xl font-bold mt-2">Custo Mensal Total: <span class="text-red-500" id="total-monthly-subscriptions-cost">R$ 0,00</span></p>
-                                </div>
-                                <p class="text-sm text-slate-600 mt-4 text-center">Revise suas assinaturas regularmente para cortar gastos desnecessários!</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Seção 9: Resumo Geral (NOVO POSICIONAMENTO) -->
-                <section id="passo9-resumo-geral" class="content-section">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h2 class="text-2xl font-bold mb-1 text-emerald-600">Passo 9: Resumo Geral</h2>
-                        <p class="text-slate-600 mb-6">Uma visão consolidada do seu planejamento financeiro.</p>
-                        
-                        <div class="grid md:grid-cols-2 gap-8">
-                            <!-- Resumo do Orçamento -->
-                            <div class="bg-stone-50 p-6 rounded-xl">
-                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Orçamento Mensal</h3>
-                                <p class="text-sm text-slate-700">Renda Líquida: <span class="font-semibold" id="resumo-income">R$ 0,00</span></p>
-                                <p class="text-sm text-slate-700">Total Despesas: <span class="font-semibold" id="resumo-total-expenses">R$ 0,00</span></p>
-                                <p class="text-lg font-bold mt-2">Saldo: <span id="resumo-balance" class="text-emerald-600">R$ 0,00</span></p>
-                                <div class="mt-4">
-                                    <h4 class="font-bold text-sm mb-2">Distribuição (50/30/20)</h4>
-                                    <div id="resumo-budget-bars" class="space-y-1">
-                                        <!-- Barras de resumo do orçamento -->
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Resumo de Dívidas -->
-                            <div class="bg-stone-50 p-6 rounded-xl">
-                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Plano de Dívidas</h3>
-                                <p class="text-sm text-slate-700">Estratégia Atual: <span class="font-semibold" id="resumo-debt-strategy">Bola de Neve</span></p>
-                                <p class="text-sm text-slate-700">Dívidas Registradas: <span class="font-semibold" id="resumo-num-debts">0</span></p>
-                                <p class="text-sm text-slate-700">Pagamento Extra Mensal: <span class="font-semibold" id="resumo-extra-payment">R$ 0,00</span></p>
-                                <p class="text-lg font-bold mt-2">Dívida Prioritária: <span id="resumo-priority-debt" class="text-red-500">N/A</span></p>
-                            </div>
-
-                            <!-- Resumo de Metas -->
-                            <div class="bg-stone-50 p-6 rounded-xl">
-                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Metas e Futuro</h3>
-                                <p class="text-sm text-slate-700">Metas Registradas: <span class="font-semibold" id="resumo-num-goals">0</span></p>
-                                <p class="text-lg font-bold mt-2">Total Economizado para Metas: <span class="text-emerald-600" id="resumo-total-saved-goals">R$ 0,00</span></p>
-                                <p class="text-sm text-slate-700">Reserva de Emergência Ideal: <span class="font-semibold" id="resumo-emergency-fund">R$ 0,00 - R$ 0,00</span></p>
-                            </div>
-
-                            <!-- Resumo de Investimentos -->
-                            <div class="bg-stone-50 p-6 rounded-xl">
-                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Simulador de Investimentos</h3>
-                                <p class="text-sm text-slate-700">Capital Inicial: <span class="font-semibold" id="resumo-inv-initial">R$ 0,00</span></p>
-                                <p class="text-sm text-slate-700">Aporte Mensal: <span class="font-semibold" id="resumo-inv-monthly">R$ 0,00</span></p>
-                                <p class="text-sm text-slate-700">Taxa Anual: <span class="font-semibold" id="resumo-inv-rate">0%</span></p>
-                                <p class="text-sm text-slate-700">Período: <span class="font-semibold" id="resumo-inv-period">0 anos</span></p>
-                                <p class="text-lg font-bold mt-2">Valor Acumulado (Projetado): <span class="text-emerald-600" id="resumo-inv-projected">R$ 0,00</span></p>
-                            </div>
-
-                            <!-- Resumo de Financiamento -->
-                            <div class="bg-stone-50 p-6 rounded-xl">
-                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Simulador de Financiamento</h3>
-                                <p class="text-sm text-slate-700">Valor do Bem: <span class="font-semibold" id="resumo-fin-value">R$ 0,00</span></p>
-                                <p class="text-sm text-slate-700">Entrada: <span class="font-semibold" id="resumo-fin-downpayment">0%</span></p>
-                                <p class="text-sm text-slate-700">Taxa Anual: <span class="font-semibold" id="resumo-fin-rate">0%</span></p>
-                                <p class="text-sm text-slate-700">Período: <span class="font-semibold" id="resumo-fin-period">0 anos</span></p>
-                                <p class="text-lg font-bold mt-2">Parcela Mensal (Projetada): <span class="text-red-500" id="resumo-fin-monthly-payment">R$ 0,00</span></p>
-                            </div>
-
-                            <!-- Resumo de Patrimônio Líquido -->
-                            <div class="bg-stone-50 p-6 rounded-xl">
-                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Patrimônio Líquido</h3>
-                                <p class="text-sm text-slate-700">Total Ativos: <span class="font-semibold" id="resumo-pat-assets">R$ 0,00</span></p>
-                                <p class="text-sm text-slate-700">Total Passivos: <span class="font-semibold" id="resumo-pat-liabilities">R$ 0,00</span></p>
-                                <p class="text-lg font-bold mt-2">Patrimônio Líquido Atual: <span class="text-emerald-600" id="resumo-pat-net-worth">R$ 0,00</span></p>
-                                <p class="text-sm text-slate-700 mt-2">Registros de Histórico: <span class="font-semibold" id="resumo-pat-history-count">0</span></p>
-                            </div>
-
-                            <!-- Resumo de Assinaturas -->
-                            <div class="bg-stone-50 p-6 rounded-xl">
-                                <h3 class="font-bold text-lg mb-2 text-emerald-600">Assinaturas e Recorrentes</h3>
-                                <p class="text-sm text-slate-700">Assinaturas Ativas: <span class="font-semibold" id="resumo-sub-active">0</span></p>
-                                <p class="text-lg font-bold mt-2">Custo Mensal Total: <span class="text-red-500" id="resumo-sub-monthly-cost">R$ 0,00</span></p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </main>
-
-            <footer class="text-center mt-12 text-sm text-slate-500">
-                <p>Ferramenta interativa para te ajudar a conquistar sua liberdade financeira.</p>
-                <div class="mt-4">
-                    <button id="reset-data-btn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition">Reiniciar Todos os Dados</button>
-                    <p class="text-sm text-slate-500 mt-2">Isso apagará todas as informações salvas nesta ferramenta.</p>
-                </div>
-            </footer>
-        </section>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Gerenciamento de Estado
-            const state = {
-                income: 0,
-                expenses: [],
-                debts: [],
-                goals: [],
-                activeSection: 'passo1', // Seção ativa padrão
-                debtStrategy: 'snowball', // Estratégia de dívida padrão
-                essentialCosts: 0, // Custo essencial para cálculo da reserva
-                extraPayment: 0, // Para o simulador de dívidas
-                // Novos estados para simuladores
-                investment: {
-                    initialCapital: 0,
-                    monthlyContribution: 0,
-                    annualInterestRate: 0,
-                    periodYears: 0,
-                    projectedFutureValue: 0 // Adicionado para armazenar o resultado do investimento
-                },
-                financing: {
-                    propertyValue: 0,
-                    downPaymentPercentage: 0,
-                    annualFinancingRate: 0,
-                    periodYears: 0,
-                    projectedMonthlyPayment: 0 // Adicionado para armazenar o resultado do financiamento
-                },
-                // Novos estados para Previsão de Fluxo de Caixa
-                futureEvents: [],
-                projectionSettings: {
-                    startMonth: new Date().getMonth() + 1, // Mês atual (1-12)
-                    startYear: new Date().getFullYear(), // Ano atual
-                    months: 12 // Padrão de 12 meses
-                },
-                // Novos estados para Patrimônio Líquido
-                assets: [],
-                liabilities: [],
-                netWorthHistory: [], // [{ date: 'YYYY-MM-DD', value: 1234.56 }]
-                // Novo estado para Assinaturas
-                subscriptions: [] // [{ id: Date.now(), name: '', amount: 0, frequency: 'monthly', renewalDate: '' }]
-            };
-
-            // Carregar estado salvo do localStorage
-            const savedState = localStorage.getItem('financasAppState');
-            if (savedState) {
-                try {
-                    const parsedState = JSON.parse(savedState);
-                    // Atribuir valores carregados com fallbacks seguros
-                    state.income = parsedState.income !== undefined ? parsedState.income : 0;
-                    state.expenses = Array.isArray(parsedState.expenses) ? parsedState.expenses : [];
-                    state.debts = Array.isArray(parsedState.debts) ? parsedState.debts : [];
-                    state.goals = Array.isArray(parsedState.goals) ? parsedState.goals : [];
-                    state.activeSection = parsedState.activeSection || 'passo1';
-                    state.debtStrategy = parsedState.debtStrategy || 'snowball';
-                    state.essentialCosts = parsedState.essentialCosts !== undefined ? parsedState.essentialCosts : 0;
-                    state.extraPayment = parsedState.extraPayment !== undefined ? parsedState.extraPayment : 0;
-                    state.investment = parsedState.investment || { initialCapital: 0, monthlyContribution: 0, annualInterestRate: 0, periodYears: 0, projectedFutureValue: 0 };
-                    state.financing = parsedState.financing || { propertyValue: 0, downPaymentPercentage: 0, annualFinancingRate: 0, periodYears: 0, projectedMonthlyPayment: 0 };
-                    state.futureEvents = Array.isArray(parsedState.futureEvents) ? parsedState.futureEvents : [];
-                    // Garantir que a data dos eventos futuros seja carregada como objeto Date
-                    state.futureEvents.forEach(event => {
-                        if (typeof event.date === 'string') {
-                            event.date = new Date(event.date);
-                        }
-                    });
-                    state.projectionSettings = parsedState.projectionSettings || { startMonth: new Date().getMonth() + 1, startYear: new Date().getFullYear(), months: 12 };
-                    // Carregar novos estados de Patrimônio Líquido
-                    state.assets = Array.isArray(parsedState.assets) ? parsedState.assets : [];
-                    state.liabilities = Array.isArray(parsedState.liabilities) ? parsedState.liabilities : [];
-                    state.netWorthHistory = Array.isArray(parsedState.netWorthHistory) ? parsedState.netWorthHistory : [];
-                    state.netWorthHistory.forEach(item => {
-                        if (typeof item.date === 'string') {
-                            item.date = new Date(item.date);
-                        }
-                    });
-                    // Carregar novo estado de Assinaturas
-                    state.subscriptions = Array.isArray(parsedState.subscriptions) ? parsedState.subscriptions : [];
-                    state.subscriptions.forEach(sub => {
-                        if (typeof sub.renewalDate === 'string') {
-                            sub.renewalDate = new Date(sub.renewalDate);
-                        }
-                    });
-
-                } catch (e) {
-                    console.error("Erro ao carregar dados do localStorage:", e);
-                    // Se a análise falhar, o estado permanece o padrão inicializado
-                }
-            }
-
-            // Instâncias de Gráficos
-            let budgetChart;
-            let cashFlowChart;
-            let netWorthChart; 
-
-            // Elementos do DOM
-            // Usando uma função auxiliar para obter elementos de forma segura
-            const getElement = (id) => document.getElementById(id);
-
-            const navButtons = document.querySelectorAll('.nav-button');
-            const contentSections = document.querySelectorAll('.content-section');
-            const incomeInput = getElement('income');
-            const addExpenseBtn = getElement('add-expense');
-            const expenseNameInput = getElement('expense-name');
-            const expenseAmountInput = getElement('expense-amount');
-            const expenseCategoryInput = getElement('expense-category');
-            const expenseList = getElement('expense-list');
-            const summaryEl = getElement('summary');
-            const comparisonBarsEl = getElement('comparison-bars');
-            
-            const addDebtBtn = getElement('add-debt');
-            const debtNameInput = getElement('debt-name');
-            const debtTotalInput = getElement('debt-total');
-            const debtRateInput = getElement('debt-rate');
-            const debtListEl = getElement('debt-list');
-            const snowballBtn = getElement('snowball-btn');
-            const avalancheBtn = getElement('avalanche-btn');
-            const strategyExplanationEl = getElement('strategy-explanation');
-            const extraPaymentInput = getElement('extra-payment');
-            const debtSimulationResultEl = getElement('debt-simulation-result');
-
-            const essentialCostsInput = getElement('essential-costs');
-            const emergencyFundResultEl = getElement('emergency-fund-result');
-
-            const addGoalBtn = getElement('add-goal');
-            const goalNameInput = getElement('goal-name');
-            const goalTargetAmountInput = getElement('goal-target-amount');
-            const goalSavedAmountInput = getElement('goal-saved-amount');
-            const goalListEl = getElement('goal-list');
-
-            const initialCapitalInput = getElement('initial-capital');
-            const monthlyContributionInput = getElement('monthly-contribution');
-            const annualInterestRateInput = getElement('annual-interest-rate');
-            const investmentPeriodYearsInput = getElement('investment-period-years');
-            const calculateInvestmentBtn = getElement('calculate-investment');
-            const investmentResultEl = getElement('investment-result');
-
-            const propertyValueInput = getElement('property-value');
-            const downPaymentPercentageInput = getElement('down-payment-percentage');
-            const annualFinancingRateInput = getElement('annual-financing-rate');
-            const financingPeriodYearsInput = getElement('financing-period-years');
-            const calculateFinancingBtn = getElement('calculate-financing');
-            const financingResultEl = getElement('financing-result');
-
-            const eventNameInput = getElement('event-name');
-            const eventAmountInput = getElement('event-amount');
-            const eventDateInput = getElement('event-date');
-            const eventTypeInput = getElement('event-type');
-            const addFutureEventBtn = getElement('add-future-event');
-            const futureEventListEl = getElement('future-event-list');
-            const projectionStartMonthSelect = getElement('projection-start-month');
-            const projectionStartYearInput = getElement('projection-start-year');
-            const projectionMonthsInput = getElement('projection-months');
-            const calculateCashFlowBtn = getElement('calculate-cash-flow');
-            const projectionTableBody = getElement('projection-table-body');
-            const cashFlowChartCanvas = getElement('cashFlowChart');
-            const annualCashFlowCalendar = getElement('annual-cash-flow-calendar'); 
-
-            // Elementos para Patrimônio Líquido
-            const assetNameInput = getElement('asset-name');
-            const assetValueInput = getElement('asset-value');
-            const addAssetBtn = getElement('add-asset');
-            const assetListEl = getElement('asset-list');
-
-            const liabilityNameInput = getElement('liability-name');
-            const liabilityValueInput = getElement('liability-value');
-            const addLiabilityBtn = getElement('add-liability');
-            const liabilityListEl = getElement('liability-list');
-
-            const totalAssetsEl = getElement('total-assets');
-            const totalLiabilitiesEl = getElement('total-liabilities');
-            const currentNetWorthEl = getElement('current-net-worth');
-            const recordNetWorthBtn = getElement('record-net-worth');
-            const netWorthChartCanvas = getElement('netWorthChart');
-            const netWorthHistoryListEl = getElement('net-worth-history-list');
-
-            // Elementos para Assinaturas
-            const subscriptionNameInput = getElement('subscription-name');
-            const subscriptionAmountInput = getElement('subscription-amount');
-            const subscriptionFrequencyInput = getElement('subscription-frequency');
-            const subscriptionRenewalDateInput = getElement('subscription-renewal-date');
-            const addSubscriptionBtn = getElement('add-subscription');
-            const subscriptionListEl = getElement('subscription-list');
-            const totalActiveSubscriptionsEl = getElement('total-active-subscriptions');
-            const totalMonthlySubscriptionsCostEl = getElement('total-monthly-subscriptions-cost'); // Old element
-            const totalMonthlySubscriptionsCostDisplay = getElement('total-monthly-subscriptions-cost-display'); // New element
-
-            // Elementos para "Total Economizado"
-            const totalEconomizadoDisplay = getElement('total-economizado-display');
-            const extraPaymentMessage = getElement('extra-payment-message');
-            const summaryIncomeDisplay = getElement('summary-income-display'); // New element
-            const summaryExpensesDisplay = getElement('summary-expenses-display'); // New element
-
-            // Elementos para Resumo Geral
-            const resumoIncome = getElement('resumo-income');
-            const resumoTotalExpenses = getElement('resumo-total-expenses');
-            const resumoBalance = getElement('resumo-balance');
-            const resumoBudgetBars = getElement('resumo-budget-bars');
-            const resumoDebtStrategy = getElement('resumo-debt-strategy');
-            const resumoNumDebts = getElement('resumo-num-debts');
-            const resumoExtraPayment = getElement('resumo-extra-payment');
-            const resumoPriorityDebt = getElement('resumo-priority-debt');
-            const resumoNumGoals = getElement('resumo-num-goals');
-            const resumoTotalSavedGoals = getElement('resumo-total-saved-goals');
-            const resumoEmergencyFund = getElement('resumo-emergency-fund');
-            const resumoInvInitial = getElement('resumo-inv-initial');
-            const resumoInvMonthly = getElement('resumo-inv-monthly');
-            const resumoInvRate = getElement('resumo-inv-rate');
-            const resumoInvPeriod = getElement('resumo-inv-period');
-            const resumoInvProjected = getElement('resumo-inv-projected');
-            const resumoFinValue = getElement('resumo-fin-value');
-            const resumoFinDownpayment = getElement('resumo-fin-downpayment');
-            const resumoFinRate = getElement('resumo-fin-rate');
-            const resumoFinPeriod = getElement('resumo-fin-period');
-            const resumoFinMonthlyPayment = getElement('resumo-fin-monthly-payment');
-            const resumoPatAssets = getElement('resumo-pat-assets');
-            const resumoPatLiabilities = getElement('resumo-pat-liabilities');
-            const resumoPatNetWorth = getElement('resumo-pat-net-worth');
-            const resumoPatHistoryCount = getElement('resumo-pat-history-count');
-            const resumoSubActive = getElement('resumo-sub-active');
-            const resumoSubMonthlyCost = getElement('resumo-sub-monthly-cost');
-
-
-            // Botão de Reiniciar (agora existe no HTML)
-            const resetDataBtn = getElement('reset-data-btn');
-
-            // Função para Salvar o Estado
-            const saveState = () => {
-                localStorage.setItem('financasAppState', JSON.stringify(state));
-            };
-
-            // Utility for debouncing
-            const debounce = (func, delay) => {
-                let timeout;
-                return function(...args) {
-                    const context = this;
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(context, args), delay);
-                };
-            };
-
-            // Funções de Renderização
-            const renderExpenses = () => {
-                if (expenseList) {
-                    expenseList.innerHTML = '';
-                    if (state.expenses.length === 0) {
-                        expenseList.innerHTML = '<p class="text-slate-400 text-center">Nenhuma despesa adicionada.</p>';
-                    } else {
-                        state.expenses.forEach((exp, index) => {
-                            const expEl = document.createElement('div');
-                            expEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
-                            expEl.innerHTML = `
-                                <span>${exp.name} (${exp.category})</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="font-medium">R$ ${exp.amount.toFixed(2)}</span>
-                                    <button data-index="${index}" class="remove-expense text-red-500 hover:text-red-700 text-lg">&times;</button>
-                                </div>
-                            `;
-                            expenseList.appendChild(expEl);
-                        });
-                    }
-                }
-            };
-
-            const renderChartAndSummary = () => {
-                const totals = {
-                    necessidades: 0,
-                    desejos: 0,
-                    dividas: 0,
-                    transporte: 0,
-                    moradia: 0,
-                    alimentacao: 0,
-                    saude: 0,
-                    educacao: 0,
-                    lazer: 0,
-                    outros: 0,
-                };
-                let totalExpenses = 0;
-                state.expenses.forEach(exp => {
-                    if (totals[exp.category] !== undefined) { // Ensure category exists
-                        totals[exp.category] += exp.amount;
-                    } else {
-                        // If a new category is added dynamically, handle it or default
-                        totals['outros'] += exp.amount; 
-                    }
-                    totalExpenses += exp.amount;
-                });
-
-                const balance = state.income - totalExpenses;
-                if (summaryEl) {
-                    summaryEl.textContent = `Saldo: R$ ${balance.toFixed(2)}`;
-                    summaryEl.classList.toggle('text-red-500', balance < 0);
-                    summaryEl.classList.toggle('text-green-600', balance >= 0);
-                }
-
-                // Atualizar Gráfico
-                if (budgetChart) {
-                    budgetChart.destroy(); // Always destroy before re-creating for updates
-                }
-                if (getElement('budgetChart')) {
-                    const ctx = getElement('budgetChart').getContext('2d');
-                    budgetChart = new Chart(ctx, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Necessidades', 'Desejos', 'Dívidas', 'Transporte', 'Moradia', 'Alimentação', 'Saúde', 'Educação', 'Lazer', 'Outros'],
-                            datasets: [{
-                                data: [
-                                    totals.necessidades, totals.desejos, totals.dividas,
-                                    totals.transporte, totals.moradia, totals.alimentacao,
-                                    totals.saude, totals.educacao, totals.lazer, totals.outros
-                                ],
-                                backgroundColor: [
-                                    '#34D399', '#FBBF24', '#F87171', // Needs, Wants, Debts
-                                    '#60A5FA', '#A78BFA', '#FCA5A5', // Blue, Purple, Light Red
-                                    '#38B2AC', '#ED8936', '#4299E1', // Teal, Orange, Light Blue
-                                    '#ECC94B' // Yellow
-                                ],
-                                borderWidth: 0,
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { position: 'bottom' },
-                            },
-                            cutout: '60%'
-                        }
-                    });
-                }
-                
-                // Atualizar Barras de Comparação
-                if (comparisonBarsEl) {
-                    comparisonBarsEl.innerHTML = '';
-                    const income = state.income > 0 ? state.income : 1;
-                    const percentages = {
-                        necessidades: (totals.necessidades / income) * 100,
-                        desejos: (totals.desejos / income) * 100,
-                        poupanca: (balance > 0 ? balance / income : 0) * 100,
-                    };
-
-                    const createBar = (label, userPercent, targetPercent, color) => {
-                        const barHtml = `
-                            <div class="mb-2">
-                                <div class="flex justify-between mb-1">
-                                    <span>${label}</span>
-                                    <span>${userPercent.toFixed(1)}% (Meta: ${targetPercent}%)</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                    <div class="h-2.5 rounded-full" style="width: ${Math.min(userPercent, 100)}%; background-color: ${color};"></div>
-                                </div>
-                            </div>
-                        `;
-                        comparisonBarsEl.innerHTML += barHtml;
-                    }
-
-                    createBar('Necessidades', percentages.necessidades, 50, '#34D399');
-                    createBar('Desejos', percentages.desejos, 30, '#FBBF24');
-                    createBar('Poupança/Saldo', percentages.poupanca, 20, '#60A5FA');
-                }
-            };
-            
-            const renderDebts = () => {
-                if (debtListEl) {
-                    debtListEl.innerHTML = '';
-                    if (state.debts.length === 0) {
-                        debtListEl.innerHTML = '<p class="text-slate-400 text-center p-4">Nenhuma dívida adicionada.</p>';
-                        return;
-                    }
-
-                    let sortedDebts = [...state.debts];
-                    if (state.debtStrategy === 'snowball') {
-                        sortedDebts.sort((a, b) => a.total - b.total);
-                    } else { // avalanche
-                        sortedDebts.sort((a, b) => b.rate - a.rate);
-                    }
-
-                    sortedDebts.forEach((debt, index) => {
-                        const debtEl = document.createElement('div');
-                        debtEl.className = 'debt-item flex justify-between items-center p-3';
-                        if (index === 0) debtEl.classList.add('bg-emerald-100', 'rounded-lg');
-                        
-                        debtEl.innerHTML = `
-                            <div>
-                                <p class="font-bold">${index + 1}. ${debt.name}</p>
-                                <p class="text-sm text-slate-600">Total: R$ ${debt.total.toFixed(2)} | Juros: ${debt.rate}% a.m.</p>
-                            </div>
-                            <button data-id="${debt.id}" class="remove-debt text-red-500 hover:text-red-700 text-lg">&times;</button>
-                        `;
-                        debtListEl.appendChild(debtEl);
-                    });
-                    simulateDebtPayment(); // Chamar a simulação sempre que as dívidas forem renderizadas
-                }
-            };
-
-            const simulateDebtPayment = () => {
-                if (debtSimulationResultEl) {
-                    const extraPayment = state.extraPayment;
-                    const sortedDebts = [...state.debts]; // Obter a lista de dívidas ordenada pela estratégia atual
-                    if (state.debtStrategy === 'snowball') {
-                        sortedDebts.sort((a, b) => a.total - b.total);
-                    } else { // avalanche
-                        sortedDebts.sort((a, b) => b.rate - a.rate);
-                    }
-
-                    if (sortedDebts.length === 0 || extraPayment <= 0) {
-                        debtSimulationResultEl.innerHTML = 'Adicione dívidas e um valor extra para simular.';
-                        return;
-                    }
-
-                    let totalMonths = 0;
-                    let remainingDebt = sortedDebts[0].total;
-                    let monthlyRate = sortedDebts[0].rate / 100; // Converter % para decimal
-                    let currentExtraPayment = extraPayment;
-
-                    // Simulação de quitação de dívida mais precisa (para uma dívida)
-                    if (monthlyRate > 0) {
-                        // Se o pagamento extra for menor ou igual ao juro mensal da dívida, ela nunca será quitada ou levará muito tempo
-                        if (currentExtraPayment <= remainingDebt * monthlyRate && remainingDebt > 0) {
-                            debtSimulationResultEl.innerHTML = `Com R$ ${extraPayment.toFixed(2)} extra, levaria muito tempo ou a dívida não diminuiria.`;
-                            return;
-                        }
-                        // Calcula o número de meses usando a fórmula de amortização
-                        // n = -log(1 - (i * P) / M) / log(1 + i)
-                        // Onde: i = taxa de juros mensal, P = principal, M = pagamento mensal (aqui, o extra)
-                        if (currentExtraPayment > 0) { // Garante que o pagamento não é zero
-                            totalMonths = -Math.log(1 - (monthlyRate * remainingDebt) / currentExtraPayment) / Math.log(1 + monthlyRate);
-                        } else { // Se currentExtraPayment for 0, a dívida não será paga
-                            totalMonths = Infinity;
-                        }
-                    } else { // Sem juros
-                        if (currentExtraPayment > 0) {
-                            totalMonths = remainingDebt / currentExtraPayment;
-                        } else {
-                            totalMonths = Infinity;
-                        }
-                    }
-                    
-                    if (totalMonths > 0 && totalMonths < Infinity && totalMonths < 360) { // Limite de 360 meses (30 anos)
-                        const years = Math.floor(totalMonths / 12);
-                        const monthsRemainder = Math.round(totalMonths % 12);
-                        let resultText = `Com <strong>R$ ${extraPayment.toFixed(2)} extra</strong>, você quitaria a dívida prioritária em `;
-                        if (years > 0) {
-                            resultText += `<strong>${years} ano(s)</strong> e `;
-                        }
-                        resultText += `<strong>${monthsRemainder} mês(es)</strong>.`;
-                        debtSimulationResultEl.innerHTML = resultText;
-                    } else if (totalMonths >= 360) {
-                        debtSimulationResultEl.innerHTML = `Com <strong>R$ ${extraPayment.toFixed(2)} extra</strong>, levaria mais de 30 anos para quitar a dívida prioritária. Considere renegociar!`;
-                    } else {
-                        debtSimulationResultEl.innerHTML = 'Adicione um valor extra para simular.';
-                    }
-                }
-            };
-
-            const renderEmergencyFundResult = () => {
-                if (emergencyFundResultEl) {
-                    const costs = state.essentialCosts;
-                    const minFund = costs * 3;
-                    const maxFund = costs * 6;
-                    emergencyFundResultEl.innerHTML = `
-                        <p class="font-bold">Sua meta de reserva é:</p>
-                        <p class="text-2xl font-bold">R$ ${minFund.toFixed(2)} - R$ ${maxFund.toFixed(2)}</p>
-                    `;
-                }
-            };
-
-            const renderGoals = () => {
-                if (goalListEl) {
-                    goalListEl.innerHTML = '';
-                    if(state.goals.length === 0) {
-                        goalListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhuma meta adicionada.</p>';
-                    } else {
-                        state.goals.forEach((goal, index) => {
-                            const percentage = goal.targetAmount > 0 ? (goal.savedAmount / goal.targetAmount) * 100 : 0;
-                            const goalEl = document.createElement('div');
-                            goalEl.className = 'bg-gray-100 p-3 rounded-lg flex flex-col';
-                            goalEl.innerHTML = `
-                                <div class="flex justify-between items-center mb-2">
-                                    <span>${goal.name} - <strong>R$ ${goal.savedAmount.toFixed(2)} / R$ ${goal.targetAmount.toFixed(2)}</strong></span>
-                                    <button data-id="${goal.id}" class="remove-goal text-red-500 hover:text-red-700 text-lg">&times;</button>
-                                </div>
-                                <div class="goal-progress-bar">
-                                    <div class="goal-progress" style="width: ${Math.min(percentage, 100)}%;"></div>
-                                </div>
-                                <p class="text-sm text-slate-600 mt-1">Progresso: <strong>${percentage.toFixed(1)}%</strong></p>
-                                <div class="mt-2 text-sm">
-                                    <label for="goal-saved-input-${index}" class="block font-medium mb-1">Atualizar Economizado:</label>
-                                    <input type="number" id="goal-saved-input-${index}" data-id="${goal.id}" value="${goal.savedAmount}"
-                                            class="w-full p-1 border rounded-lg text-sm update-goal-saved-amount">
-                                </div>
-                            `;
-                            goalListEl.appendChild(goalEl);
-                        });
-                    }
-                }
-            };
-
-            const calculateInvestment = () => {
-                if (investmentResultEl) {
-                    const initialCapital = parseFloat(initialCapitalInput.value) || 0;
-                    const monthlyContribution = parseFloat(monthlyContributionInput.value) || 0;
-                    const annualRate = parseFloat(annualInterestRateInput.value) || 0;
-                    const periodYears = parseFloat(investmentPeriodYearsInput.value) || 0;
-
-                    state.investment = { initialCapital, monthlyContribution, annualInterestRate: annualRate, periodYears };
-                    saveState();
-
-                    if ((initialCapital <= 0 && monthlyContribution <= 0) || periodYears <= 0) {
-                        investmentResultEl.innerHTML = '<p>Preencha os campos para ver a simulação do seu investimento.</p>';
-                        state.investment.projectedFutureValue = 0; // Reset projected value
-                        return;
-                    }
-
-                    const monthlyRate = annualRate / 100 / 12;
-                    const totalMonths = periodYears * 12;
-
-                    let futureValue = initialCapital * Math.pow((1 + monthlyRate), totalMonths);
-                    if (monthlyContribution > 0) {
-                        // Future value of a series of payments (annuity due, as payment is at the beginning of the period)
-                        // FV = P * [((1 + r)^n - 1) / r] * (1 + r)
-                        futureValue += monthlyContribution * ((Math.pow((1 + monthlyRate), totalMonths) - 1) / monthlyRate) * (1 + monthlyRate);
-                    }
-
-                    const totalInvested = initialCapital + (monthlyContribution * totalMonths);
-                    const totalInterest = futureValue - totalInvested;
-
-                    state.investment.projectedFutureValue = futureValue; // Store projected value
-                    saveState();
-
-                    investmentResultEl.innerHTML = `
-                        <p class="font-bold">Valor Total Acumulado: <span class="text-emerald-600">R$ ${futureValue.toFixed(2)}</span></p>
-                        <p class="text-sm text-slate-600">Total Investido: R$ ${totalInvested.toFixed(2)}</p>
-                        <p class="text-sm text-slate-600">Juros Ganhos: R$ ${totalInterest.toFixed(2)}</p>
-                    `;
-                }
-            };
-
-            const calculateFinancing = () => {
-                if (financingResultEl) {
-                    const propertyValue = parseFloat(propertyValueInput.value) || 0;
-                    const downPaymentPercentage = parseFloat(downPaymentPercentageInput.value) || 0;
-                    const annualRate = parseFloat(annualFinancingRateInput.value) || 0;
-                    const periodYears = parseFloat(financingPeriodYearsInput.value) || 0;
-
-                    state.financing = { propertyValue, downPaymentPercentage, annualFinancingRate: annualRate, periodYears };
-                    saveState();
-
-                    if (propertyValue <= 0 || periodYears <= 0) {
-                        financingResultEl.innerHTML = '<p>Preencha os campos de valor do bem e período para simular seu financiamento.</p>';
-                        state.financing.projectedMonthlyPayment = 0; // Reset projected value
-                        return;
-                    }
-
-                    const downPayment = propertyValue * (downPaymentPercentage / 100);
-                    const loanAmount = propertyValue - downPayment;
-
-                    if (loanAmount <= 0) {
-                        financingResultEl.innerHTML = '<p>O valor da entrada é igual ou maior que o valor do bem. Não há financiamento necessário.</p>';
-                        state.financing.projectedMonthlyPayment = 0; // Reset projected value
-                        return;
-                    }
-
-                    const monthlyRate = annualRate / 100 / 12;
-                    const totalMonths = periodYears * 12;
-
-                    let monthlyPayment = 0;
-                    if (monthlyRate > 0) {
-                        // Formula para Tabela Price (PMT = P * [i * (1 + i)^n] / [(1 + i)^n – 1])
-                        monthlyPayment = loanAmount * (monthlyRate * Math.pow((1 + monthlyRate), totalMonths)) / (Math.pow((1 + monthlyRate), totalMonths) - 1);
-                    } else {
-                        monthlyPayment = loanAmount / totalMonths; // Sem juros
-                    }
-
-                    const totalPaid = monthlyPayment * totalMonths;
-                    const totalInterest = totalPaid - loanAmount;
-
-                    state.financing.projectedMonthlyPayment = monthlyPayment; // Store projected value
-                    saveState();
-
-                    financingResultEl.innerHTML = `
-                        <p class="font-bold">Valor da Parcela Mensal: <span class="text-emerald-600">R$ ${monthlyPayment.toFixed(2)}</span></p>
-                        <p class="text-sm text-slate-600">Valor Financiado: R$ ${loanAmount.toFixed(2)}</p>
-                        <p class="text-sm text-slate-600">Custo Total do Financiamento (com juros): <span class="text-red-500">R$ ${totalPaid.toFixed(2)}</span></p>
-                        <p class="text-sm text-slate-600">Total de Juros Pagos: R$ ${totalInterest.toFixed(2)}</p>
-                    `;
-                }
-            };
-
-            const renderFutureEvents = () => {
-                if (futureEventListEl) {
-                    futureEventListEl.innerHTML = '';
-                    if (state.futureEvents.length === 0) {
-                        futureEventListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum evento futuro adicionado.</p>';
-                    } else {
-                        state.futureEvents.sort((a, b) => a.date - b.date).forEach((event, index) => {
-                            const eventEl = document.createElement('div');
-                            eventEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
-                            const eventDate = new Date(event.date); // Ensure it's a Date object
-                            eventEl.innerHTML = `
-                                <span>${event.name} (${eventDate.toLocaleDateString('pt-BR')})</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="font-medium ${event.type === 'income' ? 'text-green-600' : 'text-red-500'}">
-                                        ${event.type === 'income' ? '+' : '-'} R$ ${event.amount.toFixed(2)}
-                                    </span>
-                                    <button data-id="${event.id}" class="remove-future-event text-red-500 hover:text-red-700 text-lg">&times;</button>
-                                </div>
-                            `;
-                            futureEventListEl.appendChild(eventEl);
-                        });
-                    }
-                }
-            };
-
-            const calculateCashFlowProjection = () => {
-                if (!projectionStartMonthSelect || !projectionStartYearInput || !projectionMonthsInput || !annualCashFlowCalendar || !cashFlowChartCanvas) {
-                    // Elements not found, skip calculation to prevent errors
-                    return;
-                }
-
-                const startMonth = parseInt(projectionStartMonthSelect.value);
-                const startYear = parseInt(projectionStartYearInput.value);
-                const numMonths = parseInt(projectionMonthsInput.value);
-
-                state.projectionSettings = { startMonth, startYear, months: numMonths };
-                saveState();
-
-                if (numMonths <= 0) {
-                    annualCashFlowCalendar.innerHTML = '<p class="text-slate-400 text-center col-span-full">Gere a projeção para visualizar o calendário.</p>';
-                    if (cashFlowChart) {
-                        cashFlowChart.destroy();
-                        cashFlowChart = null;
-                    }
-                    return;
-                }
-
-                let totalMonthlyExpensesFromBudget = 0;
-                state.expenses.forEach(exp => {
-                    totalMonthlyExpensesFromBudget += exp.amount;
-                });
-                const monthlyNetIncomeFromBudget = state.income - totalMonthlyExpensesFromBudget;
-
-                let currentBalance = state.income - totalMonthlyExpensesFromBudget; 
-
-                annualCashFlowCalendar.innerHTML = ''; // Clear previous calendar
-                if (projectionTableBody) { // Check if table body exists
-                    projectionTableBody.innerHTML = ''; // Clear previous table (if still used)
-                }
-
-                const monthsNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-
-                const labels = [];
-                const incomeData = [];
-                const expenseData = [];
-                const balanceData = [];
-
-                for (let i = 0; i < numMonths; i++) {
-                    let projectionDate = new Date(startYear, startMonth - 1 + i, 1);
-                    let monthLabel = `${monthsNames[projectionDate.getMonth()]}/${projectionDate.getFullYear()}`;
-                    labels.push(monthLabel);
-
-                    let monthStartBalance = currentBalance;
-
-                    let monthIncomeEvents = 0;
-                    let monthExpenseEvents = 0;
-
-                    state.futureEvents.forEach(event => {
-                        const eventDate = new Date(event.date);
-                        if (eventDate.getFullYear() === projectionDate.getFullYear() && eventDate.getMonth() === projectionDate.getMonth()) {
-                            if (event.type === 'income') {
-                                monthIncomeEvents += event.amount;
-                            } else {
-                                monthExpenseEvents += event.amount;
-                            }
-                        }
-                    });
-
-                    const totalMonthlyIncome = state.income + monthIncomeEvents;
-                    const totalMonthlyExpenses = totalMonthlyExpensesFromBudget + monthExpenseEvents;
-                    
-                    currentBalance = monthStartBalance + totalMonthlyIncome - totalMonthlyExpenses;
-
-                    incomeData.push(totalMonthlyIncome);
-                    expenseData.push(totalMonthlyExpenses);
-                    balanceData.push(currentBalance);
-
-                    // Create month card for calendar view
-                    const monthCard = document.createElement('div');
-                    monthCard.className = `bg-white p-4 rounded-lg shadow-sm border ${currentBalance < 0 ? 'border-red-300' : 'border-emerald-300'}`;
-                    monthCard.innerHTML = `
-                        <h4 class="font-bold text-md mb-2">${monthLabel}</h4>
-                        <p class="text-sm text-slate-600">Receitas: <span class="font-medium text-green-600">R$ ${totalMonthlyIncome.toFixed(2)}</span></p>
-                        <p class="text-sm text-slate-600">Despesas: <span class="font-medium text-red-500">R$ ${totalMonthlyExpenses.toFixed(2)}</span></p>
-                        <p class="text-md font-bold mt-2">Saldo: <span class="${currentBalance < 0 ? 'text-red-600' : 'text-emerald-600'}">R$ ${currentBalance.toFixed(2)}</span></p>
-                    `;
-                    annualCashFlowCalendar.appendChild(monthCard);
-
-                    // Populate the table (if still desired, otherwise remove this block)
-                    if (projectionTableBody) {
-                        const row = document.createElement('tr');
-                        row.className = 'border-b last:border-b-0';
-                        row.innerHTML = `
-                            <td class="py-2 px-3">${monthLabel}</td>
-                            <td class="py-2 px-3">R$ ${monthStartBalance.toFixed(2)}</td>
-                            <td class="py-2 px-3 text-green-600">R$ ${totalMonthlyIncome.toFixed(2)}</td>
-                            <td class="py-2 px-3 text-red-500">R$ ${totalMonthlyExpenses.toFixed(2)}</td>
-                            <td class="py-2 px-3 font-bold ${currentBalance < 0 ? 'text-red-600' : 'text-emerald-600'}">R$ ${currentBalance.toFixed(2)}</td>
-                        `;
-                        projectionTableBody.appendChild(row);
-                    }
-                }
-
-                // Renderizar Gráfico de Fluxo de Caixa
-                if (cashFlowChart) {
-                    cashFlowChart.destroy();
-                }
-                if (cashFlowChartCanvas) {
-                    const ctx = cashFlowChartCanvas.getContext('2d');
-                    cashFlowChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [
-                                {
-                                    label: 'Receitas Totais',
-                                    data: incomeData,
-                                    borderColor: '#34D399',
-                                    backgroundColor: 'rgba(52, 211, 153, 0.2)',
-                                    fill: true,
-                                    tension: 0.3
-                                },
-                                {
-                                    label: 'Despesas Totais',
-                                    data: expenseData,
-                                    borderColor: '#EF4444',
-                                    backgroundColor: 'rgba(239, 68, 68, 0.2)',
-                                    fill: true,
-                                    tension: 0.3
-                                },
-                                {
-                                    label: 'Saldo Final',
-                                    data: balanceData,
-                                    borderColor: '#60A5FA',
-                                    backgroundColor: 'rgba(96, 165, 250, 0.2)',
-                                    fill: false,
-                                    tension: 0.3,
-                                    borderWidth: 2
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'top',
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            let label = context.dataset.label || '';
-                                            if (label) {
-                                                label += ': ';
-                                            }
-                                            if (context.parsed.y !== null) {
-                                                label += 'R$ ' + context.parsed.y.toFixed(2);
-                                            }
-                                            return label;
-                                        }
-                                    }
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: false,
-                                    title: {
-                                        display: true,
-                                        text: 'Valor (R$)'
-                                    }
-                                },
-                                x: {
-                                    title: {
-                                        display: true,
-                                        text: 'Mês/Ano'
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-            };
-
-            const calculateNetWorth = () => {
-                let totalAssets = state.assets.reduce((sum, asset) => sum + asset.value, 0);
-                let totalLiabilities = state.liabilities.reduce((sum, liability) => sum + liability.value, 0);
-                let currentNetWorth = totalAssets - totalLiabilities;
-
-                if (totalAssetsEl) totalAssetsEl.textContent = `R$ ${totalAssets.toFixed(2)}`;
-                if (totalLiabilitiesEl) totalLiabilitiesEl.textContent = `R$ ${totalLiabilities.toFixed(2)}`;
-                if (currentNetWorthEl) {
-                    currentNetWorthEl.textContent = `R$ ${currentNetWorth.toFixed(2)}`;
-                    currentNetWorthEl.classList.toggle('text-red-500', currentNetWorth < 0);
-                    currentNetWorthEl.classList.toggle('text-emerald-600', currentNetWorth >= 0);
-                }
-
-                renderNetWorthHistory();
-            };
-
-            const renderAssets = () => {
-                if (assetListEl) {
-                    assetListEl.innerHTML = '';
-                    if (state.assets.length === 0) {
-                        assetListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum ativo adicionado.</p>';
-                    } else {
-                        state.assets.forEach((asset, index) => {
-                            const assetEl = document.createElement('div');
-                            assetEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
-                            assetEl.innerHTML = `
-                                <span>${asset.name}</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="font-medium text-emerald-600">R$ ${asset.value.toFixed(2)}</span>
-                                    <button data-id="${asset.id}" class="remove-asset text-red-500 hover:text-red-700 text-lg">&times;</button>
-                                </div>
-                            `;
-                            assetListEl.appendChild(assetEl);
-                        });
-                    }
-                }
-            };
-
-            const renderLiabilities = () => {
-                if (liabilityListEl) {
-                    liabilityListEl.innerHTML = '';
-                    if (state.liabilities.length === 0) {
-                        liabilityListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum passivo adicionado.</p>';
-                    } else {
-                        state.liabilities.forEach((liability, index) => {
-                            const liabilityEl = document.createElement('div');
-                            liabilityEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
-                            liabilityEl.innerHTML = `
-                                <span>${liability.name}</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="font-medium text-red-500">R$ ${liability.value.toFixed(2)}</span>
-                                    <button data-id="${liability.id}" class="remove-liability text-red-500 hover:text-red-700 text-lg">&times;</button>
-                                </div>
-                            `;
-                            liabilityListEl.appendChild(liabilityEl);
-                        });
-                    }
-                }
-            };
-
-            const renderNetWorthHistory = () => {
-                if (netWorthHistoryListEl) {
-                    netWorthHistoryListEl.innerHTML = '';
-                    if (state.netWorthHistory.length === 0) {
-                        netWorthHistoryListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhum registro de patrimônio.</p>';
-                    } else {
-                        state.netWorthHistory.sort((a, b) => b.date - a.date).forEach(item => { // Sort descending by date
-                            const historyEl = document.createElement('div');
-                            historyEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
-                            const itemDate = new Date(item.date);
-                            historyEl.innerHTML = `
-                                <span>${itemDate.toLocaleDateString('pt-BR')}</span>
-                                <span class="font-medium ${item.value < 0 ? 'text-red-600' : 'text-emerald-600'}">R$ ${item.value.toFixed(2)}</span>
-                            `;
-                            netWorthHistoryListEl.appendChild(historyEl);
-                        });
-                    }
-                }
-
-                // Renderizar Gráfico de Patrimônio Líquido
-                if (netWorthChart) {
-                    netWorthChart.destroy();
-                }
-
-                // Define labels and data here, before chart creation
-                const labels = state.netWorthHistory.map(item => new Date(item.date).toLocaleDateString('pt-BR'));
-                const data = state.netWorthHistory.map(item => item.value);
-
-                if (netWorthChartCanvas) {
-                    const ctx = netWorthChartCanvas.getContext('2d');
-                    netWorthChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Patrimônio Líquido',
-                                data: data,
-                                borderColor: '#10B981', // Emerald 500
-                                backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                                fill: true,
-                                tension: 0.3
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    display: false,
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            let label = context.dataset.label || '';
-                                            if (label) {
-                                                label += ': ';
-                                            }
-                                            if (context.parsed.y !== null) {
-                                                label += 'R$ ' + context.parsed.y.toFixed(2);
-                                            }
-                                            return label;
-                                        }
-                                    }
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: false,
-                                    title: {
-                                        display: true,
-                                        text: 'Valor (R$)'
-                                    }
-                                },
-                                x: {
-                                    title: {
-                                        display: true,
-                                        text: 'Data'
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-            };
-
-            const renderSubscriptions = () => {
-                if (subscriptionListEl) {
-                    subscriptionListEl.innerHTML = '';
-                    let totalActive = 0;
-                    let totalMonthlyCost = 0;
-
-                    if (state.subscriptions.length === 0) {
-                        subscriptionListEl.innerHTML = '<p class="text-slate-400 text-center">Nenhuma assinatura adicionada.</p>';
-                    } else {
-                        state.subscriptions.forEach((sub, index) => {
-                            const subEl = document.createElement('div');
-                            subEl.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg text-sm';
-                            const monthlyAmount = sub.frequency === 'yearly' ? sub.amount / 12 : sub.amount;
-                            totalMonthlyCost += monthlyAmount;
-                            totalActive++;
-
-                            subEl.innerHTML = `
-                                <span>${sub.name} (R$ ${sub.amount.toFixed(2)} ${sub.frequency === 'yearly' ? 'anual' : 'mensal'})</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="font-medium text-slate-700">R$ ${monthlyAmount.toFixed(2)}/mês</span>
-                                    <button data-id="${sub.id}" class="remove-subscription text-red-500 hover:text-red-700 text-lg">&times;</button>
-                                </div>
-                            `;
-                            subscriptionListEl.appendChild(subEl);
-                        });
-                    }
-                    if (totalActiveSubscriptionsEl) totalActiveSubscriptionsEl.textContent = totalActive;
-                    if (totalMonthlySubscriptionsCostEl) totalMonthlySubscriptionsCostEl.textContent = `R$ ${totalMonthlyCost.toFixed(2)}`;
-                    if (totalMonthlySubscriptionsCostDisplay) totalMonthlySubscriptionsCostDisplay.textContent = `${totalMonthlyCost.toFixed(2)}`; // Update top display
-                }
-            };
-
-            // Função para calcular e exibir o total economizado
-            const calculateTotalEconomizado = () => {
-                let totalSavedGoals = state.goals.reduce((sum, goal) => sum + goal.savedAmount, 0);
-                
-                if (totalEconomizadoDisplay) totalEconomizadoDisplay.textContent = `${totalSavedGoals.toFixed(2)}`;
-
-                if (extraPaymentMessage) {
-                    if (state.extraPayment > 0) {
-                        extraPaymentMessage.textContent = `(Você está pagando R$ ${state.extraPayment.toFixed(2)} extra/mês em dívidas, acelerando a quitação!)`;
-                    } else {
-                        extraPaymentMessage.textContent = '';
-                    }
-                }
-            };
-
-            // Nova função para atualizar o resumo de receitas e gastos no topo
-            const updateSummaryIncomeExpenses = () => {
-                const totalExpensesFromBudget = state.expenses.reduce((sum, exp) => sum + exp.amount, 0);
-                if (summaryIncomeDisplay) summaryIncomeDisplay.textContent = `${state.income.toFixed(2)}`;
-                if (summaryExpensesDisplay) summaryExpensesDisplay.textContent = `${totalExpensesFromBudget.toFixed(2)}`;
-            };
-
-            // Funções para renderizar os detalhes expansíveis
-            const renderDetailedSavedGoals = () => {
-                const detailListEl = getElement('detail-economizado');
-                if (detailListEl) {
-                    detailListEl.innerHTML = '';
-                    if (state.goals.length === 0) {
-                        detailListEl.innerHTML = '<p class="detail-item">Nenhuma meta adicionada.</p>';
-                    } else {
-                        state.goals.forEach(goal => {
-                            const itemEl = document.createElement('div');
-                            itemEl.className = 'detail-item';
-                            itemEl.innerHTML = `
-                                <span>${goal.name}</span>
-                                <span class="font-medium">R$ ${goal.savedAmount.toFixed(2)}</span>
-                            `;
-                            detailListEl.appendChild(itemEl);
-                        });
-                    }
-                }
-            };
-
-            const renderDetailedSubscriptions = () => {
-                const detailListEl = getElement('detail-assinaturas');
-                if (detailListEl) {
-                    detailListEl.innerHTML = '';
-                    if (state.subscriptions.length === 0) {
-                        detailListEl.innerHTML = '<p class="detail-item">Nenhuma assinatura adicionada.</p>';
-                    } else {
-                        state.subscriptions.forEach(sub => {
-                            const itemEl = document.createElement('div');
-                            itemEl.className = 'detail-item';
-                            const monthlyAmount = sub.frequency === 'yearly' ? sub.amount / 12 : sub.amount;
-                            itemEl.innerHTML = `
-                                <span>${sub.name}</span>
-                                <span class="font-medium">R$ ${monthlyAmount.toFixed(2)}/mês</span>
-                            `;
-                            detailListEl.appendChild(itemEl);
-                        });
-                    }
-                }
-            };
-
-            const renderDetailedIncome = () => {
-                const detailListEl = getElement('detail-receitas');
-                if (detailListEl) {
-                    detailListEl.innerHTML = '';
-                    if (state.income === 0 && state.futureEvents.filter(e => e.type === 'income').length === 0) {
-                        detailListEl.innerHTML = '<p class="detail-item">Nenhuma receita registrada.</p>';
-                    } else {
-                        const itemEl = document.createElement('div');
-                        itemEl.className = 'detail-item';
-                        itemEl.innerHTML = `
-                            <span>Renda Mensal Fixa</span>
-                            <span class="font-medium">R$ ${state.income.toFixed(2)}</span>
-                        `;
-                        detailListEl.appendChild(itemEl);
-                        state.futureEvents.filter(e => e.type === 'income').forEach(event => {
-                            const eventDate = new Date(event.date);
-                            const eventItemEl = document.createElement('div');
-                            eventItemEl.className = 'detail-item';
-                            eventItemEl.innerHTML = `
-                                <span>${event.name} (${eventDate.toLocaleDateString('pt-BR')})</span>
-                                <span class="font-medium">R$ ${event.amount.toFixed(2)}</span>
-                            `;
-                            detailListEl.appendChild(eventItemEl);
-                        });
-                    }
-                }
-            };
-
-            const renderDetailedExpenses = () => {
-                const detailListEl = getElement('detail-despesas');
-                if (detailListEl) {
-                    detailListEl.innerHTML = '';
-                    if (state.expenses.length === 0) {
-                        detailListEl.innerHTML = '<p class="detail-item">Nenhuma despesa adicionada.</p>';
-                    } else {
-                        state.expenses.forEach(exp => {
-                            const itemEl = document.createElement('div');
-                            itemEl.className = 'detail-item';
-                            itemEl.innerHTML = `
-                                <span>${exp.name} (${exp.category})</span>
-                                <span class="font-medium">R$ ${exp.amount.toFixed(2)}</span>
-                            `;
-                            detailListEl.appendChild(itemEl);
-                        });
-                    }
-                }
-            };
-
-            // Função para renderizar o Resumo Geral
-            const renderResumoGeral = () => {
-                // Resumo do Orçamento
-                if (resumoIncome) resumoIncome.textContent = `R$ ${state.income.toFixed(2)}`;
-                const totalExpensesSummary = state.expenses.reduce((sum, exp) => sum + exp.amount, 0);
-                if (resumoTotalExpenses) resumoTotalExpenses.textContent = `R$ ${totalExpensesSummary.toFixed(2)}`;
-                const balanceSummary = state.income - totalExpensesSummary;
-                if (resumoBalance) {
-                    resumoBalance.textContent = `R$ ${balanceSummary.toFixed(2)}`;
-                    resumoBalance.classList.toggle('text-red-600', balanceSummary < 0);
-                    resumoBalance.classList.toggle('text-emerald-600', balanceSummary >= 0);
-                }
-
-                // Re-criar barras de comparação para o resumo
-                if (resumoBudgetBars) {
-                    resumoBudgetBars.innerHTML = '';
-                    const income = state.income > 0 ? state.income : 1;
-                    const percentages = {
-                        necessidades: (state.expenses.filter(e => e.category === 'necessidades').reduce((s, e) => s + e.amount, 0) / income) * 100,
-                        desejos: (state.expenses.filter(e => e.category === 'desejos').reduce((s, e) => s + e.amount, 0) / income) * 100,
-                        poupanca: (balanceSummary > 0 ? balanceSummary / income : 0) * 100,
-                    };
-                    const createResumoBar = (label, userPercent, targetPercent, color) => {
-                        const barHtml = `
-                            <div class="mb-1">
-                                <div class="flex justify-between text-xs">
-                                    <span>${label}</span>
-                                    <span>${userPercent.toFixed(1)}% (Meta: ${targetPercent}%)</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="h-2 rounded-full" style="width: ${Math.min(userPercent, 100)}%; background-color: ${color};"></div>
-                                </div>
-                            </div>
-                        `;
-                        resumoBudgetBars.innerHTML += barHtml;
-                    }
-                    createResumoBar('Necessidades', percentages.necessidades, 50, '#34D399');
-                    createResumoBar('Desejos', percentages.desejos, 30, '#FBBF24');
-                    createResumoBar('Poupança/Saldo', percentages.poupanca, 20, '#60A5FA');
-                }
-
-
-                // Resumo de Dívidas
-                if (resumoDebtStrategy) resumoDebtStrategy.textContent = state.debtStrategy === 'snowball' ? 'Bola de Neve' : 'Avalancha';
-                if (resumoNumDebts) resumoNumDebts.textContent = state.debts.length;
-                if (resumoExtraPayment) resumoExtraPayment.textContent = `R$ ${state.extraPayment.toFixed(2)}`;
-                let sortedDebtsForResumo = [...state.debts];
-                if (state.debtStrategy === 'snowball') {
-                    sortedDebtsForResumo.sort((a, b) => a.total - b.total);
-                } else {
-                    sortedDebtsForResumo.sort((a, b) => b.rate - a.rate);
-                }
-                if (resumoPriorityDebt) {
-                    resumoPriorityDebt.textContent = sortedDebtsForResumo.length > 0 ? `${sortedDebtsForResumo[0].name} (R$ ${sortedDebtsForResumo[0].total.toFixed(2)})` : 'N/A';
-                    resumoPriorityDebt.classList.toggle('text-red-500', sortedDebtsForResumo.length > 0);
-                }
-
-
-                // Resumo de Metas
-                if (resumoNumGoals) resumoNumGoals.textContent = state.goals.length;
-                if (resumoTotalSavedGoals) resumoTotalSavedGoals.textContent = `R$ ${state.goals.reduce((sum, goal) => sum + goal.savedAmount, 0).toFixed(2)}`;
-                const minFund = state.essentialCosts * 3;
-                const maxFund = state.essentialCosts * 6;
-                if (resumoEmergencyFund) resumoEmergencyFund.textContent = `R$ ${minFund.toFixed(2)} - R$ ${maxFund.toFixed(2)}`;
-
-                // Resumo de Investimentos
-                if (resumoInvInitial) resumoInvInitial.textContent = `R$ ${state.investment.initialCapital.toFixed(2)}`;
-                if (resumoInvMonthly) resumoInvMonthly.textContent = `R$ ${state.investment.monthlyContribution.toFixed(2)}`;
-                if (resumoInvRate) resumoInvRate.textContent = `${state.investment.annualInterestRate.toFixed(2)}%`;
-                if (resumoInvPeriod) resumoInvPeriod.textContent = `${state.investment.periodYears} anos`;
-                if (resumoInvProjected) {
-                    resumoInvProjected.textContent = `R$ ${state.investment.projectedFutureValue.toFixed(2)}`;
-                    resumoInvProjected.classList.toggle('text-emerald-600', state.investment.projectedFutureValue > 0);
-                }
-
-                // Resumo de Financiamento
-                if (resumoFinValue) resumoFinValue.textContent = `R$ ${state.financing.propertyValue.toFixed(2)}`;
-                if (resumoFinDownpayment) resumoFinDownpayment.textContent = `${state.financing.downPaymentPercentage.toFixed(2)}%`;
-                if (resumoFinRate) resumoFinRate.textContent = `${state.financing.annualFinancingRate.toFixed(2)}%`;
-                if (resumoFinPeriod) resumoFinPeriod.textContent = `${state.financing.periodYears} anos`;
-                if (resumoFinMonthlyPayment) {
-                    resumoFinMonthlyPayment.textContent = `R$ ${state.financing.projectedMonthlyPayment.toFixed(2)}`;
-                    resumoFinMonthlyPayment.classList.toggle('text-red-500', state.financing.projectedMonthlyPayment > 0);
-                }
-
-                // Resumo de Patrimônio Líquido
-                const totalAssetsResumo = state.assets.reduce((sum, asset) => sum + asset.value, 0);
-                const totalLiabilitiesResumo = state.liabilities.reduce((sum, liability) => sum + liability.value, 0);
-                const currentNetWorthResumo = totalAssetsResumo - totalLiabilitiesResumo;
-                if (resumoPatAssets) resumoPatAssets.textContent = `R$ ${totalAssetsResumo.toFixed(2)}`;
-                if (resumoPatLiabilities) resumoPatLiabilities.textContent = `R$ ${totalLiabilitiesResumo.toFixed(2)}`;
-                if (resumoPatNetWorth) {
-                    resumoPatNetWorth.textContent = `R$ ${currentNetWorthResumo.toFixed(2)}`;
-                    resumoPatNetWorth.classList.toggle('text-red-600', currentNetWorthResumo < 0);
-                    resumoPatNetWorth.classList.toggle('text-emerald-600', currentNetWorthResumo >= 0);
-                }
-                if (resumoPatHistoryCount) resumoPatHistoryCount.textContent = state.netWorthHistory.length;
-
-                // Resumo de Assinaturas
-                if (resumoSubActive) resumoSubActive.textContent = state.subscriptions.length;
-                const totalMonthlySubsCostResumo = state.subscriptions.reduce((sum, sub) => sum + (sub.frequency === 'yearly' ? sub.amount / 12 : sub.amount), 0);
-                if (resumoSubMonthlyCost) {
-                    resumoSubMonthlyCost.textContent = `R$ ${totalMonthlySubsCostResumo.toFixed(2)}`;
-                    resumoSubMonthlyCost.classList.toggle('text-red-500', totalMonthlySubsCostResumo > 0);
-                }
-            };
-
-
-            // Função de Atualização Completa do UI
-            const updateAll = () => {
-                renderExpenses();
-                renderChartAndSummary();
-                renderDebts();
-                renderEmergencyFundResult();
-                renderGoals();
-                renderFutureEvents();
-                renderAssets(); 
-                renderLiabilities(); 
-                calculateNetWorth(); 
-                calculateTotalEconomizado(); 
-                renderSubscriptions(); // Renderizar assinaturas
-                updateSummaryIncomeExpenses(); // Update new top summary
-                renderResumoGeral(); // Chamar a função de resumo geral
-
-                // Atualizar campos de input com o estado carregado
-                if (incomeInput) incomeInput.value = state.income;
-                if (essentialCostsInput) essentialCostsInput.value = state.essentialCosts;
-                if (extraPaymentInput) extraPaymentInput.value = state.extraPayment;
-
-                if (initialCapitalInput) initialCapitalInput.value = state.investment.initialCapital;
-                if (monthlyContributionInput) monthlyContributionInput.value = state.investment.monthlyContribution;
-                if (annualInterestRateInput) annualInterestRateInput.value = state.investment.annualInterestRate;
-                if (investmentPeriodYearsInput) investmentPeriodYearsInput.value = state.investment.periodYears;
-
-                if (propertyValueInput) propertyValueInput.value = state.financing.propertyValue;
-                if (downPaymentPercentageInput) downPaymentPercentageInput.value = state.financing.downPaymentPercentage;
-                if (annualFinancingRateInput) annualFinancingRateInput.value = state.financing.annualFinancingRate;
-                if (financingPeriodYearsInput) financingPeriodYearsInput.value = state.financing.periodYears;
-
-                if (projectionStartMonthSelect) projectionStartMonthSelect.value = state.projectionSettings.startMonth;
-                if (projectionStartYearInput) projectionStartYearInput.value = state.projectionSettings.startYear;
-                if (projectionMonthsInput) projectionMonthsInput.value = state.projectionSettings.months;
-
-                // Definir botão de navegação e seção ativa
-                navButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                    if (btn.dataset.target === state.activeSection) {
-                        btn.classList.add('active');
-                    }
-                });
-                // Only toggle content sections that are part of the main `main` tag
-                contentSections.forEach(section => {
-                    section.classList.toggle('active', section.id === state.activeSection);
-                });
-
-                // Atualizar estado dos botões de estratégia de dívida
-                if (snowballBtn && avalancheBtn && strategyExplanationEl) {
-                    if (state.debtStrategy === 'snowball') {
-                        snowballBtn.classList.add('bg-emerald-200', 'text-emerald-800');
-                        snowballBtn.classList.remove('bg-gray-200');
-                        avalancheBtn.classList.add('bg-gray-200');
-                        avalancheBtn.classList.remove('bg-emerald-200', 'text-emerald-800');
-                        strategyExplanationEl.innerHTML = "<b>Método Bola de Neve:</b> Pague as dívidas da menor para a maior. Ideal para ganhar motivação rápida.";
-                    } else {
-                        avalancheBtn.classList.add('bg-emerald-200', 'text-emerald-800');
-                        avalancheBtn.classList.remove('bg-gray-200');
-                        snowballBtn.classList.add('bg-gray-200');
-                        snowballBtn.classList.remove('bg-emerald-200', 'text-emerald-800');
-                        strategyExplanationEl.innerHTML = "<b>Método Avalancha:</b> Pague as dívidas com maiores juros primeiro. Ideal para economizar mais dinheiro.";
-                    }
-                }
-            };
-
-            // Listeners de Eventos
-            navButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const target = button.dataset.target;
-                    state.activeSection = target;
-                    saveState();
-                    updateAll();
-                    if (target === 'passo4-investimento') {
-                        calculateInvestment();
-                    } else if (target === 'passo5-financiamento') {
-                        calculateFinancing();
-                    } else if (target === 'passo6-patrimonio') { 
-                        calculateNetWorth(); 
-                    } else if (target === 'passo7-fluxo-caixa') { // Fluxo de caixa agora é um passo
-                        populateMonthYearSelectors();
-                        calculateCashFlowProjection();
-                    } else if (target === 'passo8-assinaturas') { // Novo passo para assinaturas
-                        renderSubscriptions();
-                    } else if (target === 'passo9-resumo-geral') { // Resumo geral é o último passo
-                        renderResumoGeral();
-                    }
-                });
-            });
-
-            // Listeners para os botões de toggle de detalhes
-            document.querySelectorAll('.toggle-details-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const targetId = e.target.dataset.target;
-                    const detailList = getElement(targetId);
-                    if (detailList) { // Check if element exists
-                        detailList.classList.toggle('expanded');
-                        e.target.classList.toggle('rotated');
-
-                        // Renderizar os detalhes apenas quando expandir
-                        if (detailList.classList.contains('expanded')) {
-                            if (targetId === 'detail-economizado') {
-                                renderDetailedSavedGoals();
-                            } else if (targetId === 'detail-assinaturas') {
-                                renderDetailedSubscriptions();
-                            } else if (targetId === 'detail-receitas') {
-                                renderDetailedIncome();
-                            } else if (targetId === 'detail-despesas') {
-                                renderDetailedExpenses();
-                            }
-                        }
-                    }
-                });
-            });
-
-            // Debounced functions for inputs
-            const debouncedIncomeInput = debounce((e) => {
-                state.income = parseFloat(e.target.value) || 0;
-                saveState();
-                renderChartAndSummary();
-                calculateTotalEconomizado(); 
-                calculateCashFlowProjection(); 
-                updateSummaryIncomeExpenses(); 
-                renderDetailedIncome(); 
-                renderResumoGeral(); 
-            }, 300); // 300ms debounce
-
-            if (incomeInput) incomeInput.addEventListener('input', debouncedIncomeInput);
-
-            if (addExpenseBtn) {
-                addExpenseBtn.addEventListener('click', () => {
-                    const name = expenseNameInput.value.trim();
-                    const amount = parseFloat(expenseAmountInput.value);
-                    const category = expenseCategoryInput.value;
-
-                    if (name && amount > 0) {
-                        state.expenses.push({ id: Date.now(), name, amount, category });
-                        if (expenseNameInput) expenseNameInput.value = '';
-                        if (expenseAmountInput) expenseAmountInput.value = '';
-                        saveState(); // Save immediately after adding
-                        updateAll();
-                        calculateCashFlowProjection(); 
-                        updateSummaryIncomeExpenses(); 
-                        renderDetailedExpenses(); 
-                        renderResumoGeral(); 
-                    }
-                });
-            }
-
-            if (expenseList) {
-                expenseList.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('remove-expense')) {
-                        const index = parseInt(e.target.dataset.index); 
-                        state.expenses.splice(index, 1);
-                        saveState(); // Save immediately after removing
-                        updateAll();
-                        calculateCashFlowProjection(); 
-                        updateSummaryIncomeExpenses(); 
-                        renderDetailedExpenses(); 
-                        renderResumoGeral(); 
-                    }
-                });
+<body>
+  <nav id="sidebar">
+    <div class="menu-icon">☰</div>
+    <h2>Finanças</h2>
+    <ul>
+      <li data-screen="dashboard"><span class="icon">🏠</span><span class="label">Dashboard</span></li>
+      <li data-screen="receitas"><span class="icon">💰</span><span class="label">Receitas</span></li>
+      <li data-screen="gastos"><span class="icon">🛒</span><span class="label">Gastos</span></li>
+      <li data-screen="relatorio"><span class="icon">📊</span><span class="label">Relatório</span></li>
+      <li data-screen="metas"><span class="icon">🎯</span><span class="label">Metas</span></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="dashboard" class="active">
+      <h1>Dashboard</h1>
+       <div class="economia-box">
+        💸 Saldo do Mês: <span id="economia-mes">R$ 0,00</span>
+      </div>
+      <br>
+      <div class="grid-container">
+        <div class="chart-container"><canvas id="chart-comparativo"></canvas></div>
+        <div class="chart-container"><canvas id="chart-receitas-mes"></canvas></div>
+        <div class="chart-container"><canvas id="chart-despesas-mes"></canvas></div>
+        <div class="chart-container"><canvas id="chart-mes-comparativo"></canvas></div>
+        <div class="chart-container"><canvas id="chart-meta"></canvas></div>
+        <div class="chart-container"><canvas id="chart-anual"></canvas></div>
+      </div>
+     
+    </section>
+
+    <section id="receitas">
+      <h1>Receitas</h1>
+      <form id="form-receita">
+        <input name="descricao" placeholder="Descrição" required>
+        <input type="number" name="valor" placeholder="Valor R$" step="0.01" required>
+        <input type="date" name="data" required>
+        <select name="categoria">
+          <option>Salário</option>
+          <option>Bônus</option>
+          <option>Freelance</option>
+          <option>Investimentos</option>
+          <option>Outros</option>
+        </select>
+        <button type="submit">Adicionar</button>
+      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Data</th>
+            <th>Categoria</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="gastos">
+      <h1>Gastos</h1>
+      <form id="form-gasto">
+        <input name="descricao" placeholder="Descrição" required>
+        <input type="number" name="valor" placeholder="Valor R$" step="0.01" required>
+        <input type="date" name="data" required>
+        <select name="categoria">
+          <option>Moradia</option>
+          <option>Alimentação</option>
+          <option>Transporte</option>
+          <option>Lazer</option>
+          <option>Saúde</option>
+          <option>Educação</option>
+          <option>Dívidas</option>
+          <option>Outros</option>
+        </select>
+        <button type="submit">Adicionar</button>
+      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Data</th>
+            <th>Categoria</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="relatorio">
+      <h1>Relatório Mensal</h1>
+      <form id="form-relatorio">
+        <input type="month" id="mes-relatorio">
+        <button type="button" id="btn-gerar-relatorio">Gerar Relatório</button>
+      </form>
+      <div id="relatorio-conteudo" class="report-container"></div>
+    </section>
+
+    <section id="metas">
+      <h1>Metas</h1>
+      <form id="form-meta">
+        <input name="nome" placeholder="Nome da Meta" required>
+        <input type="number" name="valorTotal" placeholder="Valor Total R$" step="0.01" required>
+        <input type="number" name="valorGuardado" placeholder="Valor Guardado R$" step="0.01" required>
+        <button type="submit">Adicionar</button>
+      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>Meta</th>
+            <th>Total</th>
+            <th>Guardado</th>
+            <th>Progresso</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+
+    document.querySelectorAll('.filtros-dashboard button').forEach(btn => {
+  btn.addEventListener('click', function() {
+    // Atualizar gráficos conforme período selecionado
+    const periodo = this.dataset.periodo;
+    atualizarDashboard(periodo);
+  });
+});
+    // Funções para carregar e salvar dados no localStorage
+    const load = k => JSON.parse(localStorage.getItem(k)) || [];
+    const save = (k, d) => localStorage.setItem(k, JSON.stringify(d));
+    
+    // Carregar dados iniciais
+    let receitas = load('receitas');
+    let gastos = load('gastos');
+    let metas = load('metas');
+
+    // Navegação entre seções
+    document.querySelectorAll('nav li').forEach(i => {
+      i.onclick = () => {
+        document.querySelectorAll('nav li').forEach(li => li.classList.remove('active'));
+        i.classList.add('active');
+        document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
+        document.getElementById(i.dataset.screen).classList.add('active');
+        if (i.dataset.screen === 'dashboard') atualizarDashboard();
+      };
+    });
+
+    // Função para renderizar tabelas com opção de exclusão
+    function renderTable(data, sel, tipo) {
+      document.querySelector(sel + ' tbody').innerHTML = data.map((e, index) => {
+        const progresso = e.valorTotal ? (e.valorGuardado / e.valorTotal * 100).toFixed(1) + '%' : '';
+        const rowClass = tipo === 'receita' ? 'receita-row' : tipo === 'gasto' ? 'gasto-row' : '';
+        const valorClass = tipo === 'receita' ? 'receita-text' : tipo === 'gasto' ? 'gasto-text' : '';
+        
+        return `
+          <tr class="${rowClass}">
+            <td>${e.descricao || e.nome}</td>
+            <td class="${valorClass}">${e.valor != null ? 'R$ ' + e.valor.toFixed(2) : ''}</td>
+            <td>${e.data || ''}</td>
+            <td>${e.categoria || ''}</td>
+            ${e.valorTotal != null ? `<td>${progresso}</td>` : '<td></td>'}
+            <td class="acoes-cell">
+              <button class="btn-excluir" data-index="${index}" data-tipo="${tipo}">Excluir</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      
+      // Adicionar eventos de clique aos botões de exclusão
+      document.querySelectorAll(`${sel} .btn-excluir`).forEach(btn => {
+        btn.onclick = function() {
+          const index = parseInt(this.dataset.index);
+          const tipo = this.dataset.tipo;
+          
+          if (confirm('Tem certeza que deseja excluir este item?')) {
+            if (tipo === 'receita') {
+              receitas.splice(index, 1);
+              save('receitas', receitas);
+              renderTable(receitas, '#receitas table', 'receita');
+            } else if (tipo === 'gasto') {
+              gastos.splice(index, 1);
+              save('gastos', gastos);
+              renderTable(gastos, '#gastos table', 'gasto');
+            } else if (tipo === 'meta') {
+              metas.splice(index, 1);
+              save('metas', metas);
+              renderTable(metas, '#metas table', 'meta');
             }
             
-            if (addDebtBtn) {
-                addDebtBtn.addEventListener('click', () => {
-                    const name = debtNameInput.value.trim();
-                    const total = parseFloat(debtTotalInput.value);
-                    const rate = parseFloat(debtRateInput.value);
-                    if (name && total > 0 && rate >= 0) {
-                        state.debts.push({ id: Date.now(), name, total, rate });
-                        if (debtNameInput) debtNameInput.value = '';
-                        if (debtTotalInput) debtTotalInput.value = '';
-                        if (debtRateInput) debtRateInput.value = '';
-                        saveState(); // Save immediately after adding
-                        renderDebts();
-                        renderResumoGeral(); 
-                    }
-                });
+            atualizarDashboard();
+          }
+        };
+      });
+    }
+
+    // Atualizar tabelas ao carregar com classes de tipo
+    renderTable(receitas, '#receitas table', 'receita');
+    renderTable(gastos, '#gastos table', 'gasto');
+    renderTable(metas, '#metas table', 'meta');
+
+    // Formulário de receitas
+    document.getElementById('form-receita').onsubmit = e => {
+      e.preventDefault();
+      const f = e.target;
+      receitas.push({
+        descricao: f.descricao.value,
+        valor: +f.valor.value,
+        data: f.data.value,
+        categoria: f.categoria.value
+      });
+      save('receitas', receitas);
+      renderTable(receitas, '#receitas table', 'receita');
+      f.reset();
+      atualizarDashboard();
+    };
+
+    // Formulário de gastos
+    document.getElementById('form-gasto').onsubmit = e => {
+      e.preventDefault();
+      const f = e.target;
+      gastos.push({
+        descricao: f.descricao.value,
+        valor: +f.valor.value,
+        data: f.data.value,
+        categoria: f.categoria.value
+      });
+      save('gastos', gastos);
+      renderTable(gastos, '#gastos table', 'gasto');
+      f.reset();
+      atualizarDashboard();
+    };
+
+    // Formulário de metas
+    document.getElementById('form-meta').onsubmit = e => {
+      e.preventDefault();
+      const f = e.target;
+      metas.push({
+        nome: f.nome.value,
+        valorTotal: +f.valorTotal.value,
+        valorGuardado: +f.valorGuardado.value
+      });
+      save('metas', metas);
+      renderTable(metas, '#metas table', 'meta');
+      f.reset();
+      atualizarDashboard();
+    };
+
+    // Gerar relatório
+    document.getElementById('btn-gerar-relatorio').onclick = () => {
+      const mes = document.getElementById('mes-relatorio').value;
+      if (!mes) return alert('Selecione um mês');
+      
+      const mesFormatado = new Date(mes + '-01').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+      const de = mes + '-01', ate = mes + '-31';
+      const R = receitas.filter(r => r.data >= de && r.data <= ate);
+      const G = gastos.filter(d => d.data >= de && d.data <= ate);
+      const soma = a => a.reduce((t, i) => t + (i.valor || 0), 0);
+      const totalReceitas = soma(R);
+      const totalGastos = soma(G);
+      const saldo = totalReceitas - totalGastos;
+
+      let html = `
+        <div class="report-header">
+          <h2>Relatório Mensal</h2>
+          <span class="report-date">${mesFormatado}</span>
+        </div>
+        
+        <div class="report-summary">
+          <div class="summary-card receitas">
+            <h3>Receitas</h3>
+            <div class="value">R$ ${totalReceitas.toFixed(2)}</div>
+          </div>
+          
+          <div class="summary-card gastos">
+            <h3>Gastos</h3>
+            <div class="value">R$ ${totalGastos.toFixed(2)}</div>
+          </div>
+          
+          <div class="summary-card saldo">
+            <h3>Saldo</h3>
+            <div class="value ${saldo >= 0 ? 'saldo-positivo' : 'saldo-negativo'}">R$ ${saldo.toFixed(2)}</div>
+          </div>
+        </div>
+        
+        <div class="report-details">
+          <div class="details-section">
+            <h4>Receitas</h4>
+            <ul class="details-list">
+              ${R.map(r => `
+                <li>
+                  <span>${r.descricao} <small>(${r.categoria})</small></span>
+                  <span class="receita-value">R$ ${r.valor.toFixed(2)}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+          
+          <div class="details-section">
+            <h4>Gastos</h4>
+            <ul class="details-list">
+              ${G.map(g => `
+                <li>
+                  <span>${g.descricao} <small>(${g.categoria})</small></span>
+                  <span class="gasto-value">R$ ${g.valor.toFixed(2)}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('relatorio-conteudo').innerHTML = html;
+    };
+
+    // Gráficos do Dashboard
+    let charts = {};
+    function atualizarDashboard() {
+      const mesAtual = new Date().toISOString().slice(0, 7);
+      const mesAnterior = new Date();
+      mesAnterior.setMonth(mesAnterior.getMonth() - 1);
+      const mesAnteriorStr = mesAnterior.toISOString().slice(0, 7);
+      
+      // Filtrar dados
+      const RM = receitas.filter(r => r.data.startsWith(mesAtual));
+      const GM = gastos.filter(g => g.data.startsWith(mesAtual));
+      const RAM = receitas.filter(r => r.data.startsWith(mesAnteriorStr));
+      const GAM = gastos.filter(g => g.data.startsWith(mesAnteriorStr));
+      
+      // Calcular totais
+      const soma = a => a.reduce((s, i) => s + (i.valor || 0), 0);
+      const totalReceitas = soma(RM);
+      const totalGastos = soma(GM);
+      const saldo = totalReceitas - totalGastos;
+      
+      // Atualizar box de economia com cor conforme saldo
+      const economiaBox = document.getElementById('economia-mes');
+      economiaBox.innerText = `R$ ${saldo.toFixed(2)}`;
+      economiaBox.className = saldo >= 0 ? 'receita-text' : 'gasto-text';
+
+      // Agrupar por categoria
+      const agruparPorCategoria = (arr) => {
+        return arr.reduce((o, i) => {
+          o[i.categoria] = (o[i.categoria] || 0) + (i.valor || 0);
+          return o;
+        }, {});
+      };
+
+      const receitasPorCategoria = agruparPorCategoria(RM);
+      const gastosPorCategoria = agruparPorCategoria(GM);
+      
+      // Configuração comum para os gráficos
+      const configComum = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 20,
+              font: {
+                size: 12
+              },
+              boxWidth: 12
             }
-
-            if (debtListEl) {
-                debtListEl.addEventListener('click', e => {
-                    if(e.target.classList.contains('remove-debt')) {
-                        const id = parseInt(e.target.dataset.id);
-                        state.debts = state.debts.filter(d => d.id !== id);
-                        saveState(); // Save immediately after removing
-                        renderDebts();
-                        renderResumoGeral(); 
-                    }
-                });
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `${context.dataset.label}: R$ ${context.raw.toFixed(2)}`;
+              }
             }
-
-            if (snowballBtn) {
-                snowballBtn.addEventListener('click', () => {
-                    state.debtStrategy = 'snowball';
-                    saveState(); // Save immediately after strategy change
-                    updateAll();
-                    renderResumoGeral(); 
-                });
+          },
+          title: {
+            display: true,
+            font: {
+              size: 14
             }
+          }
+        }
+      };
 
-            if (avalancheBtn) {
-                avalancheBtn.addEventListener('click', () => {
-                    state.debtStrategy = 'avalanche';
-                    saveState(); // Save immediately after strategy change
-                    updateAll();
-                    renderResumoGeral(); 
-                });
+      // Cores para categorias
+      const coresCategorias = [
+        '#2ecc71', '#3498db', '#9b59b6', '#f1c40f', 
+        '#e67e22', '#e74c3c', '#1abc9c', '#34495e'
+      ];
+
+      // 1. Gráfico Comparativo Receitas vs Despesas
+      if (charts['chart-comparativo']) charts['chart-comparativo'].destroy();
+      charts['chart-comparativo'] = new Chart(
+        document.getElementById('chart-comparativo'),
+        {
+          type: 'bar',
+          data: {
+            labels: ['Receitas', 'Despesas'],
+            datasets: [{
+              label: 'Valor (R$)',
+              data: [totalReceitas, totalGastos],
+              backgroundColor: ['#2ecc71', '#e74c3c'],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            ...configComum,
+            scales: {
+              y: { beginAtZero: true }
+            },
+            plugins: {
+              ...configComum.plugins,
+              title: {
+                ...configComum.plugins.title,
+                text: 'Receitas vs Despesas'
+              }
             }
+          }
+        }
+      );
 
-            const debouncedExtraPaymentInput = debounce((e) => {
-                state.extraPayment = parseFloat(e.target.value) || 0;
-                saveState();
-                simulateDebtPayment();
-                calculateTotalEconomizado(); 
-                renderResumoGeral(); 
-            }, 300);
-            if (extraPaymentInput) extraPaymentInput.addEventListener('input', debouncedExtraPaymentInput);
-
-            const debouncedEssentialCostsInput = debounce((e) => {
-                state.essentialCosts = parseFloat(e.target.value) || 0;
-                saveState();
-                renderEmergencyFundResult();
-                renderResumoGeral(); 
-            }, 300);
-            if (essentialCostsInput) essentialCostsInput.addEventListener('input', debouncedEssentialCostsInput);
-            
-            if (addGoalBtn) {
-                addGoalBtn.addEventListener('click', () => {
-                    const name = goalNameInput.value.trim();
-                    const targetAmount = parseFloat(goalTargetAmountInput.value);
-                    const savedAmount = parseFloat(goalSavedAmountInput.value) || 0;
-                    if(name && targetAmount > 0) {
-                        state.goals.push({ id: Date.now(), name, targetAmount, savedAmount });
-                        if (goalNameInput) goalNameInput.value = '';
-                        if (goalTargetAmountInput) goalTargetAmountInput.value = '';
-                        if (goalSavedAmountInput) goalSavedAmountInput.value = '';
-                        saveState(); // Save immediately after adding
-                        renderGoals();
-                        calculateTotalEconomizado(); 
-                        renderDetailedSavedGoals(); 
-                        renderResumoGeral(); 
-                    }
-                });
+      // 2. Gráfico de Receitas por Categoria
+      if (charts['chart-receitas-mes']) charts['chart-receitas-mes'].destroy();
+      charts['chart-receitas-mes'] = new Chart(
+        document.getElementById('chart-receitas-mes'),
+        {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(receitasPorCategoria),
+            datasets: [{
+              label: 'Receitas por Categoria',
+              data: Object.values(receitasPorCategoria),
+              backgroundColor: Object.keys(receitasPorCategoria).map((_, i) => coresCategorias[i % coresCategorias.length]),
+              borderWidth: 1
+            }]
+          },
+          options: {
+            ...configComum,
+            plugins: {
+              ...configComum.plugins,
+              title: {
+                ...configComum.plugins.title,
+                text: 'Receitas por Categoria'
+              }
             }
+          }
+        }
+      );
 
-            if (goalListEl) {
-                goalListEl.addEventListener('click', e => {
-                    if(e.target.classList.contains('remove-goal')) {
-                        const id = parseInt(e.target.dataset.id);
-                        state.goals = state.goals.filter(g => g.id !== id);
-                        saveState(); // Save immediately after removing
-                        renderGoals();
-                        calculateTotalEconomizado(); 
-                        renderDetailedSavedGoals(); 
-                        renderResumoGeral(); 
-                    }
-                });
-
-                const debouncedUpdateGoalSavedAmount = debounce((e) => {
-                    if (e.target.classList.contains('update-goal-saved-amount')) {
-                        const id = parseInt(e.target.dataset.id);
-                        const newSavedAmount = parseFloat(e.target.value) || 0;
-                        const goalIndex = state.goals.findIndex(g => g.id === id);
-                        if (goalIndex !== -1) {
-                            state.goals[goalIndex].savedAmount = newSavedAmount;
-                            saveState();
-                            renderGoals();
-                            calculateTotalEconomizado(); 
-                            renderDetailedSavedGoals(); 
-                            renderResumoGeral(); 
-                        }
-                    }
-                }, 300);
-                goalListEl.addEventListener('input', debouncedUpdateGoalSavedAmount);
+      // 3. Gráfico de Despesas por Categoria
+      if (charts['chart-despesas-mes']) charts['chart-despesas-mes'].destroy();
+      charts['chart-despesas-mes'] = new Chart(
+        document.getElementById('chart-despesas-mes'),
+        {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(gastosPorCategoria),
+            datasets: [{
+              label: 'Despesas por Categoria',
+              data: Object.values(gastosPorCategoria),
+              backgroundColor: Object.keys(gastosPorCategoria).map((_, i) => coresCategorias[i % coresCategorias.length]),
+              borderWidth: 1
+            }]
+          },
+          options: {
+            ...configComum,
+            plugins: {
+              ...configComum.plugins,
+              title: {
+                ...configComum.plugins.title,
+                text: 'Despesas por Categoria'
+              }
             }
+          }
+        }
+      );
 
-            // Listeners para Simulador de Investimentos (Debounced)
-            const debouncedCalculateInvestment = debounce(() => { calculateInvestment(); renderResumoGeral(); }, 300);
-            if (initialCapitalInput) initialCapitalInput.addEventListener('input', debouncedCalculateInvestment);
-            if (monthlyContributionInput) monthlyContributionInput.addEventListener('input', debouncedCalculateInvestment);
-            if (annualInterestRateInput) annualInterestRateInput.addEventListener('input', debouncedCalculateInvestment);
-            if (investmentPeriodYearsInput) investmentPeriodYearsInput.addEventListener('input', debouncedCalculateInvestment);
-            if (calculateInvestmentBtn) calculateInvestmentBtn.addEventListener('click', () => { calculateInvestment(); renderResumoGeral(); }); // No debounce on button click
-
-            // Listeners para Simulador de Financiamento (Debounced)
-            const debouncedCalculateFinancing = debounce(() => { calculateFinancing(); renderResumoGeral(); }, 300);
-            if (propertyValueInput) propertyValueInput.addEventListener('input', debouncedCalculateFinancing);
-            if (downPaymentPercentageInput) downPaymentPercentageInput.addEventListener('input', debouncedCalculateFinancing);
-            if (annualFinancingRateInput) annualFinancingRateInput.addEventListener('input', debouncedCalculateFinancing);
-            if (financingPeriodYearsInput) financingPeriodYearsInput.addEventListener('input', debouncedCalculateFinancing);
-            if (calculateFinancingBtn) calculateFinancingBtn.addEventListener('click', () => { calculateFinancing(); renderResumoGeral(); }); // No debounce on button click
-
-            // Listeners para Previsão de Fluxo de Caixa
-            if (addFutureEventBtn) {
-                addFutureEventBtn.addEventListener('click', () => {
-                    const name = eventNameInput.value.trim();
-                    const amount = parseFloat(eventAmountInput.value);
-                    const date = eventDateInput.value;
-                    const type = eventTypeInput.value;
-
-                    if (name && amount > 0 && date) {
-                        state.futureEvents.push({ id: Date.now(), name, amount, date: new Date(date), type });
-                        if (eventNameInput) eventNameInput.value = '';
-                        if (eventAmountInput) eventAmountInput.value = '';
-                        if (eventDateInput) eventDateInput.value = '';
-                        saveState(); // Save immediately after adding
-                        renderFutureEvents();
-                        calculateCashFlowProjection();
-                        renderDetailedIncome(); 
-                        renderDetailedExpenses(); 
-                        renderResumoGeral(); 
-                    }
-                });
+      // 4. Comparativo Mensal (mês atual vs mês anterior)
+      if (charts['chart-mes-comparativo']) charts['chart-mes-comparativo'].destroy();
+      charts['chart-mes-comparativo'] = new Chart(
+        document.getElementById('chart-mes-comparativo'),
+        {
+          type: 'bar',
+          data: {
+            labels: ['Mês Anterior', 'Mês Atual'],
+            datasets: [
+              {
+                label: 'Receitas',
+                data: [soma(RAM), soma(RM)],
+                backgroundColor: '#2ecc71',
+                borderWidth: 1
+              },
+              {
+                label: 'Despesas',
+                data: [soma(GAM), soma(GM)],
+                backgroundColor: '#e74c3c',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            ...configComum,
+            scales: {
+              y: { beginAtZero: true }
+            },
+            plugins: {
+              ...configComum.plugins,
+              title: {
+                ...configComum.plugins.title,
+                text: 'Comparativo Mensal'
+              }
             }
+          }
+        }
+      );
 
-            if (futureEventListEl) {
-                futureEventListEl.addEventListener('click', e => {
-                    if(e.target.classList.contains('remove-future-event')) {
-                        const id = parseInt(e.target.dataset.id);
-                        state.futureEvents = state.futureEvents.filter(event => event.id !== id);
-                        saveState(); // Save immediately after removing
-                        renderFutureEvents();
-                        calculateCashFlowProjection();
-                        renderDetailedIncome(); 
-                        renderDetailedExpenses(); 
-                        renderResumoGeral(); 
-                    }
-                });
-            }
-
-            const debouncedCashFlowProjection = debounce(() => { calculateCashFlowProjection(); renderResumoGeral(); }, 300);
-            if (projectionStartMonthSelect) projectionStartMonthSelect.addEventListener('change', debouncedCashFlowProjection);
-            if (projectionStartYearInput) projectionStartYearInput.addEventListener('input', debouncedCashFlowProjection);
-            if (projectionMonthsInput) projectionMonthsInput.addEventListener('input', debouncedCashFlowProjection);
-            if (calculateCashFlowBtn) calculateCashFlowBtn.addEventListener('click', () => { calculateCashFlowProjection(); renderResumoGeral(); }); // No debounce on button click
-
-            // Listeners para Patrimônio Líquido
-            if (addAssetBtn) {
-                addAssetBtn.addEventListener('click', () => {
-                    const name = assetNameInput.value.trim();
-                    const value = parseFloat(assetValueInput.value);
-                    if (name && value >= 0) {
-                        state.assets.push({ id: Date.now(), name, value });
-                        if (assetNameInput) assetNameInput.value = '';
-                        if (assetValueInput) assetValueInput.value = '';
-                        saveState(); // Save immediately after adding
-                        renderAssets();
-                        calculateNetWorth();
-                        renderResumoGeral(); 
-                    }
-                });
-            }
-
-            if (assetListEl) {
-                assetListEl.addEventListener('click', e => {
-                    if (e.target.classList.contains('remove-asset')) {
-                        const id = parseInt(e.target.dataset.id);
-                        state.assets = state.assets.filter(asset => asset.id !== id);
-                        saveState(); // Save immediately after removing
-                        renderAssets();
-                        calculateNetWorth();
-                        renderResumoGeral(); 
-                    }
-                });
-            }
-
-            if (addLiabilityBtn) {
-                addLiabilityBtn.addEventListener('click', () => {
-                    const name = liabilityNameInput.value.trim();
-                    const value = parseFloat(liabilityValueInput.value);
-                    if (name && value >= 0) {
-                        state.liabilities.push({ id: Date.now(), name, value });
-                        if (liabilityNameInput) liabilityNameInput.value = '';
-                        if (liabilityValueInput) liabilityValueInput.value = '';
-                        saveState(); // Save immediately after adding
-                        renderLiabilities();
-                        calculateNetWorth();
-                        renderResumoGeral(); 
-                    }
-                });
-            }
-
-            if (liabilityListEl) {
-                liabilityListEl.addEventListener('click', e => {
-                    if (e.target.classList.contains('remove-liability')) {
-                        const id = parseInt(e.target.dataset.id);
-                        state.liabilities = state.liabilities.filter(liability => liability.id !== id);
-                        saveState(); // Save immediately after removing
-                        renderLiabilities();
-                        calculateNetWorth();
-                        renderResumoGeral(); 
-                    }
-                });
-            }
-
-            if (recordNetWorthBtn) {
-                recordNetWorthBtn.addEventListener('click', () => {
-                    let totalAssets = state.assets.reduce((sum, asset) => sum + asset.value, 0);
-                    let totalLiabilities = state.liabilities.reduce((sum, liability) => sum + liability.value, 0);
-                    let currentNetWorth = totalAssets - totalLiabilities;
-                    
-                    // Add only if there's a change or if it's the first record
-                    const lastRecord = state.netWorthHistory[state.netWorthHistory.length - 1];
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0); // Normalize date to compare only day, month, year
-
-                    if (!lastRecord || lastRecord.value !== currentNetWorth || (lastRecord.date && new Date(lastRecord.date).toDateString() !== today.toDateString())) {
-                        state.netWorthHistory.push({ date: today, value: currentNetWorth });
-                        saveState(); // Save immediately after recording
-                        renderNetWorthHistory();
-                        renderResumoGeral(); 
-                    } else {
-                        // Optionally, inform the user that net worth hasn't changed or was already recorded today
-                    }
-                });
-            }
-
-            // Listeners para Assinaturas
-            if (addSubscriptionBtn) {
-                addSubscriptionBtn.addEventListener('click', () => {
-                    const name = subscriptionNameInput.value.trim();
-                    const amount = parseFloat(subscriptionAmountInput.value);
-                    const frequency = subscriptionFrequencyInput.value;
-                    const renewalDate = subscriptionRenewalDateInput.value;
-
-                    if (name && amount > 0) {
-                        state.subscriptions.push({ id: Date.now(), name, amount, frequency, renewalDate: renewalDate ? new Date(renewalDate) : null });
-                        if (subscriptionNameInput) subscriptionNameInput.value = '';
-                        if (subscriptionAmountInput) subscriptionAmountInput.value = '';
-                        if (subscriptionRenewalDateInput) subscriptionRenewalDateInput.value = '';
-                        saveState(); // Save immediately after adding
-                        renderSubscriptions();
-                        renderDetailedSubscriptions(); 
-                        renderResumoGeral();
-                    }
-                });
-            }
-
-            if (subscriptionListEl) {
-                subscriptionListEl.addEventListener('click', e => {
-                    if (e.target.classList.contains('remove-subscription')) {
-                        const id = parseInt(e.target.dataset.id);
-                        state.subscriptions = state.subscriptions.filter(sub => sub.id !== id);
-                        saveState(); // Save immediately after removing
-                        renderSubscriptions();
-                        renderDetailedSubscriptions(); 
-                        renderResumoGeral();
-                    }
-                });
-            }
-
-            // Função para popular os seletores de mês e ano
-            const populateMonthYearSelectors = () => {
-                if (projectionStartMonthSelect && projectionStartYearInput) {
-                    const monthsNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-                    projectionStartMonthSelect.innerHTML = '';
-                    monthsNames.forEach((name, index) => {
-                        const option = document.createElement('option');
-                        option.value = index + 1; // Mês 1-12
-                        option.textContent = name;
-                        projectionStartMonthSelect.appendChild(option);
-                    });
-
-                    const currentYear = new Date().getFullYear();
-                    projectionStartYearInput.value = currentYear;
+      // 5. Gráfico de Metas
+      if (charts['chart-meta']) charts['chart-meta'].destroy();
+      charts['chart-meta'] = new Chart(
+        document.getElementById('chart-meta'),
+        {
+          type: 'bar',
+          data: {
+            labels: metas.map(m => m.nome),
+            datasets: [{
+              label: 'Progresso da Meta (%)',
+              data: metas.map(m => (m.valorGuardado / m.valorTotal * 100)),
+              backgroundColor: '#3498db',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            ...configComum,
+            scales: {
+              y: { 
+                beginAtZero: true,
+                max: 100,
+                title: {
+                  display: true,
+                  text: 'Percentual (%)'
                 }
-            };
-
-            // Reiniciar Dados (se existir no HTML)
-            if (resetDataBtn) {
-                resetDataBtn.addEventListener('click', () => {
-                    if (confirm("Tem certeza que deseja reiniciar todos os dados? Esta ação não pode ser desfeita.")) {
-                        localStorage.removeItem('financasAppState');
-                        // Reinicializar o estado para valores padrão
-                        state.income = 0;
-                        state.expenses = [];
-                        state.debts = [];
-                        state.goals = [];
-                        state.activeSection = 'passo1';
-                        state.debtStrategy = 'snowball';
-                        state.essentialCosts = 0;
-                        state.extraPayment = 0;
-                        state.investment = { initialCapital: 0, monthlyContribution: 0, annualInterestRate: 0, periodYears: 0, projectedFutureValue: 0 };
-                        state.financing = { propertyValue: 0, downPaymentPercentage: 0, annualFinancingRate: 0, periodYears: 0, projectedMonthlyPayment: 0 };
-                        state.futureEvents = [];
-                        state.projectionSettings = { startMonth: new Date().getMonth() + 1, startYear: new Date().getFullYear(), months: 12 };
-                        state.assets = [];
-                        state.liabilities = [];
-                        state.netWorthHistory = [];
-                        state.subscriptions = [];
-
-                        updateAll();
-                        populateMonthYearSelectors();
-                    }
-                });
+              }
+            },
+            plugins: {
+              ...configComum.plugins,
+              title: {
+                ...configComum.plugins.title,
+                text: 'Progresso das Metas'
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const meta = metas[context.dataIndex];
+                    return [
+                      `Progresso: ${context.raw.toFixed(1)}%`,
+                      `Guardado: R$ ${meta.valorGuardado.toFixed(2)}`,
+                      `Total: R$ ${meta.valorTotal.toFixed(2)}`
+                    ];
+                  }
+                }
+              }
             }
+          }
+        }
+      );
 
-            // Renderização Inicial com o estado carregado ou padrão
-            populateMonthYearSelectors();
-            updateAll();
-            // Ensure cash flow projection is calculated on initial load since it's always visible
-            calculateCashFlowProjection(); 
-        });
-    </script>
+      // 6. Evolução Anual
+      const anoAtual = new Date().getFullYear();
+      const mesesAno = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+      const saldosMensais = Array.from({ length: 12 }, (_, i) => {
+        const m = (i + 1).toString().padStart(2, '0');
+        const dataStr = `${anoAtual}-${m}`;
+        const r = receitas.filter(r => r.data.startsWith(dataStr)).reduce((s, i) => s + i.valor, 0);
+        const g = gastos.filter(g => g.data.startsWith(dataStr)).reduce((s, i) => s + i.valor, 0);
+        return r - g;
+      });
+
+      if (charts['chart-anual']) charts['chart-anual'].destroy();
+      charts['chart-anual'] = new Chart(
+        document.getElementById('chart-anual'),
+        {
+          type: 'line',
+          data: {
+            labels: mesesAno,
+            datasets: [{
+              label: 'Saldo Mensal (R$)',
+              data: saldosMensais,
+              backgroundColor: 'rgba(52, 152, 219, 0.2)',
+              borderColor: '#3498db',
+              borderWidth: 3,
+              tension: 0.1,
+              fill: true
+            }]
+          },
+          options: {
+            ...configComum,
+            scales: {
+              y: { 
+                beginAtZero: false,
+                title: {
+                  display: true,
+                  text: 'Valor (R$)'
+                }
+              }
+            },
+            plugins: {
+              ...configComum.plugins,
+              title: {
+                ...configComum.plugins.title,
+                text: 'Evolução Anual'
+              }
+            }
+          }
+        }
+      );
+    }
+
+    // Inicialização
+    document.querySelector('nav li[data-screen="dashboard"]').classList.add('active');
+    atualizarDashboard();
+  </script>
 </body>
 </html>

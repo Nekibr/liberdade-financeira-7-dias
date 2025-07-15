@@ -790,7 +790,7 @@
                     <label for="gasto-categoria" class="form-label">Categoria</label>
                     <select id="gasto-categoria" class="form-select">
                         <option value="Moradia">Moradia</option>
-                        <option value="Alimentação">Alimentation</option>
+                        <option value="Alimentação">Alimentação</option>
                         <option value="Transporte">Transporte</option>
                         <option value="Lazer">Lazer</option>
                         <option value="Saúde">Saúde</option>
@@ -1362,7 +1362,7 @@
                         <input type="text" id="${formIdPrefix}-nome" class="form-input" value="${itemToEdit.nome}">
                     </div>
                     <div class="form-group">
-                        <label for="${formIdPrefix}-valor" class="form-label">Valor Total (R$)</label>
+                        <label for="${formIdPrefix}-valor" class="form-label">Valor (R$)</label>
                         <input type="number" id="${formIdPrefix}-valor" class="form-input" value="${itemToEdit.valor}" step="0.01">
                     </div>
                     <div class="form-group">
@@ -1879,7 +1879,7 @@
 
             // Processar receitas
             receitasArr.forEach(item => {
-                const date = new Date(item.data + 'T00:00:00');
+                const date = new Date(item.data.split('-')[0], item.data.split('-')[1] - 1, item.data.split('-')[2]); // Local time
                 const mesAno = `${meses[date.getMonth()]}/${date.getFullYear()}`;
                 if (!dados[mesAno]) {
                     dados[mesAno] = { receitas: 0, gastos: 0 };
@@ -1889,7 +1889,7 @@
 
             // Processar gastos
             gastosArr.forEach(item => {
-                const date = new Date(item.data + 'T00:00:00');
+                const date = new Date(item.data.split('-')[0], item.data.split('-')[1] - 1, item.data.split('-')[2]); // Local time
                 const mesAno = `${meses[date.getMonth()]}/${date.getFullYear()}`;
                 if (!dados[mesAno]) {
                     dados[mesAno] = { receitas: 0, gastos: 0 };
@@ -1899,10 +1899,13 @@
 
             // Ordenar por data
             const sortedKeys = Object.keys(dados).sort((a, b) => {
-                const [monthA, yearA] = a.split('/');
-                const [monthB, yearB] = b.split('/');
-                const dateA = new Date(`${monthA} 1, ${yearA}`);
-                const dateB = new Date(`${monthB} 1, ${yearB}`);
+                const [monthNameA, yearA] = a.split('/');
+                const monthA = meses.indexOf(monthNameA); // Get 0-indexed month
+                const [monthNameB, yearB] = b.split('/');
+                const monthB = meses.indexOf(monthNameB); // Get 0-indexed month
+
+                const dateA = new Date(yearA, monthA, 1);
+                const dateB = new Date(yearB, monthB, 1);
                 return dateA - dateB;
             });
 
@@ -1919,7 +1922,7 @@
 
             // Processar receitas
             receitasArr.forEach(item => {
-                const date = new Date(item.data + 'T00:00:00');
+                const date = new Date(item.data.split('-')[0], item.data.split('-')[1] - 1, item.data.split('-')[2]); // Local time
                 const ano = date.getFullYear().toString();
                 if (!dados[ano]) {
                     dados[ano] = { receitas: 0, gastos: 0 };
@@ -1929,7 +1932,7 @@
 
             // Processar gastos
             gastosArr.forEach(item => {
-                const date = new Date(item.data + 'T00:00:00');
+                const date = new Date(item.data.split('-')[0], item.data.split('-')[1] - 1, item.data.split('-')[2]); // Local time
                 const ano = date.getFullYear().toString();
                 if (!dados[ano]) {
                     dados[ano] = { receitas: 0, gastos: 0 };
@@ -1950,26 +1953,28 @@
 
 
         function gerarRelatorio() {
-            const mes = document.getElementById('relatorio-mes').value;
+            const mes = document.getElementById('relatorio-mes').value; // e.g., "2023-10"
             if (!mes) {
                 showModal('Por favor, selecione um mês.', 'alert');
                 return;
             }
             
-            const inicioMesStr = mes + '-01';
-            const dataFimMes = new Date(new Date(mes).getFullYear(), new Date(mes).getMonth() + 1, 0);
-            const fimMesStr = dataFimMes.toISOString().slice(0, 10);
+            const [year, monthIndex] = mes.split('-').map(Number); // monthIndex is 1-based
 
-            // Convertendo para objetos Date para comparação robusta
-            const inicioMesDate = new Date(inicioMesStr + 'T00:00:00'); // Garante análise consistente
-            const fimMesDate = new Date(fimMesStr + 'T00:00:00');     // Garante análise consistente
+            // Construct start date for the selected month (local time)
+            const inicioMesDate = new Date(year, monthIndex - 1, 1); // Month is 0-indexed in Date constructor
+
+            // Construct end date for the selected month (local time)
+            const fimMesDate = new Date(year, monthIndex, 0); // Day 0 of next month gives last day of current month
 
             const receitasMes = receitas.filter(r => {
-                const rDate = new Date(r.data + 'T00:00:00'); // Garante análise consistente para dados armazenados
+                const rDateParts = r.data.split('-').map(Number); // r.data is "YYYY-MM-DD"
+                const rDate = new Date(rDateParts[0], rDateParts[1] - 1, rDateParts[2]); // Create Date in local time
                 return rDate >= inicioMesDate && rDate <= fimMesDate;
             });
             const gastosMes = gastos.filter(g => {
-                const gDate = new Date(g.data + 'T00:00:00'); // Garante análise consistente para dados armazenados
+                const gDateParts = g.data.split('-').map(Number); // g.data is "YYYY-MM-DD"
+                const gDate = new Date(gDateParts[0], gDateParts[1] - 1, gDateParts[2]); // Create Date in local time
                 return gDate >= inicioMesDate && gDate <= fimMesDate;
             });
             
@@ -1977,7 +1982,7 @@
             const totalGastos = gastosMes.reduce((sum, item) => sum + item.valor, 0);
             const saldo = totalReceitas - totalGastos;
             
-            const nomeMes = new Date(inicioMesStr + 'T00:00:00').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+            const nomeMes = inicioMesDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
             
             const relatorioHTML = `
                 <h2>Relatório Mensal - ${nomeMes}</h2>

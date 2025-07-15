@@ -20,34 +20,6 @@
             --gray: #95a5a6;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-
-            /* Light Theme Defaults */
-            --body-bg: #f5f7fa;
-            --body-color: #333;
-            --container-bg: var(--white);
-            --input-bg: var(--white);
-            --input-border: #ddd;
-            --table-header-bg: var(--secondary-color);
-            --table-header-color: var(--white);
-            --table-border: #eee;
-            --modal-bg: var(--white);
-            --modal-text-color: var(--secondary-color);
-            --report-summary-box-bg: #f8f9fa;
-        }
-
-        /* Dark Theme Variables (applied via .dark-theme class) */
-        body.dark-theme {
-            --body-bg: #121212;
-            --body-color: #f1f1f1;
-            --container-bg: #1e1e1e;
-            --input-bg: #2d2d2d;
-            --input-border: #444;
-            --table-header-bg: #2c3e50; /* Keep consistent or adjust for dark */
-            --table-header-color: #f1f1f1;
-            --table-border: #444;
-            --modal-bg: #1e1e1e;
-            --modal-text-color: #f1f1f1;
-            --report-summary-box-bg: #2d2d2d;
         }
 
         * {
@@ -62,16 +34,15 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            background-color: var(--body-bg);
-            color: var(--body-color);
+            background-color: #f5f7fa;
+            color: #333;
             line-height: 1.6;
-            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
         }
 
         /* Header */
         .app-header {
             background: var(--secondary-color);
-            color: var(--white);
+            color: white;
             padding: 15px;
             text-align: center;
             position: relative;
@@ -105,7 +76,7 @@
             width: 250px;
             height: 100vh;
             background: var(--secondary-color);
-            color: var(--white);
+            color: white;
             transition: var(--transition);
             z-index: 20;
             overflow-y: auto;
@@ -244,8 +215,8 @@
         .chart-container {
             position: relative;
             width: 100%;
-            height: 180px; /* Reduced height for smaller charts */
-            background: var(--container-bg);
+            height: 250px; /* Fixed height for consistency in grid */
+            background: var(--white);
             border-radius: 12px;
             padding: 15px;
             box-shadow: var(--shadow);
@@ -258,7 +229,7 @@
 
         /* Forms */
         .form-container {
-            background: var(--container-bg);
+            background: var(--white);
             padding: 15px;
             margin-bottom: 25px;
             border-radius: 12px;
@@ -280,12 +251,10 @@
         .form-input {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid var(--input-border);
+            border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 1rem;
             transition: var(--transition);
-            background-color: var(--input-bg);
-            color: var(--body-color);
         }
 
         .form-input:focus {
@@ -297,11 +266,10 @@
         .form-select {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid var(--input-border);
+            border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 1rem;
-            background-color: var(--input-bg);
-            color: var(--body-color);
+            background-color: white;
         }
 
         .btn {
@@ -317,7 +285,7 @@
 
         .btn-primary {
             background: var(--primary-color);
-            color: var(--white);
+            color: white;
         }
 
         .btn-primary:hover {
@@ -335,7 +303,7 @@
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            background: var(--container-bg);
+            background: var(--white);
             border-radius: 12px;
             overflow: hidden;
             box-shadow: var(--shadow);
@@ -343,8 +311,8 @@
         }
 
         .data-table th {
-            background: var(--table-header-bg);
-            color: var(--table-header-color);
+            background: var(--secondary-color);
+            color: var(--white);
             padding: 12px 15px;
             text-align: left;
             font-weight: 600;
@@ -353,7 +321,7 @@
 
         .data-table td {
             padding: 10px 15px;
-            border-bottom: 1px solid var(--table-border);
+            border-bottom: 1px solid #eee;
             font-size: 0.85rem;
         }
 
@@ -374,7 +342,7 @@
 
         .btn-danger {
             background: var(--danger-color);
-            color: var(--white);
+            color: white;
         }
 
         .btn-danger:hover {
@@ -446,7 +414,7 @@
             height: 60px;
             border-radius: 50%;
             background: var(--primary-color);
-            color: var(--white);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -485,7 +453,7 @@
         }
 
         .modal-content {
-            background: var(--modal-bg);
+            background: var(--white);
             padding: 30px;
             border-radius: 12px;
             box-shadow: var(--shadow);
@@ -494,7 +462,6 @@
             width: 90%;
             transform: translateY(-20px);
             transition: transform 0.3s ease;
-            color: var(--modal-text-color);
         }
 
         .modal-overlay.visible .modal-content {
@@ -504,7 +471,7 @@
         .modal-message {
             font-size: 1.1rem;
             margin-bottom: 25px;
-            color: var(--modal-text-color);
+            color: var(--secondary-color);
         }
 
         .modal-buttons {
@@ -521,12 +488,11 @@
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            width: 100%;
         }
 
         .modal-button.confirm {
             background: var(--primary-color);
-            color: var(--white);
+            color: white;
         }
 
         .modal-button.confirm:hover {
@@ -535,7 +501,7 @@
 
         .modal-button.cancel {
             background: var(--gray);
-            color: var(--white);
+            color: white;
         }
 
         .modal-button.cancel:hover {
@@ -573,7 +539,7 @@
         }
 
         .report-summary-box {
-            background: var(--report-summary-box-bg);
+            background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
             box-shadow: var(--shadow);
@@ -594,7 +560,7 @@
             list-style: none;
             padding: 0;
             margin-bottom: 20px;
-            background: var(--container-bg);
+            background: var(--white);
             border-radius: 12px;
             box-shadow: var(--shadow);
             overflow: hidden;
@@ -602,7 +568,7 @@
 
         .report-detail-list li {
             padding: 12px 15px;
-            border-bottom: 1px solid var(--table-border);
+            border-bottom: 1px solid #eee;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -615,11 +581,51 @@
 
         .report-detail-list h3 {
             padding: 15px;
-            background: var(--table-header-bg);
-            color: var(--table-header-color);
+            background: var(--secondary-color);
+            color: var(--white);
             margin: 0;
             border-top-left-radius: 12px;
             border-top-right-radius: 12px;
+        }
+
+
+        /* Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #121212;
+                color: #f1f1f1;
+            }
+
+            .chart-container,
+            .form-container,
+            .data-table,
+            .modal-content,
+            .report-detail-list {
+                background: #1e1e1e;
+                color: #f1f1f1;
+            }
+
+            .form-input,
+            .form-select {
+                background: #2d2d2d;
+                color: #f1f1f1;
+                border-color: #444;
+            }
+
+            .data-table td {
+                border-color: #444;
+            }
+
+            .modal-message {
+                color: #f1f1f1;
+            }
+
+            .report-summary-box {
+                background: #2d2d2d;
+            }
+            .report-detail-list li {
+                border-color: #444;
+            }
         }
     </style>
 </head>
@@ -656,10 +662,6 @@
             <li data-section="relatorios">
                 <span class="menu-icon">📈</span>
                 <span>Relatórios</span>
-            </li>
-            <li id="theme-toggle-button">
-                <span class="menu-icon">💡</span> <!-- Ícone para tema -->
-                <span>Tema: <span id="current-theme-text">Claro</span></span>
             </li>
         </ul>
     </nav>
@@ -950,8 +952,6 @@
         const sidebar = document.querySelector('.sidebar');
         const sections = document.querySelectorAll('.section');
         const navItems = document.querySelectorAll('.sidebar-menu li');
-        const themeToggleButton = document.getElementById('theme-toggle-button');
-        const currentThemeText = document.getElementById('current-theme-text');
 
         // Elementos do Modal
         const customModalOverlay = document.getElementById('custom-modal-overlay');
@@ -1080,25 +1080,8 @@
             }
         }
 
-        // Função para alternar o tema
-        function toggleTheme() {
-            document.body.classList.toggle('dark-theme');
-            const isDarkMode = document.body.classList.contains('dark-theme');
-            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-            currentThemeText.textContent = isDarkMode ? 'Escuro' : 'Claro';
-        }
-
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            // Aplica o tema salvo ou o padrão
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-theme');
-                currentThemeText.textContent = 'Escuro';
-            } else {
-                currentThemeText.textContent = 'Claro';
-            }
-
             // Menu mobile
             menuToggle.addEventListener('click', function() {
                 sidebar.classList.toggle('active');
@@ -1111,9 +1094,6 @@
                     changeSection(sectionId);
                 });
             });
-
-            // Botão de alternar tema
-            themeToggleButton.addEventListener('click', toggleTheme);
 
             // Botão de Ação Flutuante
             const fab = document.getElementById('fab');
@@ -1899,10 +1879,7 @@
 
             // Processar receitas
             receitasArr.forEach(item => {
-                // Parse date string to YYYY, MM, DD components
-                const dateParts = item.data.split('-').map(Number);
-                // Create a Date object in local time (month is 0-indexed)
-                const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]); 
+                const date = new Date(item.data.split('-')[0], item.data.split('-')[1] - 1, item.data.split('-')[2]); // Local time
                 const mesAno = `${meses[date.getMonth()]}/${date.getFullYear()}`;
                 if (!dados[mesAno]) {
                     dados[mesAno] = { receitas: 0, gastos: 0 };
@@ -1912,10 +1889,7 @@
 
             // Processar gastos
             gastosArr.forEach(item => {
-                // Parse date string to YYYY, MM, DD components
-                const dateParts = item.data.split('-').map(Number);
-                // Create a Date object in local time (month is 0-indexed)
-                const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]); 
+                const date = new Date(item.data.split('-')[0], item.data.split('-')[1] - 1, item.data.split('-')[2]); // Local time
                 const mesAno = `${meses[date.getMonth()]}/${date.getFullYear()}`;
                 if (!dados[mesAno]) {
                     dados[mesAno] = { receitas: 0, gastos: 0 };
@@ -1948,10 +1922,7 @@
 
             // Processar receitas
             receitasArr.forEach(item => {
-                // Parse date string to YYYY, MM, DD components
-                const dateParts = item.data.split('-').map(Number);
-                // Create a Date object in local time (month is 0-indexed)
-                const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]); 
+                const date = new Date(item.data.split('-')[0], item.data.split('-')[1] - 1, item.data.split('-')[2]); // Local time
                 const ano = date.getFullYear().toString();
                 if (!dados[ano]) {
                     dados[ano] = { receitas: 0, gastos: 0 };
@@ -1961,10 +1932,7 @@
 
             // Processar gastos
             gastosArr.forEach(item => {
-                // Parse date string to YYYY, MM, DD components
-                const dateParts = item.data.split('-').map(Number);
-                // Create a Date object in local time (month is 0-indexed)
-                const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]); 
+                const date = new Date(item.data.split('-')[0], item.data.split('-')[1] - 1, item.data.split('-')[2]); // Local time
                 const ano = date.getFullYear().toString();
                 if (!dados[ano]) {
                     dados[ano] = { receitas: 0, gastos: 0 };
@@ -1985,29 +1953,28 @@
 
 
         function gerarRelatorio() {
-            const mesInput = document.getElementById('relatorio-mes').value; // e.g., "2023-10"
-            if (!mesInput) {
+            const mes = document.getElementById('relatorio-mes').value; // e.g., "2023-10"
+            if (!mes) {
                 showModal('Por favor, selecione um mês.', 'alert');
                 return;
             }
             
-            const [year, month] = mesInput.split('-').map(Number); // month is 1-based
+            const [year, monthIndex] = mes.split('-').map(Number); // monthIndex is 1-based
 
-            // Create Date objects for the start and end of the selected month in local time
-            // Using day 1 for start, and day 0 of the next month for the last day of the current month
-            const inicioMesDate = new Date(year, month - 1, 1);
-            const fimMesDate = new Date(year, month, 0); 
-            
+            // Construct start date for the selected month (local time)
+            const inicioMesDate = new Date(year, monthIndex - 1, 1); // Month is 0-indexed in Date constructor
+
+            // Construct end date for the selected month (local time)
+            const fimMesDate = new Date(year, monthIndex, 0); // Day 0 of next month gives last day of current month
+
             const receitasMes = receitas.filter(r => {
-                // Parse stored date string "YYYY-MM-DD" into Date object in local time
-                const rDateParts = r.data.split('-').map(Number);
-                const rDate = new Date(rDateParts[0], rDateParts[1] - 1, rDateParts[2]);
+                const rDateParts = r.data.split('-').map(Number); // r.data is "YYYY-MM-DD"
+                const rDate = new Date(rDateParts[0], rDateParts[1] - 1, rDateParts[2]); // Create Date in local time
                 return rDate >= inicioMesDate && rDate <= fimMesDate;
             });
             const gastosMes = gastos.filter(g => {
-                // Parse stored date string "YYYY-MM-DD" into Date object in local time
-                const gDateParts = g.data.split('-').map(Number);
-                const gDate = new Date(gDateParts[0], gDateParts[1] - 1, gDateParts[2]);
+                const gDateParts = g.data.split('-').map(Number); // g.data is "YYYY-MM-DD"
+                const gDate = new Date(gDateParts[0], gDateParts[1] - 1, gDateParts[2]); // Create Date in local time
                 return gDate >= inicioMesDate && gDate <= fimMesDate;
             });
             

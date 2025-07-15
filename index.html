@@ -1956,20 +1956,28 @@
                 return;
             }
             
-            const inicioMes = mes + '-01';
-            // Para garantir que o fim do mês seja correto, calculamos o último dia
+            const inicioMesStr = mes + '-01';
             const dataFimMes = new Date(new Date(mes).getFullYear(), new Date(mes).getMonth() + 1, 0);
-            const fimMes = dataFimMes.toISOString().slice(0, 10);
-            
-            // Filtra receitas e gastos para o mês selecionado
-            const receitasMes = receitas.filter(r => r.data >= inicioMes && r.data <= fimMes);
-            const gastosMes = gastos.filter(g => g.data >= inicioMes && g.data <= fimMes);
+            const fimMesStr = dataFimMes.toISOString().slice(0, 10);
+
+            // Convertendo para objetos Date para comparação robusta
+            const inicioMesDate = new Date(inicioMesStr + 'T00:00:00'); // Garante análise consistente
+            const fimMesDate = new Date(fimMesStr + 'T00:00:00');     // Garante análise consistente
+
+            const receitasMes = receitas.filter(r => {
+                const rDate = new Date(r.data + 'T00:00:00'); // Garante análise consistente para dados armazenados
+                return rDate >= inicioMesDate && rDate <= fimMesDate;
+            });
+            const gastosMes = gastos.filter(g => {
+                const gDate = new Date(g.data + 'T00:00:00'); // Garante análise consistente para dados armazenados
+                return gDate >= inicioMesDate && gDate <= fimMesDate;
+            });
             
             const totalReceitas = receitasMes.reduce((sum, item) => sum + item.valor, 0);
             const totalGastos = gastosMes.reduce((sum, item) => sum + item.valor, 0);
             const saldo = totalReceitas - totalGastos;
             
-            const nomeMes = new Date(inicioMes + 'T00:00:00').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+            const nomeMes = new Date(inicioMesStr + 'T00:00:00').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
             
             const relatorioHTML = `
                 <h2>Relatório Mensal - ${nomeMes}</h2>

@@ -600,6 +600,24 @@
             font-weight: bold;
         }
 
+        /* Estilo para alerta de orçamento excedido */
+        .budget-alert {
+            background-color: var(--danger-color);
+            color: var(--white);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: 600;
+            text-align: center;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.02); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
         .report-detail-list {
             list-style: none;
             padding: 0;
@@ -670,6 +688,124 @@
                 border-color: #444;
             }
         }
+
+        /* Estilos para o formulário de Adicionar Transação */
+        .transaction-type-selector {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--primary-color);
+        }
+
+        .transaction-type-selector button {
+            flex: 1;
+            padding: 12px;
+            background-color: var(--white);
+            color: var(--primary-color);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .transaction-type-selector button.active {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        .transaction-type-selector button:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+
+        .transaction-type-selector button:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .transaction-type-selector button:not(.active):hover {
+            background-color: var(--light-color);
+        }
+
+        /* Estilos para a lista de transações (Minhas Transações) */
+        .transaction-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            background-color: var(--white);
+            transition: background-color 0.2s ease;
+        }
+
+        .transaction-list-item:hover {
+            background-color: var(--light-color);
+        }
+
+        .transaction-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-info {
+            flex-grow: 1;
+        }
+
+        .transaction-info strong {
+            display: block;
+            font-size: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .transaction-info small {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .transaction-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-left: 15px;
+            text-align: right;
+        }
+
+        .transaction-value.receita {
+            color: var(--success-color);
+        }
+
+        .transaction-value.gasto {
+            color: var(--danger-color);
+        }
+
+        .transaction-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: 15px;
+        }
+
+        /* Filtros da lista de transações */
+        .transaction-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .transaction-filters .form-group {
+            flex: 1 1 calc(50% - 10px); /* 2 colunas em mobile */
+            margin-bottom: 0; /* Ajuste para flexbox */
+        }
+
+        @media (min-width: 768px) {
+            .transaction-filters .form-group {
+                flex: 1 1 calc(33.33% - 10px); /* 3 colunas em desktop */
+            }
+        }
+        @media (min-width: 1024px) {
+            .transaction-filters .form-group {
+                flex: 1 1 calc(25% - 10px); /* 4 colunas em desktop */
+            }
+        }
     </style>
 </head>
 <body>
@@ -686,21 +822,29 @@
                 <span class="menu-icon">📊</span>
                 <span>Dashboard</span>
             </li>
-            <li data-section="receitas">
-                <span class="menu-icon">💰</span>
-                <span>Receitas</span>
+            <li data-section="add-transaction">
+                <span class="menu-icon">➕</span>
+                <span>Adicionar Transação</span>
             </li>
-            <li data-section="gastos">
-                <span class="menu-icon">💸</span>
-                <span>Gastos</span>
+            <li data-section="transactions-list">
+                <span class="menu-icon">📋</span>
+                <span>Minhas Transações</span>
+            </li>
+            <li data-section="orcamentos">
+                <span class="menu-icon">💰</span>
+                <span>Orçamentos</span>
             </li>
             <li data-section="metas">
                 <span class="menu-icon">🎯</span>
                 <span>Metas</span>
             </li>
-            <li data-section="orcamentos">
-                <span class="menu-icon">📊</span>
-                <span>Orçamentos</span>
+            <li data-section="recorrentes">
+                <span class="menu-icon">🔄</span>
+                <span>Recorrentes</span>
+            </li>
+            <li data-section="categorias">
+                <span class="menu-icon">🏷️</span>
+                <span>Categorias</span>
             </li>
             <li data-section="relatorios">
                 <span class="menu-icon">📈</span>
@@ -733,6 +877,7 @@
                     <div id="overall-budget-progress" style="background: var(--primary-color); width: 0%; height: 100%; border-radius: 4px;"></div>
                 </div>
                 <small><span id="overall-budget-percent">0%</span> do orçamento total gasto.</small>
+                <div id="budget-alert-message"></div> <!-- Mensagem de alerta de orçamento -->
             </div>
 
             <div class="charts-grid">
@@ -757,107 +902,116 @@
             </div>
         </section>
 
-        <!-- Seção Receitas -->
-        <section id="receitas" class="section">
-            <h1>Receitas</h1>
+        <!-- Seção Adicionar Transação (Receita ou Gasto) -->
+        <section id="add-transaction" class="section">
+            <h1>Adicionar Transação</h1>
             
             <div class="form-container">
+                <div class="transaction-type-selector">
+                    <button id="btn-select-receita" class="active">Receita</button>
+                    <button id="btn-select-gasto">Gasto</button>
+                </div>
+
                 <div class="form-group">
-                    <label for="receita-descricao" class="form-label">Descrição</label>
-                    <input type="text" id="receita-descricao" class="form-input" placeholder="Salário, Freela, etc.">
+                    <label for="transaction-descricao" class="form-label">Descrição</label>
+                    <input type="text" id="transaction-descricao" class="form-input" placeholder="Ex: Salário, Aluguel, Mercado">
                 </div>
                 
                 <div class="form-group">
-                    <label for="receita-valor" class="form-label">Valor (R$)</label>
-                    <input type="number" id="receita-valor" class="form-input" placeholder="0,00" step="0.01">
+                    <label for="transaction-valor" class="form-label">Valor (R$)</label>
+                    <input type="number" id="transaction-valor" class="form-input" placeholder="0,00" step="0.01">
                 </div>
                 
                 <div class="form-group">
-                    <label for="receita-data" class="form-label">Data</label>
-                    <input type="date" id="receita-data" class="form-input">
+                    <label for="transaction-data" class="form-label">Data</label>
+                    <input type="date" id="transaction-data" class="form-input">
                 </div>
                 
                 <div class="form-group">
-                    <label for="receita-categoria" class="form-label">Categoria</label>
-                    <select id="receita-categoria" class="form-select">
-                        <option value="Salário">Salário</option>
-                        <option value="Freelance">Freelance</option>
-                        <option value="Investimentos">Investimentos</option>
-                        <option value="Presente">Presente</option>
-                        <option value="Outros">Outros</option>
+                    <label for="transaction-categoria" class="form-label">Categoria</label>
+                    <select id="transaction-categoria" class="form-select">
+                        <!-- Opções de categoria serão carregadas via JavaScript, baseadas no tipo de transação -->
                     </select>
                 </div>
                 
-                <button id="btn-adicionar-receita" class="btn btn-primary">Adicionar Receita</button>
-            </div>
-
-            <div class="table-responsive">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Descrição</th>
-                            <th>Valor</th>
-                            <th>Data</th>
-                            <th>Categoria</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-receitas">
-                        <!-- Receitas serão inseridas aqui via JavaScript -->
-                    </tbody>
-                </table>
+                <button id="btn-adicionar-transacao" class="btn btn-primary">Adicionar Transação</button>
+                <button id="btn-selecionar-recorrente-transacao" class="btn btn-primary" style="margin-top: 10px;">Usar Recorrente</button>
             </div>
         </section>
 
-        <!-- Seção Gastos -->
-        <section id="gastos" class="section">
-            <h1>Gastos</h1>
+        <!-- Seção Minhas Transações (Lista Consolidada) -->
+        <section id="transactions-list" class="section">
+            <h1>Minhas Transações</h1>
+
+            <div class="form-container transaction-filters">
+                <div class="form-group">
+                    <label for="filter-type" class="form-label">Tipo</label>
+                    <select id="filter-type" class="form-select">
+                        <option value="all">Todos</option>
+                        <option value="receita">Receitas</option>
+                        <option value="gasto">Gastos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filter-category" class="form-label">Categoria</label>
+                    <select id="filter-category" class="form-select">
+                        <option value="all">Todas</option>
+                        <!-- Categorias serão carregadas via JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filter-start-date" class="form-label">Data Início</label>
+                    <input type="date" id="filter-start-date" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="filter-end-date" class="form-label">Data Fim</label>
+                    <input type="date" id="filter-end-date" class="form-input">
+                </div>
+                <button id="btn-apply-filters" class="btn btn-primary" style="flex: 1 1 100%;">Aplicar Filtros</button>
+            </div>
+            
+            <div class="table-responsive">
+                <ul id="transactions-list-container" style="list-style: none; padding: 0;">
+                    <!-- Transações serão inseridas aqui via JavaScript -->
+                    <li style="text-align: center; padding: 20px; color: var(--gray);">Nenhuma transação registrada.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Seção Orçamentos -->
+        <section id="orcamentos" class="section">
+            <h1>Orçamentos Mensais</h1>
             
             <div class="form-container">
                 <div class="form-group">
-                    <label for="gasto-descricao" class="form-label">Descrição</label>
-                    <input type="text" id="gasto-descricao" class="form-input" placeholder="Aluguel, Mercado, etc.">
-                </div>
-                
-                <div class="form-group">
-                    <label for="gasto-valor" class="form-label">Valor (R$)</label>
-                    <input type="number" id="gasto-valor" class="form-input" placeholder="0,00" step="0.01">
-                </div>
-                
-                <div class="form-group">
-                    <label for="gasto-data" class="form-label">Data</label>
-                    <input type="date" id="gasto-data" class="form-input">
-                </div>
-                
-                <div class="form-group">
-                    <label for="gasto-categoria" class="form-label">Categoria</label>
-                    <select id="gasto-categoria" class="form-select">
-                        <option value="Moradia">Moradia</option>
-                        <option value="Alimentação">Alimentação</option>
-                        <option value="Transporte">Transporte</option>
-                        <option value="Lazer">Lazer</option>
-                        <option value="Saúde">Saúde</option>
-                        <option value="Educação">Educação</option>
-                        <option value="Outros">Outros</option>
+                    <label for="orcamento-categoria" class="form-label">Categoria</label>
+                    <select id="orcamento-categoria" class="form-select">
+                        <!-- Opções de categoria serão carregadas via JavaScript -->
                     </select>
                 </div>
                 
-                <button id="btn-adicionar-gasto" class="btn btn-primary">Adicionar Gasto</button>
+                <div class="form-group">
+                    <label for="orcamento-limite" class="form-label">Limite Mensal (R$)</label>
+                    <input type="number" id="orcamento-limite" class="form-input" placeholder="0,00" step="0.01">
+                </div>
+                
+                <button id="btn-adicionar-orcamento" class="btn btn-primary">Adicionar Orçamento</button>
             </div>
 
             <div class="table-responsive">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Descrição</th>
-                            <th>Valor</th>
-                            <th>Data</th>
                             <th>Categoria</th>
+                            <th>Limite</th>
+                            <th>Gasto Atual</th>
+                            <th>Restante/Excedente</th>
+                            <th>Progresso</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="tabela-gastos">
-                        <!-- Gastos serão inseridos aqui via JavaScript -->
+                    <tbody id="tabela-orcamentos">
+                        <!-- Orçamentos serão inseridos aqui via JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -904,46 +1058,83 @@
             </div>
         </section>
 
-        <!-- Seção Orçamentos -->
-        <section id="orcamentos" class="section">
-            <h1>Orçamentos Mensais</h1>
+        <!-- Seção Transações Recorrentes -->
+        <section id="recorrentes" class="section">
+            <h1>Transações Recorrentes (Modelos)</h1>
             
             <div class="form-container">
                 <div class="form-group">
-                    <label for="orcamento-categoria" class="form-label">Categoria</label>
-                    <select id="orcamento-categoria" class="form-select">
-                        <option value="Moradia">Moradia</option>
-                        <option value="Alimentação">Alimentação</option>
-                        <option value="Transporte">Transporte</option>
-                        <option value="Lazer">Lazer</option>
-                        <option value="Saúde">Saúde</option>
-                        <option value="Educação">Educação</option>
-                        <option value="Outros">Outros</option>
+                    <label for="recorrente-tipo" class="form-label">Tipo</label>
+                    <select id="recorrente-tipo" class="form-select">
+                        <option value="receita">Receita</option>
+                        <option value="gasto">Gasto</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
-                    <label for="orcamento-limite" class="form-label">Limite Mensal (R$)</label>
-                    <input type="number" id="orcamento-limite" class="form-input" placeholder="0,00" step="0.01">
+                    <label for="recorrente-descricao" class="form-label">Descrição</label>
+                    <input type="text" id="recorrente-descricao" class="form-input" placeholder="Ex: Aluguel, Salário">
                 </div>
-                
-                <button id="btn-adicionar-orcamento" class="btn btn-primary">Adicionar Orçamento</button>
+                <div class="form-group">
+                    <label for="recorrente-valor" class="form-label">Valor (R$)</label>
+                    <input type="number" id="recorrente-valor" class="form-input" placeholder="0,00" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="recorrente-categoria" class="form-label">Categoria</label>
+                    <select id="recorrente-categoria" class="form-select">
+                        <!-- Categorias serão carregadas via JavaScript -->
+                    </select>
+                </div>
+                <button id="btn-adicionar-recorrente" class="btn btn-primary">Adicionar Modelo Recorrente</button>
             </div>
 
             <div class="table-responsive">
                 <table class="data-table">
                     <thead>
                         <tr>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                            <th>Valor</th>
                             <th>Categoria</th>
-                            <th>Limite</th>
-                            <th>Gasto Atual</th>
-                            <th>Restante/Excedente</th>
-                            <th>Progresso</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="tabela-orcamentos">
-                        <!-- Orçamentos serão inseridos aqui via JavaScript -->
+                    <tbody id="tabela-recorrentes">
+                        <!-- Transações recorrentes serão inseridas aqui via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Seção Categorias -->
+        <section id="categorias" class="section">
+            <h1>Gerenciar Categorias</h1>
+            
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="categoria-nome" class="form-label">Nome da Nova Categoria</label>
+                    <input type="text" id="categoria-nome" class="form-input" placeholder="Ex: Educação, Lazer">
+                </div>
+                <div class="form-group">
+                    <label for="categoria-tipo" class="form-label">Tipo</label>
+                    <select id="categoria-tipo" class="form-select">
+                        <option value="receita">Receita</option>
+                        <option value="gasto">Gasto</option>
+                    </select>
+                </div>
+                <button id="btn-adicionar-categoria" class="btn btn-primary">Adicionar Categoria</button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Tipo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-categorias">
+                        <!-- Categorias serão inseridas aqui via JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -955,8 +1146,12 @@
             
             <div class="form-container">
                 <div class="form-group">
-                    <label for="relatorio-mes" class="form-label">Selecione o Mês</label>
-                    <input type="month" id="relatorio-mes" class="form-input">
+                    <label for="relatorio-data-inicio" class="form-label">Data de Início</label>
+                    <input type="date" id="relatorio-data-inicio" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="relatorio-data-fim" class="form-label">Data de Fim</label>
+                    <input type="date" id="relatorio-data-fim" class="form-input">
                 </div>
                 
                 <button id="btn-gerar-relatorio" class="btn btn-primary">Gerar Relatório</button>
@@ -964,7 +1159,7 @@
 
             <div id="relatorio-conteudo" class="form-container">
                 <!-- Relatório será gerado aqui via JavaScript -->
-                <p style="text-align: center; color: var(--gray);">Selecione um mês e clique em "Gerar Relatório" para visualizar.</p>
+                <p style="text-align: center; color: var(--gray);">Selecione um período e clique em "Gerar Relatório" para visualizar.</p>
             </div>
         </section>
     </main>
@@ -988,6 +1183,12 @@
         let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
         let metas = JSON.parse(localStorage.getItem('metas')) || [];
         let orcamentos = JSON.parse(localStorage.getItem('orcamentos')) || []; 
+        let recorrentes = JSON.parse(localStorage.getItem('recorrentes')) || [];
+        // Categorias padrão para inicialização
+        let categorias = JSON.parse(localStorage.getItem('categorias')) || {
+            receita: ['Salário', 'Freelance', 'Investimentos', 'Presente', 'Outros'],
+            gasto: ['Moradia', 'Alimentação', 'Transporte', 'Lazer', 'Saúde', 'Educação', 'Outros']
+        };
         let charts = {}; // Objeto para armazenar as instâncias dos gráficos Chart.js
 
         // Referências aos elementos do DOM
@@ -1001,15 +1202,23 @@
         const modalMessage = document.getElementById('modal-message');
         const modalButtons = document.getElementById('modal-buttons');
 
+        // Variável global para o tipo de transação selecionado na tela de Adicionar Transação
+        let currentTransactionType = 'receita'; // 'receita' ou 'gasto'
+
         /**
          * Exibe um modal personalizado para alertas ou confirmações.
          * @param {string} message - A mensagem a ser exibida no modal.
-         * @param {'alert'|'confirm'} type - O tipo de modal ('alert' para apenas OK, 'confirm' para Confirmar/Cancelar).
+         * @param {'alert'|'confirm'|'custom'} type - O tipo de modal ('alert' para apenas OK, 'confirm' para Confirmar/Cancelar, 'custom' para conteúdo HTML personalizado).
          * @param {function(boolean):void} [callback] - Função de callback para o modal de confirmação (recebe true se confirmado, false se cancelado).
+         * @param {string} [customHtml] - Conteúdo HTML personalizado para o modal (usado com type 'custom').
          */
-        function showModal(message, type, callback = null) {
-            modalMessage.textContent = message;
+        function showModal(message, type, callback = null, customHtml = null) {
+            modalMessage.innerHTML = message; // Usa innerHTML para permitir HTML na mensagem
             modalButtons.innerHTML = ''; // Limpa botões anteriores
+
+            if (customHtml) {
+                modalMessage.innerHTML = customHtml; // Sobrescreve a mensagem com HTML personalizado
+            }
 
             if (type === 'alert') {
                 const okButton = document.createElement('button');
@@ -1035,6 +1244,16 @@
                     if (callback) callback(false);
                 };
                 modalButtons.appendChild(cancelButton);
+            } else if (type === 'custom') {
+                // Botões para modais customizados podem ser adicionados via JS ou no customHtml
+                // Por padrão, adiciona um botão de fechar se não houver outros botões
+                if (modalButtons.children.length === 0) {
+                    const closeButton = document.createElement('button');
+                    closeButton.textContent = 'Fechar';
+                    closeButton.classList.add('modal-button', 'cancel');
+                    closeButton.onclick = hideModal;
+                    modalButtons.appendChild(closeButton);
+                }
             }
 
             // Garante que a classe 'fab-actions-modal' não esteja presente para modais comuns
@@ -1054,49 +1273,55 @@
          * Exibe o modal de ações rápidas do Floating Action Button (FAB).
          */
         function showFabQuickActionsModal() {
-            modalMessage.textContent = 'O que você gostaria de adicionar?';
+            modalMessage.textContent = 'O que você gostaria de fazer?';
             modalButtons.innerHTML = '';
 
             // Cria botões para cada tipo de adição
-            const btnReceita = document.createElement('button');
-            btnReceita.textContent = 'Adicionar Receita';
-            btnReceita.classList.add('modal-button', 'btn-primary');
-            btnReceita.onclick = () => {
+            const btnAddTransaction = document.createElement('button');
+            btnAddTransaction.textContent = 'Adicionar Transação';
+            btnAddTransaction.classList.add('modal-button', 'btn-primary');
+            btnAddTransaction.onclick = () => {
                 hideModal();
-                changeSection('receitas'); // Muda para a seção de receitas
-                document.getElementById('receita-descricao').focus(); // Foca no campo de descrição
+                changeSection('add-transaction'); // Muda para a seção de adicionar transação
+                document.getElementById('transaction-descricao').focus(); // Foca no campo de descrição
             };
-            modalButtons.appendChild(btnReceita);
-
-            const btnGasto = document.createElement('button');
-            btnGasto.textContent = 'Adicionar Gasto';
-            btnGasto.classList.add('modal-button', 'btn-primary');
-            btnGasto.onclick = () => {
-                hideModal();
-                changeSection('gastos'); // Muda para a seção de gastos
-                document.getElementById('gasto-descricao').focus(); // Foca no campo de descrição
-            };
-            modalButtons.appendChild(btnGasto);
-
-            const btnMeta = document.createElement('button');
-            btnMeta.textContent = 'Adicionar Meta';
-            btnMeta.classList.add('modal-button', 'btn-primary');
-            btnMeta.onclick = () => {
-                hideModal();
-                changeSection('metas'); // Muda para a seção de metas
-                document.getElementById('meta-nome').focus(); // Foca no campo de nome da meta
-            };
-            modalButtons.appendChild(btnMeta);
+            modalButtons.appendChild(btnAddTransaction);
 
             const btnOrcamento = document.createElement('button');
-            btnOrcamento.textContent = 'Adicionar Orçamento';
+            btnOrcamento.textContent = 'Gerenciar Orçamentos';
             btnOrcamento.classList.add('modal-button', 'btn-primary');
             btnOrcamento.onclick = () => {
                 hideModal();
-                changeSection('orcamentos'); // Muda para a seção de orçamentos
-                document.getElementById('orcamento-categoria').focus(); // Foca no campo de categoria do orçamento
+                changeSection('orcamentos');
             };
             modalButtons.appendChild(btnOrcamento);
+
+            const btnMeta = document.createElement('button');
+            btnMeta.textContent = 'Gerenciar Metas';
+            btnMeta.classList.add('modal-button', 'btn-primary');
+            btnMeta.onclick = () => {
+                hideModal();
+                changeSection('metas');
+            };
+            modalButtons.appendChild(btnMeta);
+
+            const btnRecorrente = document.createElement('button');
+            btnRecorrente.textContent = 'Gerenciar Recorrentes';
+            btnRecorrente.classList.add('modal-button', 'btn-primary');
+            btnRecorrente.onclick = () => {
+                hideModal();
+                changeSection('recorrentes');
+            };
+            modalButtons.appendChild(btnRecorrente);
+
+            const btnCategoria = document.createElement('button');
+            btnCategoria.textContent = 'Gerenciar Categorias';
+            btnCategoria.classList.add('modal-button', 'btn-primary');
+            btnCategoria.onclick = () => {
+                hideModal();
+                changeSection('categorias');
+            };
+            modalButtons.appendChild(btnCategoria);
 
             // Adiciona uma classe ao overlay para aplicar estilos específicos do modal FAB
             customModalOverlay.classList.add('fab-actions-modal');
@@ -1132,9 +1357,22 @@
             if (sectionId === 'dashboard') {
                 updateCharts();
                 updateBudgetDashboardSummary(); // Atualiza o resumo do orçamento no dashboard
+            } else if (sectionId === 'transactions-list') {
+                renderTransactionsList(); // Renderiza a lista de transações
+                updateCategoryFilterSelect('filter-category', 'all'); // Atualiza o filtro de categoria
+            } else if (sectionId === 'add-transaction') {
+                // Ao entrar na tela de adicionar transação, garante que o select de categoria esteja correto
+                updateTransactionCategorySelect();
+                document.getElementById('transaction-descricao').focus();
             } else if (sectionId === 'orcamentos') {
                 renderOrcamentosTable(); // Atualiza a tabela de orçamentos quando a seção está ativa
+            } else if (sectionId === 'recorrentes') {
+                renderRecorrentesTable(); // Atualiza a tabela de recorrentes
+            } else if (sectionId === 'categorias') {
+                renderCategoriasTable(); // Atualiza a tabela de categorias
             }
+            // Atualiza os selects de categoria em todas as se seções que os utilizam
+            updateCategorySelects();
         }
 
         // Inicialização do aplicativo quando o DOM estiver completamente carregado
@@ -1154,155 +1392,130 @@
 
             // Event listener para o Floating Action Button (FAB)
             const fab = document.getElementById('fab');
-            fab.addEventListener('click', function() {
-                const activeSection = document.querySelector('.section.active').id;
-                
-                if (activeSection === 'dashboard') {
-                    showFabQuickActionsModal(); // Exibe o modal de ações rápidas no Dashboard
-                } else if (activeSection === 'receitas') {
-                    document.getElementById('receita-descricao').focus();
-                } else if (activeSection === 'gastos') {
-                    document.getElementById('gasto-descricao').focus();
-                } else if (activeSection === 'metas') {
-                    document.getElementById('meta-nome').focus();
-                } else if (activeSection === 'orcamentos') {
-                    document.getElementById('orcamento-categoria').focus();
-                }
-            });
+            fab.addEventListener('click', showFabQuickActionsModal);
+
+            // Event listeners para a tela de Adicionar Transação
+            document.getElementById('btn-select-receita').addEventListener('click', () => setTransactionType('receita'));
+            document.getElementById('btn-select-gasto').addEventListener('click', () => setTransactionType('gasto'));
+            document.getElementById('btn-adicionar-transacao').addEventListener('click', adicionarTransacao);
+            document.getElementById('btn-selecionar-recorrente-transacao').addEventListener('click', () => showRecorrentesModal(currentTransactionType));
+
+            // Event listeners para a lista de transações
+            document.getElementById('btn-apply-filters').addEventListener('click', renderTransactionsList);
+            document.getElementById('filter-type').addEventListener('change', renderTransactionsList);
+            document.getElementById('filter-category').addEventListener('change', renderTransactionsList);
+            document.getElementById('filter-start-date').addEventListener('change', renderTransactionsList);
+            document.getElementById('filter-end-date').addEventListener('change', renderTransactionsList);
 
             // Event listeners para os botões de adicionar
-            document.getElementById('btn-adicionar-receita').addEventListener('click', adicionarReceita);
-            document.getElementById('btn-adicionar-gasto').addEventListener('click', adicionarGasto);
-            document.getElementById('btn-adicionar-meta').addEventListener('click', adicionarMeta);
             document.getElementById('btn-adicionar-orcamento').addEventListener('click', adicionarOrcamento);
+            document.getElementById('btn-adicionar-meta').addEventListener('click', adicionarMeta);
+            document.getElementById('btn-adicionar-recorrente').addEventListener('click', adicionarRecorrente);
+            document.getElementById('btn-adicionar-categoria').addEventListener('click', adicionarCategoria);
             
             // Event listener para o botão de gerar relatório
             document.getElementById('btn-gerar-relatorio').addEventListener('click', gerarRelatorio);
             
             // Define a data atual como padrão para os campos de data e o mês atual para o relatório
             const today = new Date();
-            const currentMonth = today.toISOString().slice(0, 7); // Formato "YYYY-MM"
-            document.getElementById('receita-data').valueAsDate = today;
-            document.getElementById('gasto-data').valueAsDate = today;
-            document.getElementById('relatorio-mes').value = currentMonth;
-            
+            document.getElementById('transaction-data').valueAsDate = today;
+            document.getElementById('filter-start-date').valueAsDate = new Date(today.getFullYear(), today.getMonth(), 1); // Primeiro dia do mês
+            document.getElementById('filter-end-date').valueAsDate = today; // Dia atual
+            document.getElementById('relatorio-data-inicio').valueAsDate = new Date(today.getFullYear(), today.getMonth(), 1); // Primeiro dia do mês
+            document.getElementById('relatorio-data-fim').valueAsDate = today; // Dia atual
+
             // Carrega e renderiza os dados iniciais ao carregar a página
-            renderTables();
-            updateCharts();
+            updateCategorySelects(); // Carrega as categorias nos selects
+            setTransactionType('receita'); // Define o tipo padrão para a tela de Adicionar Transação
+            renderTransactionsList(); // Renderiza a lista de transações inicialmente
             renderOrcamentosTable(); 
+            renderMetasTable(); // Nova função para renderizar metas
+            renderRecorrentesTable();
+            renderCategoriasTable();
+            updateCharts();
             updateBudgetDashboardSummary(); 
         });
 
         /**
-         * Adiciona uma nova receita aos dados da aplicação.
+         * Define o tipo de transação (receita ou gasto) na tela de adicionar transação.
+         * Atualiza os botões de seleção e as categorias disponíveis.
+         * @param {'receita'|'gasto'} type - O tipo de transação a ser selecionado.
          */
-        function adicionarReceita() {
-            const descricao = document.getElementById('receita-descricao').value.trim();
-            const valor = parseFloat(document.getElementById('receita-valor').value);
-            const data = document.getElementById('receita-data').value;
-            const categoria = document.getElementById('receita-categoria').value;
-            
+        function setTransactionType(type) {
+            currentTransactionType = type;
+            const btnReceita = document.getElementById('btn-select-receita');
+            const btnGasto = document.getElementById('btn-select-gasto');
+            const categorySelect = document.getElementById('transaction-categoria');
+
+            if (type === 'receita') {
+                btnReceita.classList.add('active');
+                btnGasto.classList.remove('active');
+            } else {
+                btnGasto.classList.add('active');
+                btnReceita.classList.remove('active');
+            }
+            updateTransactionCategorySelect();
+        }
+
+        /**
+         * Atualiza o select de categoria na tela de Adicionar Transação com base no tipo selecionado.
+         */
+        function updateTransactionCategorySelect() {
+            const categorySelect = document.getElementById('transaction-categoria');
+            categorySelect.innerHTML = ''; // Limpa opções existentes
+
+            const categoriesForType = categorias[currentTransactionType];
+            categoriesForType.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                categorySelect.appendChild(option);
+            });
+        }
+
+        /**
+         * Adiciona uma nova transação (receita ou gasto) aos dados da aplicação.
+         */
+        function adicionarTransacao() {
+            const descricao = document.getElementById('transaction-descricao').value.trim();
+            const valor = parseFloat(document.getElementById('transaction-valor').value);
+            const data = document.getElementById('transaction-data').value;
+            const categoria = document.getElementById('transaction-categoria').value;
+            const tipo = currentTransactionType; // Usa o tipo selecionado globalmente
+
             // Validação dos campos
-            if (!descricao || isNaN(valor) || valor <= 0 || !data) {
-                showModal('Por favor, preencha todos os campos corretamente (Descrição, Valor e Data devem ser válidos).', 'alert');
+            if (!descricao || isNaN(valor) || valor <= 0 || !data || !categoria) {
+                showModal('Por favor, preencha todos os campos corretamente (Descrição, Valor, Data e Categoria devem ser válidos).', 'alert');
                 return;
             }
             
-            receitas.push({
-                id: Date.now(), // ID único baseado no timestamp
+            const newTransaction = {
+                id: Date.now(), // Usando timestamp como ID único
+                tipo,
                 descricao,
                 valor,
                 data,
                 categoria
-            });
+            };
+
+            if (tipo === 'receita') {
+                receitas.push(newTransaction);
+            } else { // tipo === 'gasto'
+                gastos.push(newTransaction);
+            }
             
             salvarDados(); // Salva os dados no localStorage
-            renderTables(); // Re-renderiza as tabelas
             updateCharts(); // Atualiza os gráficos
             updateBudgetDashboardSummary(); // Atualiza o resumo do orçamento no dashboard
-            
-            // Reseta o formulário e foca no primeiro campo
-            document.getElementById('receita-descricao').value = '';
-            document.getElementById('receita-valor').value = '';
-            document.getElementById('receita-descricao').focus();
-            showModal('Receita adicionada com sucesso!', 'alert');
-        }
+            renderTransactionsList(); // Re-renderiza a lista de transações
 
-        /**
-         * Adiciona um novo gasto aos dados da aplicação.
-         */
-        function adicionarGasto() {
-            const descricao = document.getElementById('gasto-descricao').value.trim();
-            const valor = parseFloat(document.getElementById('gasto-valor').value);
-            const data = document.getElementById('gasto-data').value;
-            const categoria = document.getElementById('gasto-categoria').value;
-            
-            // Validação dos campos
-            if (!descricao || isNaN(valor) || valor <= 0 || !data) {
-                showModal('Por favor, preencha todos os campos corretamente (Descrição, Valor e Data devem ser válidos).', 'alert');
-                return;
-            }
-            
-            gastos.push({
-                id: Date.now(), // ID único baseado no timestamp
-                descricao,
-                valor,
-                data,
-                categoria
-            });
-            
-            salvarDados();
-            renderTables();
-            updateCharts();
-            renderOrcamentosTable(); // Atualiza a tabela de orçamentos após adicionar um gasto
-            updateBudgetDashboardSummary(); // Atualiza o resumo do orçamento no dashboard
-            
-            // Reseta o formulário e foca no primeiro campo
-            document.getElementById('gasto-descricao').value = '';
-            document.getElementById('gasto-valor').value = '';
-            document.getElementById('gasto-descricao').focus();
-            showModal('Gasto adicionado com sucesso!', 'alert');
-        }
-
-        /**
-         * Adiciona uma nova meta financeira aos dados da aplicação.
-         */
-        function adicionarMeta() {
-            const nome = document.getElementById('meta-nome').value.trim();
-            const valor = parseFloat(document.getElementById('meta-valor').value);
-            const valorAtual = parseFloat(document.getElementById('meta-valor-atual').value) || 0;
-            
-            // Validação dos campos
-            if (!nome || isNaN(valor) || valor <= 0) {
-                showModal('Por favor, preencha todos os campos corretamente. O valor total da meta deve ser maior que zero.', 'alert');
-                return;
-            }
-            if (valorAtual < 0) {
-                showModal('O valor guardado não pode ser negativo.', 'alert');
-                return;
-            }
-            if (valorAtual > valor) {
-                showModal('O valor guardado não pode ser maior que o valor total da meta.', 'alert');
-                return;
-            }
-            
-            metas.push({
-                id: Date.now(), // ID único baseado no timestamp
-                nome,
-                valor,
-                valorAtual
-            });
-            
-            salvarDados();
-            renderTables();
-            updateCharts();
-            
-            // Reseta o formulário e foca no primeiro campo
-            document.getElementById('meta-nome').value = '';
-            document.getElementById('meta-valor').value = '';
-            document.getElementById('meta-valor-atual').value = '';
-            document.getElementById('meta-nome').focus();
-            showModal('Meta adicionada com sucesso!', 'alert');
+            // Reseta o formulário
+            document.getElementById('transaction-descricao').value = '';
+            document.getElementById('transaction-valor').value = '';
+            document.getElementById('transaction-data').valueAsDate = new Date(); // Volta para a data atual
+            updateTransactionCategorySelect(); // Reseta a categoria para a primeira opção
+            document.getElementById('transaction-descricao').focus();
+            showModal('Transação adicionada com sucesso!', 'alert');
         }
 
         /**
@@ -1312,7 +1525,6 @@
             const categoria = document.getElementById('orcamento-categoria').value;
             const limite = parseFloat(document.getElementById('orcamento-limite').value);
 
-            // Validação dos campos
             if (isNaN(limite) || limite <= 0) {
                 showModal('Por favor, insira um limite válido e maior que zero.', 'alert');
                 return;
@@ -1339,15 +1551,111 @@
         }
 
         /**
-         * Exibe um modal para edição de um item (receita, gasto, meta, orçamento).
-         * @param {'receita'|'gasto'|'meta'|'orcamento'} itemType - O tipo do item a ser editado.
+         * Adiciona uma nova meta financeira aos dados da aplicação.
+         */
+        function adicionarMeta() {
+            const nome = document.getElementById('meta-nome').value.trim();
+            const valor = parseFloat(document.getElementById('meta-valor').value);
+            const valorAtual = parseFloat(document.getElementById('meta-valor-atual').value) || 0;
+            
+            // Validação dos campos
+            if (!nome || isNaN(valor) || valor <= 0) {
+                showModal('Por favor, preencha todos os campos corretamente. O valor total da meta deve ser maior que zero.', 'alert');
+                return;
+            }
+            if (valorAtual < 0) {
+                showModal('O valor guardado não pode ser negativo.', 'alert');
+                return;
+            }
+            if (valorAtual > valor) {
+                showModal('O valor guardado não pode ser maior que o valor total da meta.', 'alert');
+                return;
+            }
+            
+            metas.push({
+                id: Date.now(), // Usando timestamp como ID único
+                nome,
+                valor,
+                valorAtual
+            });
+            
+            salvarDados();
+            renderMetasTable(); // Renderiza a tabela de metas
+            updateCharts();
+            
+            // Reseta o formulário
+            document.getElementById('meta-nome').value = '';
+            document.getElementById('meta-valor').value = '';
+            document.getElementById('meta-valor-atual').value = '';
+            document.getElementById('meta-nome').focus();
+            showModal('Meta adicionada com sucesso!', 'alert');
+        }
+
+        /**
+         * Adiciona uma nova transação recorrente (modelo).
+         */
+        function adicionarRecorrente() {
+            const tipo = document.getElementById('recorrente-tipo').value;
+            const descricao = document.getElementById('recorrente-descricao').value.trim();
+            const valor = parseFloat(document.getElementById('recorrente-valor').value);
+            const categoria = document.getElementById('recorrente-categoria').value;
+
+            if (!descricao || isNaN(valor) || valor <= 0 || !categoria) {
+                showModal('Por favor, preencha todos os campos corretamente para o modelo de transação recorrente.', 'alert');
+                return;
+            }
+
+            recorrentes.push({
+                id: Date.now(),
+                tipo,
+                descricao,
+                valor,
+                categoria
+            });
+
+            salvarDados();
+            renderRecorrentesTable();
+            // Limpa o formulário
+            document.getElementById('recorrente-descricao').value = '';
+            document.getElementById('recorrente-valor').value = '';
+            document.getElementById('recorrente-categoria').value = categorias[tipo][0] || ''; // Volta para a primeira categoria
+            showModal('Modelo recorrente adicionado com sucesso!', 'alert');
+        }
+
+        /**
+         * Adiciona uma nova categoria.
+         */
+        function adicionarCategoria() {
+            const nome = document.getElementById('categoria-nome').value.trim();
+            const tipo = document.getElementById('categoria-tipo').value;
+
+            if (!nome) {
+                showModal('Por favor, insira um nome para a categoria.', 'alert');
+                return;
+            }
+
+            if (categorias[tipo].includes(nome)) {
+                showModal(`A categoria "${nome}" já existe para ${tipo === 'receita' ? 'receitas' : 'gastos'}.`, 'alert');
+                return;
+            }
+
+            categorias[tipo].push(nome);
+            salvarDados();
+            renderCategoriasTable();
+            updateCategorySelects(); // Atualiza todos os selects de categoria
+            document.getElementById('categoria-nome').value = ''; // Limpa o campo
+            showModal('Categoria adicionada com sucesso!', 'alert');
+        }
+
+        /**
+         * Exibe um modal para edição de um item.
+         * @param {'receita'|'gasto'|'meta'|'orcamento'|'recorrente'} itemType - O tipo do item a ser editado.
          * @param {number} itemId - O ID único do item a ser editado.
          */
         function editarItem(itemType, itemId) {
             let itemToEdit;
             let collection;
 
-            // Determina a coleção correta com base no tipo de item
             if (itemType === 'receita') {
                 collection = receitas;
             } else if (itemType === 'gasto') {
@@ -1356,9 +1664,10 @@
                 collection = metas;
             } else if (itemType === 'orcamento') {
                 collection = orcamentos;
+            } else if (itemType === 'recorrente') {
+                collection = recorrentes;
             }
 
-            // Encontra o item na coleção
             itemToEdit = collection.find(item => item.id === itemId);
 
             if (!itemToEdit) {
@@ -1368,11 +1677,10 @@
 
             let formHtml = '';
             let title = '';
-            let formIdPrefix = `edit-${itemType}`; // Prefixo para IDs dos campos do formulário de edição
+            let formIdPrefix = `edit-${itemType}`;
 
-            // Constrói o HTML do formulário de edição com base no tipo de item
-            if (itemType === 'receita') {
-                title = 'Editar Receita';
+            if (itemType === 'receita' || itemType === 'gasto') {
+                title = `Editar ${itemType === 'receita' ? 'Receita' : 'Gasto'}`;
                 formHtml = `
                     <div class="form-group">
                         <label for="${formIdPrefix}-descricao" class="form-label">Descrição</label>
@@ -1389,39 +1697,7 @@
                     <div class="form-group">
                         <label for="${formIdPrefix}-categoria" class="form-label">Categoria</label>
                         <select id="${formIdPrefix}-categoria" class="form-select">
-                            <option value="Salário">Salário</option>
-                            <option value="Freelance">Freelance</option>
-                            <option value="Investimentos">Investimentos</option>
-                            <option value="Presente">Presente</option>
-                            <option value="Outros">Outros</option>
-                        </select>
-                    </div>
-                `;
-            } else if (itemType === 'gasto') {
-                title = 'Editar Gasto';
-                formHtml = `
-                    <div class="form-group">
-                        <label for="${formIdPrefix}-descricao" class="form-label">Descrição</label>
-                        <input type="text" id="${formIdPrefix}-descricao" class="form-input" value="${itemToEdit.descricao}">
-                    </div>
-                    <div class="form-group">
-                        <label for="${formIdPrefix}-valor" class="form-label">Valor (R$)</label>
-                        <input type="number" id="${formIdPrefix}-valor" class="form-input" value="${itemToEdit.valor}" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label for="${formIdPrefix}-data" class="form-label">Data</label>
-                        <input type="date" id="${formIdPrefix}-data" class="form-input" value="${itemToEdit.data}">
-                    </div>
-                    <div class="form-group">
-                        <label for="${formIdPrefix}-categoria" class="form-label">Categoria</label>
-                        <select id="${formIdPrefix}-categoria" class="form-select">
-                            <option value="Moradia">Moradia</option>
-                            <option value="Alimentação">Alimentação</option>
-                            <option value="Transporte">Transporte</option>
-                            <option value="Lazer">Lazer</option>
-                            <option value="Saúde">Saúde</option>
-                            <option value="Educação">Educação</option>
-                            <option value="Outros">Outros</option>
+                            <!-- Categorias serão carregadas via JS -->
                         </select>
                     </div>
                 `;
@@ -1446,7 +1722,7 @@
                 formHtml = `
                     <div class="form-group">
                         <label for="${formIdPrefix}-categoria" class="form-label">Categoria</label>
-                        <select id="${formIdPrefix}-categoria" class="form-select" disabled> <!-- Categoria desabilitada para edição -->
+                        <select id="${formIdPrefix}-categoria" class="form-select" disabled>
                             <option value="${itemToEdit.categoria}">${itemToEdit.categoria}</option>
                         </select>
                     </div>
@@ -1455,42 +1731,64 @@
                         <input type="number" id="${formIdPrefix}-limite" class="form-input" value="${itemToEdit.limite}" step="0.01">
                     </div>
                 `;
+            } else if (itemType === 'recorrente') {
+                title = 'Editar Modelo Recorrente';
+                formHtml = `
+                    <div class="form-group">
+                        <label for="${formIdPrefix}-tipo" class="form-label">Tipo</label>
+                        <select id="${formIdPrefix}-tipo" class="form-select" disabled>
+                            <option value="receita" ${itemToEdit.tipo === 'receita' ? 'selected' : ''}>Receita</option>
+                            <option value="gasto" ${itemToEdit.tipo === 'gasto' ? 'selected' : ''}>Gasto</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="${formIdPrefix}-descricao" class="form-label">Descrição</label>
+                        <input type="text" id="${formIdPrefix}-descricao" class="form-input" value="${itemToEdit.descricao}">
+                    </div>
+                    <div class="form-group">
+                        <label for="${formIdPrefix}-valor" class="form-label">Valor (R$)</label>
+                        <input type="number" id="${formIdPrefix}-valor" class="form-input" value="${itemToEdit.valor}" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="${formIdPrefix}-categoria" class="form-label">Categoria</label>
+                        <select id="${formIdPrefix}-categoria" class="form-select">
+                            <!-- Categorias serão carregadas via JS -->
+                        </select>
+                    </div>
+                `;
             }
 
-            // Define o conteúdo do modal com o formulário de edição
-            modalMessage.innerHTML = `<h2>${title}</h2>${formHtml}`;
-            modalButtons.innerHTML = '';
+            showModal(`<h2>${title}</h2>`, 'custom', null, formHtml);
 
-            // Botão Salvar
             const saveButton = document.createElement('button');
             saveButton.textContent = 'Salvar Alterações';
             saveButton.classList.add('modal-button', 'confirm');
             saveButton.onclick = () => {
-                let updatedItem = { id: itemToEdit.id }; // Cria um objeto com o ID do item
-                let isValid = true; // Flag de validação
+                let updatedItem = { id: itemToEdit.id };
+                let isValid = true;
 
-                // Coleta os valores do formulário e realiza validações
-                if (itemType === 'receita') {
+                if (itemType === 'receita' || itemType === 'gasto') {
+                    updatedItem.tipo = itemType; // Garante que o tipo é mantido
                     updatedItem.descricao = document.getElementById(`${formIdPrefix}-descricao`).value.trim();
                     updatedItem.valor = parseFloat(document.getElementById(`${formIdPrefix}-valor`).value);
                     updatedItem.data = document.getElementById(`${formIdPrefix}-data`).value;
                     updatedItem.categoria = document.getElementById(`${formIdPrefix}-categoria`).value;
-                    if (!updatedItem.descricao || isNaN(updatedItem.valor) || updatedItem.valor <= 0 || !updatedItem.data) isValid = false;
-                } else if (itemType === 'gasto') {
-                    updatedItem.descricao = document.getElementById(`${formIdPrefix}-descricao`).value.trim();
-                    updatedItem.valor = parseFloat(document.getElementById(`${formIdPrefix}-valor`).value);
-                    updatedItem.data = document.getElementById(`${formIdPrefix}-data`).value;
-                    updatedItem.categoria = document.getElementById(`${formIdPrefix}-categoria`).value;
-                    if (!updatedItem.descricao || isNaN(updatedItem.valor) || updatedItem.valor <= 0 || !updatedItem.data) isValid = false;
+                    if (!updatedItem.descricao || isNaN(updatedItem.valor) || updatedItem.valor <= 0 || !updatedItem.data || !updatedItem.categoria) isValid = false;
                 } else if (itemType === 'meta') {
                     updatedItem.nome = document.getElementById(`${formIdPrefix}-nome`).value.trim();
                     updatedItem.valor = parseFloat(document.getElementById(`${formIdPrefix}-valor`).value);
                     updatedItem.valorAtual = parseFloat(document.getElementById(`${formIdPrefix}-valor-atual`).value);
                     if (!updatedItem.nome || isNaN(updatedItem.valor) || updatedItem.valor <= 0 || updatedItem.valorAtual < 0 || updatedItem.valorAtual > updatedItem.valor) isValid = false;
                 } else if (itemType === 'orcamento') {
-                    updatedItem.categoria = document.getElementById(`${formIdPrefix}-categoria`).value;
+                    updatedItem.categoria = itemToEdit.categoria; // Categoria não editável
                     updatedItem.limite = parseFloat(document.getElementById(`${formIdPrefix}-limite`).value);
                     if (isNaN(updatedItem.limite) || updatedItem.limite <= 0) isValid = false;
+                } else if (itemType === 'recorrente') {
+                    updatedItem.tipo = itemToEdit.tipo; // Tipo não editável
+                    updatedItem.descricao = document.getElementById(`${formIdPrefix}-descricao`).value.trim();
+                    updatedItem.valor = parseFloat(document.getElementById(`${formIdPrefix}-valor`).value);
+                    updatedItem.categoria = document.getElementById(`${formIdPrefix}-categoria`).value;
+                    if (!updatedItem.descricao || isNaN(updatedItem.valor) || updatedItem.valor <= 0 || !updatedItem.categoria) isValid = false;
                 }
 
                 if (!isValid) {
@@ -1498,25 +1796,29 @@
                     return;
                 }
 
-                salvarEdicao(itemType, updatedItem); // Chama a função para salvar as alterações
-                hideModal(); // Esconde o modal
+                salvarEdicao(itemType, updatedItem);
+                hideModal();
             };
             modalButtons.appendChild(saveButton);
 
-            // Botão Cancelar
             const cancelButton = document.createElement('button');
             cancelButton.textContent = 'Cancelar';
             cancelButton.classList.add('modal-button', 'cancel');
             cancelButton.onclick = hideModal;
             modalButtons.appendChild(cancelButton);
 
-            customModalOverlay.classList.remove('fab-actions-modal'); // Garante que a classe não esteja presente
-            customModalOverlay.classList.add('visible'); // Torna o modal visível
-
-            // Define a categoria selecionada para os formulários de edição (se aplicável)
-            if (itemType === 'receita' || itemType === 'gasto') {
+            // Preenche os selects de categoria dentro do modal de edição
+            if (itemType === 'receita' || itemType === 'gasto' || itemType === 'recorrente') {
                 const selectElement = document.getElementById(`${formIdPrefix}-categoria`);
                 if (selectElement) {
+                    selectElement.innerHTML = ''; 
+                    const typeCategories = categorias[itemToEdit.tipo]; // Usa o tipo do itemToEdit
+                    typeCategories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat;
+                        option.textContent = cat;
+                        selectElement.appendChild(option);
+                    });
                     selectElement.value = itemToEdit.categoria;
                 }
             }
@@ -1524,7 +1826,7 @@
 
         /**
          * Salva as alterações de um item editado na coleção correspondente.
-         * @param {'receita'|'gasto'|'meta'|'orcamento'} type - O tipo do item.
+         * @param {'receita'|'gasto'|'meta'|'orcamento'|'recorrente'} type - O tipo do item.
          * @param {object} updatedItem - O objeto do item com os dados atualizados.
          */
         function salvarEdicao(type, updatedItem) {
@@ -1537,16 +1839,26 @@
                 collection = metas;
             } else if (type === 'orcamento') {
                 collection = orcamentos;
+            } else if (type === 'recorrente') {
+                collection = recorrentes;
             }
 
             const index = collection.findIndex(item => item.id === updatedItem.id);
             if (index !== -1) {
                 collection[index] = updatedItem; // Atualiza o item na coleção
                 salvarDados(); // Salva os dados no localStorage
-                renderTables(); // Re-renderiza as tabelas de receitas, gastos e metas
-                updateCharts(); // Atualiza os gráficos
-                renderOrcamentosTable(); // Re-renderiza a tabela de orçamentos
-                updateBudgetDashboardSummary(); // Atualiza o resumo do orçamento no dashboard
+                // Re-renderiza as tabelas e atualiza gráficos relevantes
+                if (type === 'receita' || type === 'gasto') {
+                    renderTransactionsList();
+                } else if (type === 'meta') {
+                    renderMetasTable();
+                } else if (type === 'orcamento') {
+                    renderOrcamentosTable();
+                } else if (type === 'recorrente') {
+                    renderRecorrentesTable();
+                }
+                updateCharts();
+                updateBudgetDashboardSummary();
                 showModal('Item atualizado com sucesso!', 'alert');
             } else {
                 showModal('Erro: Item não encontrado para atualização.', 'alert');
@@ -1555,27 +1867,37 @@
 
         /**
          * Remove um item da coleção especificada.
-         * @param {'receita'|'gasto'|'meta'|'orcamento'} tipo - O tipo do item a ser removido.
-         * @param {number} id - O ID único do item a ser removido.
+         * @param {'receita'|'gasto'|'meta'|'orcamento'|'recorrente'|'categoria'} tipo - O tipo do item a ser removido.
+         * @param {number|string} id - O ID único (ou nome para categoria) do item a ser removido.
+         * @param {string} [categoriaTipo] - O tipo da categoria ('receita' ou 'gasto') se o tipo for 'categoria'.
          */
-        function removerItem(tipo, id) {
+        function removerItem(tipo, id, categoriaTipo = null) {
             showModal('Tem certeza que deseja excluir este item?', 'confirm', (confirmed) => {
                 if (confirmed) {
                     if (tipo === 'receita') {
                         receitas = receitas.filter(item => item.id !== id);
+                        renderTransactionsList();
                     } else if (tipo === 'gasto') {
                         gastos = gastos.filter(item => item.id !== id);
+                        renderTransactionsList();
                     } else if (tipo === 'meta') {
                         metas = metas.filter(item => item.id !== id);
+                        renderMetasTable();
                     } else if (tipo === 'orcamento') {
                         orcamentos = orcamentos.filter(item => item.id !== id);
-                        renderOrcamentosTable(); // Re-renderiza apenas a tabela de orçamentos
+                        renderOrcamentosTable();
+                    } else if (tipo === 'recorrente') {
+                        recorrentes = recorrentes.filter(item => item.id !== id);
+                        renderRecorrentesTable();
+                    } else if (tipo === 'categoria' && categoriaTipo) {
+                        categorias[categoriaTipo] = categorias[categoriaTipo].filter(cat => cat !== id);
+                        updateCategorySelects(); // Atualiza os selects após remover categoria
+                        renderCategoriasTable(); // Re-renderiza a tabela de categorias
                     }
                     
                     salvarDados();
-                    renderTables(); // Re-renderiza outras tabelas se necessário
                     updateCharts();
-                    updateBudgetDashboardSummary(); // Atualiza o resumo do orçamento no dashboard
+                    updateBudgetDashboardSummary();
                     showModal('Item excluído com sucesso!', 'alert');
                 }
             });
@@ -1589,64 +1911,71 @@
             localStorage.setItem('gastos', JSON.stringify(gastos));
             localStorage.setItem('metas', JSON.stringify(metas));
             localStorage.setItem('orcamentos', JSON.stringify(orcamentos));
+            localStorage.setItem('recorrentes', JSON.stringify(recorrentes));
+            localStorage.setItem('categorias', JSON.stringify(categorias)); // Salva as categorias
         }
 
         /**
-         * Renderiza as tabelas de receitas, gastos e metas.
+         * Renderiza a lista consolidada de transações (receitas e gastos) com filtros.
          */
-        function renderTables() {
-            // Renderiza Receitas
-            const tabelaReceitas = document.getElementById('tabela-receitas');
-            tabelaReceitas.innerHTML = receitas.map(receita => `
-                <tr class="receita-row">
-                    <td>${receita.descricao}</td>
-                    <td class="receita-text">R$ ${receita.valor.toFixed(2)}</td>
-                    <td>${formatarData(receita.data)}</td>
-                    <td>${receita.categoria}</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" onclick="editarItem('receita', ${receita.id})">Editar</button>
-                        <button class="btn btn-danger btn-sm" onclick="removerItem('receita', ${receita.id})">Excluir</button>
-                    </td>
-                </tr>
-            `).join('');
-            
-            // Renderiza Gastos
-            const tabelaGastos = document.getElementById('tabela-gastos');
-            tabelaGastos.innerHTML = gastos.map(gasto => `
-                <tr class="gasto-row">
-                    <td>${gasto.descricao}</td>
-                    <td class="gasto-text">R$ ${gasto.valor.toFixed(2)}</td>
-                    <td>${formatarData(gasto.data)}</td>
-                    <td>${gasto.categoria}</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" onclick="editarItem('gasto', ${gasto.id})">Editar</button>
-                        <button class="btn btn-danger btn-sm" onclick="removerItem('gasto', ${gasto.id})">Excluir</button>
-                    </td>
-                </tr>
-            `).join('');
-            
-            // Renderiza Metas
-            const tabelaMetas = document.getElementById('tabela-metas');
-            tabelaMetas.innerHTML = metas.map(meta => {
-                const progresso = (meta.valorAtual / meta.valor * 100).toFixed(1);
-                return `
-                    <tr>
-                        <td>${meta.nome}</td>
-                        <td>R$ ${meta.valor.toFixed(2)}</td>
-                        <td>R$ ${meta.valorAtual.toFixed(2)}</td>
-                        <td>
-                            <div style="background: #eee; border-radius: 4px; height: 20px;">
-                                <div style="background: ${progresso >= 100 ? '#2ecc71' : '#3498db'}; width: ${progresso}%; height: 100%; border-radius: 4px;"></div>
-                            </div>
-                            <small>${progresso}%</small>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" onclick="editarItem('meta', ${meta.id})">Editar</button>
-                            <button class="btn btn-danger btn-sm" onclick="removerItem('meta', ${meta.id})">Excluir</button>
-                        </td>
-                    </tr>
+        function renderTransactionsList() {
+            const container = document.getElementById('transactions-list-container');
+            container.innerHTML = ''; // Limpa a lista existente
+
+            const filterType = document.getElementById('filter-type').value;
+            const filterCategory = document.getElementById('filter-category').value;
+            const filterStartDateStr = document.getElementById('filter-start-date').value;
+            const filterEndDateStr = document.getElementById('filter-end-date').value;
+
+            const filterStartDate = filterStartDateStr ? new Date(filterStartDateStr + 'T00:00:00') : null;
+            const filterEndDate = filterEndDateStr ? new Date(filterEndDateStr + 'T00:00:00') : null;
+
+            let allTransactions = [];
+            if (filterType === 'all' || filterType === 'receita') {
+                allTransactions = allTransactions.concat(receitas.map(t => ({ ...t, tipo: 'receita' })));
+            }
+            if (filterType === 'all' || filterType === 'gasto') {
+                allTransactions = allTransactions.concat(gastos.map(t => ({ ...t, tipo: 'gasto' })));
+            }
+
+            // Aplica filtros
+            const filteredTransactions = allTransactions.filter(t => {
+                const transactionDate = new Date(t.data + 'T00:00:00');
+
+                const matchesType = filterType === 'all' || t.tipo === filterType;
+                const matchesCategory = filterCategory === 'all' || t.categoria === filterCategory;
+                const matchesDate = (!filterStartDate || transactionDate >= filterStartDate) &&
+                                    (!filterEndDate || transactionDate <= filterEndDate);
+
+                return matchesType && matchesCategory && matchesDate;
+            });
+
+            // Ordena por data (mais recente primeiro)
+            filteredTransactions.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+            if (filteredTransactions.length === 0) {
+                container.innerHTML = '<li style="text-align: center; padding: 20px; color: var(--gray);">Nenhuma transação encontrada com os filtros aplicados.</li>';
+                return;
+            }
+
+            filteredTransactions.forEach(transaction => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('transaction-list-item');
+                listItem.innerHTML = `
+                    <div class="transaction-info">
+                        <strong>${transaction.descricao}</strong>
+                        <small>${formatarData(transaction.data)} - ${transaction.categoria}</small>
+                    </div>
+                    <div class="transaction-value ${transaction.tipo}">
+                        ${transaction.tipo === 'receita' ? '+' : '-'} R$ ${transaction.valor.toFixed(2)}
+                    </div>
+                    <div class="transaction-actions">
+                        <button class="btn btn-primary btn-sm" onclick="editarItem('${transaction.tipo}', ${transaction.id})">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="removerItem('${transaction.tipo}', ${transaction.id})">Excluir</button>
+                    </div>
                 `;
-            }).join('');
+                container.appendChild(listItem);
+            });
         }
 
         /**
@@ -1684,7 +2013,7 @@
                     <td>${orcamento.categoria}</td>
                     <td>R$ ${orcamento.limite.toFixed(2)}</td>
                     <td>R$ ${gastoAtual.toFixed(2)}</td>
-                    <td style="color: ${restante >= 0 ? '#2ecc71' : '#e74c3c'}; font-weight: bold;">R$ ${restante.toFixed(2)}</td>
+                    <td style="color: ${restante >= 0 ? 'var(--success-color)' : 'var(--danger-color)'}; font-weight: bold;">R$ ${restante.toFixed(2)}</td>
                     <td>
                         <div style="background: #eee; border-radius: 4px; height: 20px; overflow: hidden;">
                             <div style="background: ${corProgresso}; width: ${Math.min(progressoPercent, 100)}%; height: 100%; border-radius: 4px;"></div>
@@ -1698,6 +2027,224 @@
                 `;
                 tabelaOrcamentos.appendChild(row);
             });
+        }
+
+        /**
+         * Renderiza a tabela de metas financeiras.
+         */
+        function renderMetasTable() {
+            const tabelaMetas = document.getElementById('tabela-metas');
+            tabelaMetas.innerHTML = ''; // Limpa as linhas existentes
+
+            if (metas.length === 0) {
+                tabelaMetas.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">Nenhuma meta definida.</td></tr>';
+                return;
+            }
+
+            metas.forEach(meta => {
+                const progresso = (meta.valorAtual / meta.valor * 100).toFixed(1);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${meta.nome}</td>
+                    <td>R$ ${meta.valor.toFixed(2)}</td>
+                    <td>R$ ${meta.valorAtual.toFixed(2)}</td>
+                    <td>
+                        <div style="background: #eee; border-radius: 4px; height: 20px;">
+                            <div style="background: ${progresso >= 100 ? '#2ecc71' : '#3498db'}; width: ${progresso}%; height: 100%; border-radius: 4px;"></div>
+                        </div>
+                        <small>${progresso}%</small>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editarItem('meta', ${meta.id})">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="removerItem('meta', ${meta.id})">Excluir</button>
+                    </td>
+                `;
+                tabelaMetas.appendChild(row);
+            });
+        }
+
+        /**
+         * Renderiza a tabela de transações recorrentes.
+         */
+        function renderRecorrentesTable() {
+            const tabelaRecorrentes = document.getElementById('tabela-recorrentes');
+            tabelaRecorrentes.innerHTML = ''; // Limpa as linhas existentes
+
+            if (recorrentes.length === 0) {
+                tabelaRecorrentes.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">Nenhum modelo de transação recorrente cadastrado.</td></tr>';
+                return;
+            }
+
+            recorrentes.forEach(rec => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${rec.tipo === 'receita' ? 'Receita' : 'Gasto'}</td>
+                    <td>${rec.descricao}</td>
+                    <td>R$ ${rec.valor.toFixed(2)}</td>
+                    <td>${rec.categoria}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editarItem('recorrente', ${rec.id})">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="removerItem('recorrente', ${rec.id})">Excluir</button>
+                    </td>
+                `;
+                tabelaRecorrentes.appendChild(row);
+            });
+        }
+
+        /**
+         * Renderiza a tabela de categorias personalizadas.
+         */
+        function renderCategoriasTable() {
+            const tabelaCategorias = document.getElementById('tabela-categorias');
+            tabelaCategorias.innerHTML = ''; // Limpa as linhas existentes
+
+            const allCategories = [];
+            for (const type in categorias) {
+                categorias[type].forEach(catName => {
+                    allCategories.push({ name: catName, type: type });
+                });
+            }
+
+            if (allCategories.length === 0) {
+                tabelaCategorias.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px;">Nenhuma categoria personalizada.</td></tr>';
+                return;
+            }
+
+            allCategories.forEach(cat => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${cat.name}</td>
+                    <td>${cat.type === 'receita' ? 'Receita' : 'Gasto'}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="removerItem('categoria', '${cat.name}', '${cat.type}')">Excluir</button>
+                    </td>
+                `;
+                tabelaCategorias.appendChild(row);
+            });
+        }
+
+        /**
+         * Atualiza todos os elementos <select> de categoria no aplicativo.
+         */
+        function updateCategorySelects() {
+            // Selects da tela de Adicionar Transação (já atualizado por setTransactionType)
+            // Selects da tela de Orçamentos
+            const orcamentoCategoriaSelect = document.getElementById('orcamento-categoria');
+            orcamentoCategoriaSelect.innerHTML = '';
+            categorias.gasto.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                orcamentoCategoriaSelect.appendChild(option);
+            });
+
+            // Selects da tela de Recorrentes
+            const recorrenteCategoriaSelect = document.getElementById('recorrente-categoria');
+            recorrenteCategoriaSelect.innerHTML = '';
+            const selectedRecorrenteType = document.getElementById('recorrente-tipo').value;
+            categorias[selectedRecorrenteType].forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                recorrenteCategoriaSelect.appendChild(option);
+            });
+            // Listener para mudar as categorias do select de recorrentes quando o tipo muda
+            document.getElementById('recorrente-tipo').onchange = function() {
+                const type = this.value;
+                recorrenteCategoriaSelect.innerHTML = '';
+                categorias[type].forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    recorrenteCategoriaSelect.appendChild(option);
+                });
+            };
+
+            // Selects de filtro na lista de transações
+            updateCategoryFilterSelect('filter-category', document.getElementById('filter-type').value);
+        }
+
+        /**
+         * Atualiza o select de filtro de categoria na tela de Minhas Transações.
+         * @param {string} selectId - O ID do elemento select.
+         * @param {'all'|'receita'|'gasto'} filterType - O tipo de transação selecionado no filtro.
+         */
+        function updateCategoryFilterSelect(selectId, filterType) {
+            const selectElement = document.getElementById(selectId);
+            const currentSelectedValue = selectElement.value; // Salva o valor atual para tentar restaurar
+            selectElement.innerHTML = '<option value="all">Todas</option>'; // Opção padrão
+
+            if (filterType === 'all') {
+                // Adiciona todas as categorias de receita e gasto
+                const allUniqueCategories = new Set();
+                categorias.receita.forEach(cat => allUniqueCategories.add(cat));
+                categorias.gasto.forEach(cat => allUniqueCategories.add(cat));
+                Array.from(allUniqueCategories).sort().forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    selectElement.appendChild(option);
+                });
+            } else {
+                // Adiciona categorias específicas para o tipo selecionado
+                categorias[filterType].forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    selectElement.appendChild(option);
+                });
+            }
+            // Tenta restaurar a seleção anterior, se ainda for válida
+            if (Array.from(selectElement.options).some(option => option.value === currentSelectedValue)) {
+                selectElement.value = currentSelectedValue;
+            } else {
+                selectElement.value = 'all'; // Volta para "Todas" se a categoria anterior não existe mais
+            }
+        }
+
+        /**
+         * Exibe um modal com os modelos de transações recorrentes para seleção.
+         * @param {'receita'|'gasto'} type - O tipo de transação recorrente a ser exibida.
+         */
+        function showRecorrentesModal(type) {
+            const filteredRecorrentes = recorrentes.filter(rec => rec.tipo === type);
+            let modalHtml = `<h2>Usar Modelo Recorrente (${type === 'receita' ? 'Receita' : 'Gasto'})</h2>`;
+
+            if (filteredRecorrentes.length === 0) {
+                modalHtml += `<p style="text-align: center; margin-top: 15px;">Nenhum modelo de transação recorrente de ${type === 'receita' ? 'receita' : 'gasto'} cadastrado.</p>`;
+            } else {
+                modalHtml += `<ul style="list-style: none; padding: 0; max-height: 200px; overflow-y: auto; text-align: left;">`;
+                filteredRecorrentes.forEach(rec => {
+                    modalHtml += `
+                        <li style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;" 
+                            onclick="preencherFormularioTransacaoRecorrente(${rec.id})">
+                            <strong>${rec.descricao}</strong> - R$ ${rec.valor.toFixed(2)} (${rec.categoria})
+                        </li>
+                    `;
+                });
+                modalHtml += `</ul>`;
+            }
+
+            showModal('', 'custom', null, modalHtml); // Usa modal customizado para exibir a lista
+        }
+
+        /**
+         * Preenche o formulário de Adicionar Transação com os dados de um modelo recorrente selecionado.
+         * @param {number} id - O ID do modelo de transação recorrente.
+         */
+        function preencherFormularioTransacaoRecorrente(id) {
+            const rec = recorrentes.find(r => r.id === id);
+            if (rec) {
+                setTransactionType(rec.tipo); // Define o tipo de transação (receita/gasto)
+                document.getElementById('transaction-descricao').value = rec.descricao;
+                document.getElementById('transaction-valor').value = rec.valor;
+                // A data é sempre a atual para uma nova transação
+                document.getElementById('transaction-data').valueAsDate = new Date(); 
+                // Atualiza o select de categoria e depois define o valor
+                updateTransactionCategorySelect(); 
+                document.getElementById('transaction-categoria').value = rec.categoria;
+                hideModal(); // Fecha o modal após preencher
+            }
         }
 
         /**
@@ -1734,26 +2281,23 @@
             document.getElementById('overall-budget-progress').style.width = `${overallProgressBarWidth}%`;
             document.getElementById('overall-budget-progress').style.backgroundColor = overallProgressBarColor;
             document.getElementById('overall-budget-percent').textContent = `${overallProgressPercent}%`;
-        }
 
-
-        /**
-         * Formata uma string de data (YYYY-MM-DD) para o formato local (DD/MM/YYYY).
-         * @param {string} dataString - A string de data no formato YYYY-MM-DD.
-         * @returns {string} A data formatada.
-         */
-        function formatarData(dataString) {
-            if (!dataString) return '';
-            // Adiciona 'T00:00:00' para garantir que a data seja interpretada no fuso horário local
-            const date = new Date(dataString + 'T00:00:00'); 
-            return date.toLocaleDateString('pt-BR');
+            // Alerta de orçamento excedido
+            const budgetAlertMessageDiv = document.getElementById('budget-alert-message');
+            if (totalGastoOrcamentos > totalOrcado && totalOrcado > 0) {
+                budgetAlertMessageDiv.className = 'budget-alert';
+                budgetAlertMessageDiv.textContent = `Atenção: Você excedeu o orçamento em R$ ${(totalGastoOrcamentos - totalOrcado).toFixed(2)} neste mês!`;
+            } else {
+                budgetAlertMessageDiv.className = '';
+                budgetAlertMessageDiv.textContent = '';
+            }
         }
 
         /**
          * Atualiza todos os gráficos no Dashboard com os dados mais recentes.
          */
         function updateCharts() {
-            // Calcula totais para o saldo e gastos
+            // Calcula totais
             const totalReceitas = receitas.reduce((sum, item) => sum + item.valor, 0);
             const totalGastos = gastos.reduce((sum, item) => sum + item.valor, 0);
             const saldo = totalReceitas - totalGastos;
@@ -1797,7 +2341,7 @@
                     datasets: [{
                         label: 'Receitas por Categoria',
                         data: Object.values(receitasPorCategoria),
-                        backgroundColor: ['#2ecc71', '#27ae60', '#1abc9c', '#16a085', '#3498db']
+                        backgroundColor: ['#2ecc71', '#27ae60', '#1abc9c', '#16a085', '#3498db', '#6c5ce7', '#fdcb6e']
                     }]
                 },
                 options: {
@@ -1821,7 +2365,7 @@
                     datasets: [{
                         label: 'Gastos por Categoria',
                         data: Object.values(gastosPorCategoria),
-                        backgroundColor: ['#e74c3c', '#c0392b', '#f39c12', '#d35400', '#e67e22']
+                        backgroundColor: ['#e74c3c', '#c0392b', '#f39c12', '#d35400', '#e67e22', '#ff7675', '#a29bfe']
                     }]
                 },
                 options: {
@@ -2086,44 +2630,46 @@
         }
 
         /**
-         * Gera e exibe o relatório financeiro para o mês selecionado.
+         * Gera e exibe o relatório financeiro para o período selecionado.
          */
         function gerarRelatorio() {
-            const mes = document.getElementById('relatorio-mes').value; // Ex: "2023-10"
-            if (!mes) {
-                showModal('Por favor, selecione um mês.', 'alert');
+            const dataInicioStr = document.getElementById('relatorio-data-inicio').value;
+            const dataFimStr = document.getElementById('relatorio-data-fim').value;
+
+            if (!dataInicioStr || !dataFimStr) {
+                showModal('Por favor, selecione as datas de início e fim para o relatório.', 'alert');
+                return;
+            }
+
+            // Converte as strings de data para objetos Date (no fuso horário local)
+            const dataInicio = new Date(dataInicioStr + 'T00:00:00');
+            const dataFim = new Date(dataFimStr + 'T00:00:00');
+
+            if (dataInicio > dataFim) {
+                showModal('A data de início não pode ser posterior à data de fim.', 'alert');
                 return;
             }
             
-            const [year, monthIndex] = mes.split('-').map(Number); // monthIndex é 1-baseado
-
-            // Constrói as datas de início e fim do mês selecionado (no fuso horário local)
-            const inicioMesDate = new Date(year, monthIndex - 1, 1); // Mês é 0-indexado no construtor Date
-            const fimMesDate = new Date(year, monthIndex, 0); // Dia 0 do próximo mês dá o último dia do mês atual
-
-            // Filtra receitas e gastos para o mês selecionado
-            const receitasMes = receitas.filter(r => {
-                const rDateParts = r.data.split('-').map(Number); // r.data é "YYYY-MM-DD"
-                const rDate = new Date(rDateParts[0], rDateParts[1] - 1, rDateParts[2]); // Cria Date no fuso horário local
-                return rDate >= inicioMesDate && rDate <= fimMesDate;
+            // Filtra receitas e gastos para o período selecionado
+            const receitasPeriodo = receitas.filter(r => {
+                const rDate = new Date(r.data + 'T00:00:00');
+                return rDate >= dataInicio && rDate <= dataFim;
             });
-            const gastosMes = gastos.filter(g => {
-                const gDateParts = g.data.split('-').map(Number); // g.data é "YYYY-MM-DD"
-                const gDate = new Date(gDateParts[0], gDateParts[1] - 1, gDateParts[2]); // Cria Date no fuso horário local
-                return gDate >= inicioMesDate && gDate <= fimMesDate;
+            const gastosPeriodo = gastos.filter(g => {
+                const gDate = new Date(g.data + 'T00:00:00');
+                return gDate >= dataInicio && gDate <= dataFim;
             });
             
             // Calcula totais
-            const totalReceitas = receitasMes.reduce((sum, item) => sum + item.valor, 0);
-            const totalGastos = gastosMes.reduce((sum, item) => sum + item.valor, 0);
+            const totalReceitas = receitasPeriodo.reduce((sum, item) => sum + item.valor, 0);
+            const totalGastos = gastosPeriodo.reduce((sum, item) => sum + item.valor, 0);
             const saldo = totalReceitas - totalGastos;
             
-            // Obtém o nome do mês e ano formatado
-            const nomeMes = inicioMesDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+            const periodoFormatado = `${formatarData(dataInicioStr)} a ${formatarData(dataFimStr)}`;
             
             // Constrói o HTML do relatório
             const relatorioHTML = `
-                <h2>Relatório Mensal - ${nomeMes}</h2>
+                <h2>Relatório Financeiro - ${periodoFormatado}</h2>
                 
                 <div class="report-summary-grid">
                     <div class="report-summary-box">
@@ -2145,24 +2691,24 @@
                 <div class="report-detail-list">
                     <h3>Detalhamento de Receitas</h3>
                     <ul>
-                        ${receitasMes.length > 0 ? receitasMes.map(item => `
+                        ${receitasPeriodo.length > 0 ? receitasPeriodo.map(item => `
                             <li>
-                                <span>${item.descricao} <small>(${item.categoria})</small></span>
+                                <span>${item.descricao} <small>(${item.categoria})</small> - ${formatarData(item.data)}</span>
                                 <span class="receita-text">R$ ${item.valor.toFixed(2)}</span>
                             </li>
-                        `).join('') : '<li style="text-align: center; color: var(--gray);">Nenhuma receita para este mês.</li>'}
+                        `).join('') : '<li style="text-align: center; color: var(--gray);">Nenhuma receita para este período.</li>'}
                     </ul>
                 </div>
                 
                 <div class="report-detail-list">
                     <h3>Detalhamento de Gastos</h3>
                     <ul>
-                        ${gastosMes.length > 0 ? gastosMes.map(item => `
+                        ${gastosPeriodo.length > 0 ? gastosPeriodo.map(item => `
                             <li>
-                                <span>${item.descricao} <small>(${item.categoria})</small></span>
+                                <span>${item.descricao} <small>(${item.categoria})</small> - ${formatarData(item.data)}</span>
                                 <span class="gasto-text">R$ ${item.valor.toFixed(2)}</span>
                             </li>
-                        `).join('') : '<li style="text-align: center; color: var(--gray);">Nenhum gasto para este mês.</li>'}
+                        `).join('') : '<li style="text-align: center; color: var(--gray);">Nenhum gasto para este período.</li>'}
                     </ul>
                 </div>
             `;
@@ -2171,10 +2717,23 @@
             document.getElementById('relatorio-conteudo').innerHTML = relatorioHTML;
         }
 
+        /**
+         * Formata uma string de data (YYYY-MM-DD) para o formato local (DD/MM/YYYY).
+         * @param {string} dataString - A string de data no formato YYYY-MM-DD.
+         * @returns {string} A data formatada.
+         */
+        function formatarData(dataString) {
+            if (!dataString) return '';
+            // Adiciona 'T00:00:00' para garantir que a data seja interpretada no fuso horário local
+            const date = new Date(dataString + 'T00:00:00'); 
+            return date.toLocaleDateString('pt-BR');
+        }
+
         // Torna as funções essenciais disponíveis globalmente para serem chamadas a partir do HTML (onclick)
         window.removerItem = removerItem;
         window.showModal = showModal;
         window.editarItem = editarItem; 
+        window.preencherFormularioTransacaoRecorrente = preencherFormularioTransacaoRecorrente; // Renomeado para clareza
     </script>
 </body>
 </html>
